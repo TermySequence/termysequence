@@ -1,0 +1,9 @@
+[Command]
+Command=emacs, emacs, %?l{+%l:%c}, %f
+Environment=-DISPLAY
+
+[Launcher]
+DisplayIcon=generic-editor
+LaunchType=3
+MountType=1
+UnmountIdleTime=0

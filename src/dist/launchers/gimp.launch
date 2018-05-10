@@ -1,0 +1,8 @@
+[Command]
+Command=gimp, gimp, %U
+
+[Launcher]
+DisplayIcon=gimp
+LaunchType=1
+MountType=1
+UnmountIdleTime=0

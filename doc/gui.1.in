@@ -1,0 +1,167 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @APP_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.B @APP_NAME@ \"m2rprog
+\- graphical @FRIENDLY_NAME@ terminal multiplexer client
+
+.SH SYNOPSIS
+.B @APP_NAME@ \"m2rprog
+[\fIoptions\fR]
+
+.SH DESCRIPTION
+.B @APP_NAME@ \"m2rprog
+is a graphical multiplexing terminal emulator client implementing the
+.I @FRIENDLY_NAME@
+protocol using the
+.BR @SERVER_NAME@ (1) \"m2rdoc
+multiplexing terminal emulator server.
+The emulator aims for
+XTerm \"m2rweb
+compatibility and supports modern terminal extensions
+such as 256-color text, mouse tracking, shell integration, and inline image
+display. In addition, the
+.I @FRIENDLY_NAME@
+protocol provides many features beyond standard terminal
+emulation, including flexible, efficient connectivity between servers,
+file monitoring and transfer, and multi-user terminal sharing and collaboration.
+
+On startup, by default
+.B @APP_NAME@ \"m2rprog
+will attempt to connect to an already running
+.BR @SERVER_NAME@ (1) \"m2rdoc
+instance using a per-user local socket. If the server is not already running, it
+will be launched. This server instance is intended to be independent of user
+login sessions in the manner of
+.BR tmux (1) \"m2rman
+or
+.BR screen (1) \"m2rman
+and is referred to as the "persistent user server." Note that terminals launched
+on this server will typically lack the environment variables needed to launch
+graphical programs on the desktop, such as
+.IR DISPLAY . \"m2renv
+
+In addition, by default
+.B @APP_NAME@ \"m2rprog
+will launch a second, private
+.BR @SERVER_NAME@ (1) \"m2rdoc
+instance as a direct child process. This server instance will exit along with
+.BR @APP_NAME@ , \"m2rprog
+but its terminals
+.I will
+have access to desktop environment variables such as
+.IR DISPLAY . \"m2renv
+This server
+instance is referred to as the "transient session server."
+
+Connections to additional
+.BR @SERVER_NAME@ (1) \"m2rdoc
+instances running in containers, on other hosts, or as other users, including
+root, can be made from
+.B @APP_NAME@ \"m2rprog
+or by using
+.BR @CONNECT_NAME@ (1) \"m2rdoc
+or its wrapper scripts
+.BR @ABBREV_NAME@-ssh (1), \"m2rdoc
+.BR @ABBREV_NAME@-su (1), \"m2rdoc
+and others.
+
+.B @APP_NAME@ \"m2rprog
+listens on a per-user local socket of its own, which can be used to launch
+remote pipe commands and application actions programmatically using
+.BR @PIPE_NAME@ (1). \"m2rdoc
+
+For comprehensive documentation of the many features offered by
+.BR @APP_NAME@ , \"m2rprog
+refer to the support pages at https://@PRODUCT_DOMAIN@/doc/
+
+.SH OPTIONS
+.IP --noplugins
+Disable loading all plugins.
+
+.IP --nosysplugins
+Disable loading plugins from
+.IR @CMAKE_INSTALL_PREFIX@/share/@APP_NAME@/plugins . \"m2rfile
+
+.IP -t,--rundir\ \fIdir\fR
+Look for the server's local socket under runtime directory
+.IR dir .
+The specifiers %t and %U, if present, are expanded to the systemd runtime
+directory and the user UID respectively. Specifying this option is only
+necessary if
+.BR @SERVER_NAME@ (1) \"m2rdoc
+is launched with a custom runtime directory.
+
+.IP --tmp
+Store the application's per-user local socket and other runtime files under
+/tmp rather than
+.IR $XDG_RUNTIME_DIR . \"m2renv
+This is the default unless systemd support is compiled in.
+
+.IP --nofdpurge
+Don't look for and close leaked file descriptors on startup. This is useful
+when debugging the application with tools such as valgrind.
+
+.IP --version
+Print version information
+
+.IP --man
+Attempt to show this man page
+
+.SH FILES
+.I $XDG_CONFIG_HOME/@APP_NAME@/ \"m2rfile
+
+Location where
+.B @APP_NAME@ \"m2rprog
+stores its configuration files.
+
+.I $XDG_DATA_HOME/@APP_NAME@/ \"m2rfile
+.br
+.I @CMAKE_INSTALL_PREFIX@/share/@APP_NAME@/ \"m2rfile
+
+Locations where
+.B @APP_NAME@ \"m2rprog
+looks for icons, images, plugins, and other data files.
+
+.I $XDG_CONFIG_HOME/@APP_NAME@/attr-script \"m2rfile
+.br
+.I /etc/@APP_NAME@/attr-script \"m2rfile
+.br
+.I @CMAKE_INSTALL_PREFIX@/lib/@APP_NAME@/attr-script \"m2rfile
+
+Programs executed by
+.B @APP_NAME@ \"m2rprog
+to set client-specific UTF-8 key-value pairs reported to servers and visible to
+other clients. The program should print lines of the form
+key=value \"m2rtt
+and must
+exit quickly. These scripts are optional and are not required to be present.
+
+A small number of basic client attributes, such as the UID, are set directly by
+.B @APP_NAME@ \"m2rprog
+and cannot be changed from scripts.
+
+.SH NOTES
+When
+.BR systemd (1) \"m2rman
+is used to manage login sessions, certain administrative commands must be run to
+to allow the persistent user server to survive across user login sessions.
+Refer to
+.BR @SYSTEMD_SETUP_NAME@ (1) \"m2rdoc
+for more information.
+
+.B @APP_NAME@ \"m2rprog
+has the ability to perform remote file and directory mounts using
+.BR fuse (8), \"m2rman
+but only if FUSE support was enabled at compile time, the FUSE 3 runtime is
+present on the system, and the user has the necessary permissions to establish
+unprivileged FUSE mounts.
+
+.SH SEE ALSO
+@SERVER_NAME@(1), @CONNECT_NAME@(1), @ABBREV_NAME@-ssh(1), \"m2rdocs
+@ABBREV_NAME@-su(1), @ABBREV_NAME@-sudo(1), @PIPE_NAME@(1) \"m2rdocs
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

@@ -1,0 +1,83 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @QUERY_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.B @QUERY_NAME@ \"m2rprog
+\- Get, set, and clear @FRIENDLY_NAME@ attributes
+
+.SH SYNOPSIS
+.B @QUERY_NAME@ \"m2rprog
+get [\fIvarname\fR]
+.br
+.B @QUERY_NAME@ \"m2rprog
+set [\fIvarname\fR] [\fIvalue\fR]
+.br
+.B @QUERY_NAME@ \"m2rprog
+clear [\fIvarname\fR]
+
+.SH DESCRIPTION
+.B @QUERY_NAME@ \"m2rprog
+is used to get, set, and clear terminal attributes from within a
+.I @FRIENDLY_NAME@
+terminal session. This is a low-level tool intended to be used from wrapper
+scripts such as
+.BR @ABBREV_NAME@ctl (1). \"m2rdoc
+
+.SH COMMANDS
+.IP get\ \fIvarname\fR
+Retrieve the value of an attribute, which will be printed on standard output.
+
+.IP set\ \fIvarname\fR\ \fIvalue\fR
+Set an attribute to a given value.
+
+.IP clear\ \fIvarname\fR
+Remove an attribute.
+
+.SH OPTIONS
+.IP --help
+Print basic help
+
+.IP --version
+Print version information
+
+.IP --man
+Attempt to show this man page
+
+.IP --about
+Print license information and disclaimer of warranty
+
+.SH EXIT STATUS
+0: Success.
+.br
+1: Failed to parse command line arguments.
+.br
+2: Attribute is not set to any value (get only).
+.br
+3: Error communicating with the server.
+.br
+4: Error writing to standard output.
+
+.SH NOTES
+Attribute values may contain arbitrary UTF-8, including control characters.
+Proceed with caution when reading and printing variable values.
+
+Only certain attributes can be set or cleared from within terminals.
+Attempting to set or clear other attributes will have no effect.
+
+.B @QUERY_NAME@ \"m2rprog
+uses escape sequences that are specific to
+.IR @FRIENDLY_NAME@ .
+Running under other terminal emulators will have undefined results.
+
+.B @QUERY_NAME@ \"m2rprog
+is an alias for
+.BR @SERVER_NAME@ ; \"m2rdoc
+both functions are implemented by the same binary.
+
+.SH SEE ALSO
+@ABBREV_NAME@ctl(1), @SERVER_NAME@(1) \"m2rdocs
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

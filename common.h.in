@@ -1,0 +1,63 @@
+// Copyright © 2018 TermySequence LLC
+//
+// SPDX-License-Identifier: GPL-2.0-only
+
+#pragma once
+
+/* Globally included headers */
+#ifdef __cplusplus
+#include <cstddef>
+#include <cinttypes>
+#include <cstring>
+#include <cstdlib>
+#include <string>
+#include <utility>
+#include <iterator>
+#else
+#include <stddef.h>
+#include <inttypes.h>
+#include <string.h>
+#include <stdlib.h>
+#endif
+
+/* Project branding and defines */
+#define PREFIX "@CMAKE_INSTALL_PREFIX@"
+#define PROJECT_NAME "@PROJECT_NAME@"
+#define PROJECT_VERSION "@PROJECT_VERSION@"
+
+#define FRIENDLY_NAME "@FRIENDLY_NAME@"
+#define ORG_NAME "@ORG_NAME@"
+#define ORG_DOMAIN "@ORG_DOMAIN@"
+#define PRODUCT_DOMAIN "@PRODUCT_DOMAIN@"
+#define ENV_NAME "@ENV_NAME@"
+#define ABBREV_NAME "@ABBREV_NAME@"
+
+#define SERVER_NAME "@SERVER_NAME@"
+#define FORWARDER_NAME "@FORWARDER_NAME@"
+#define MONITOR_NAME "@MONITOR_NAME@"
+#define CONNECT_NAME "@CONNECT_NAME@"
+#define QUERY_NAME "@QUERY_NAME@"
+#define APP_NAME "@APP_NAME@"
+#define PIPE_NAME "@PIPE_NAME@"
+#define ICONTOOL_NAME "@ICONTOOL_NAME@"
+
+#define SERVER_XDG_DIR "@SERVER_XDG_DIR@"
+#define SERVER_RUN_DIR "@SERVER_RUN_DIR@"
+#define SERVER_TMP_DIR "@SERVER_TMP_DIR@"
+#define APP_XDG_DIR "@APP_XDG_DIR@"
+#define APP_RUN_DIR "@APP_RUN_DIR@"
+#define APP_TMP_DIR "@APP_TMP_DIR@"
+#define SOCKET_FILE "@SOCKET_FILE@"
+#define PID_FILE "@PID_FILE@"
+#define DOCUMENTATION_ROOT "@DOCUMENTATION_ROOT@"
+
+#cmakedefine01 USE_SYSTEMD
+#cmakedefine01 USE_LIBGIT2
+#cmakedefine01 USE_FUSE
+#cmakedefine01 MEMDEBUG
+#cmakedefine01 NATIVE_DIALOGS
+#cmakedefine01 V8_STATIC
+
+#if USE_SYSTEMD
+#define SYSTEMD_SETUP_NAME "@SYSTEMD_SETUP_NAME@"
+#endif

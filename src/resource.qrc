@@ -1,0 +1,15 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource>
+    <file alias="dist/images/terminal/default.svg">dist/images/terminal/none.svg</file>
+    <file alias="dist/images/server/default.svg">dist/images/terminal/none.svg</file>
+    <file alias="dist/images/command/default.svg">dist/images/terminal/none.svg</file>
+    <file alias="dist/images/indicator/default.svg">dist/images/terminal/none.svg</file>
+    <file>dist/images/indicator/disconnected.svg</file>
+    <file alias="dist/images/semantic/default.svg">dist/images/terminal/none.svg</file>
+    <file alias="dist/images/avatar/default.svg">dist/images/terminal/none.svg</file>
+    <file alias="dist/images/emoji/default.svg">dist/images/indicator/disconnected.svg</file>
+
+    <file alias="dist/ATTRIBUTIONS.html">../ATTRIBUTIONS.html</file>
+  </qresource>
+</RCC>

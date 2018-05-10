@@ -1,0 +1,11 @@
+[Desktop Entry]
+Categories=System;TerminalEmulator;
+Comment=@FRIENDLY_NAME@ Terminal Emulator Client
+Exec=@APP_NAME@
+GenericName=Terminal
+Icon=@APP_NAME@
+Name=@FRIENDLY_NAME@
+StartupNotify=true
+Terminal=false
+TryExec=@APP_NAME@
+Type=Application

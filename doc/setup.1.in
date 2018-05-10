@@ -1,0 +1,75 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @SYSTEMD_SETUP_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.B @SYSTEMD_SETUP_NAME@ \"m2rprog
+\- Enable user systemd services for
+.BR @SERVER_NAME@ (1) \"m2rdoc
+
+.SH SYNOPSIS
+.B @SYSTEMD_SETUP_NAME@ \"m2rprog
+[\fIoptions\fR]
+
+.SH DESCRIPTION
+.B @SYSTEMD_SETUP_NAME@ \"m2rprog
+is an interactive shell script that essentially runs the following
+commands: \"m2rcode
+
+   systemctl --user enable @SERVER_NAME@.socket \"m2rpre
+.br \"m2rprebr
+   systemctl --user start @SERVER_NAME@.socket \"m2rpre
+.br \"m2rprebr
+   loginctl enable-linger \"m2rpre
+.br \"m2rprebr
+   kill `head -1 /tmp/@SERVER_NAME@$UID/pid` \"m2rpre
+
+This ensures that the user's persistent instance of
+.BR @SERVER_NAME@ (1) \"m2rdoc
+will keep running even when the user is logged out. This is only applicable on
+Linux systems that run systemd user session managers with login sessions
+controlled by
+.BR systemd-logind (8). \"m2rman
+On such systems, this script (or the above commands) should be run for each user
+that will be using
+.BR @SERVER_NAME@ (1). \"m2rdoc
+
+.I Important:
+These commands, particularly loginctl, must be run from within a fully formed
+systemd login session. Shells launched via
+.BR sudo (8) \"m2rman
+or
+.BR su (1) \"m2rman
+do not always meet this requirement, nor do terminals run under an existing
+persistent user server (transient session servers, however, are OK). When in
+doubt, use ssh or machinectl login to log in as the user and run the script
+from there.
+
+.SH OPTIONS
+.IP --server-pid\ \fIpid\fR
+The pid of the user's existing persistent user server, which will be killed.
+If not provided, the script will read the pid from
+.I /tmp/@SERVER_NAME@$UID/pid \"m2rfile
+if present. Otherwise, no processes will be killed.
+
+.IP --enable-linger
+Just run loginctl enable-linger. The script will check for the
+.I XDG_SESSION_ID \"m2renv
+variable as an indicator of whether a fully formed systemd login session exists.
+
+.IP --help
+Print basic help
+
+.IP --version
+Print version information
+
+.IP --man
+Attempt to show this man page
+
+.SH SEE ALSO
+@SERVER_NAME@(1), \"m2rdocs
+systemctl(1), loginctl(1), systemd-logind(8), systemd(1) \"m2rmans
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

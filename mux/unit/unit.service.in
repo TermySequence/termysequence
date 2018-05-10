@@ -1,0 +1,14 @@
+[Unit]
+Description=@FRIENDLY_NAME@ Terminal Emulator Server
+Documentation=man:@SERVER_NAME@(1) @DOCUMENTATION_ROOT@
+Requires=@SERVER_NAME@.socket
+
+[Service]
+ExecStart=@CMAKE_INSTALL_PREFIX@/bin/@SERVER_NAME@ --activated
+PIDFile=@SERVER_XDG_DIR@@PID_FILE@
+NonBlocking=true
+ExecReload=/bin/kill -USR1 $MAINPID
+
+[Install]
+Also=@SERVER_NAME@.socket
+WantedBy=default.target

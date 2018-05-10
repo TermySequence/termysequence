@@ -1,0 +1,218 @@
+// Copyright © 2018 TermySequence LLC
+//
+// SPDX-License-Identifier: GPL-2.0-only
+
+#include <QRegularExpression>
+
+static QRegularExpression s_dcRe(L("((?:\\*\\.|\\$)?\\w+)=(\\w+|[0-9]+(?:;[0-9]+)*):"));
+
+static const QHash<QString,Dircolors::Category> s_dcHash = {
+    { A("di"), Dircolors::Dir },
+    { A("ln"), Dircolors::Link },
+    { A("pi"), Dircolors::Fifo },
+    { A("so"), Dircolors::Sock },
+    { A("do"), Dircolors::Door },
+    { A("bd"), Dircolors::Blk },
+    { A("cd"), Dircolors::Chr },
+    { A("or"), Dircolors::Orphan },
+    { A("mi"), Dircolors::Missing },
+    { A("su"), Dircolors::SetUID },
+    { A("sg"), Dircolors::SetGID },
+    { A("ca"), Dircolors::Setcap },
+    { A("tw"), Dircolors::StickyOtherW },
+    { A("ow"), Dircolors::OtherW },
+    { A("st"), Dircolors::Sticky },
+    { A("ex"), Dircolors::Exec },
+    { A("ga"), Dircolors::GitIndex },
+    { A("gm"), Dircolors::GitWorking },
+    { A("gi"), Dircolors::GitIgnored },
+    { A("gu"), Dircolors::GitUnmerged },
+};
+
+static const char *s_dcNames[] = {
+    nullptr,
+    nullptr,
+    "di",
+    "ln",
+    "pi",
+    "so",
+    "do",
+    "bd",
+    "cd",
+    "or",
+    "mi",
+    "su",
+    "sg",
+    "ca",
+    "tw",
+    "ow",
+    "st",
+    "ex",
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+};
+
+struct DircolorDefCat {
+    QLatin1String id;
+    QLatin1String spec;
+    unsigned char category;
+    CellAttributes32 attr;
+};
+
+struct DircolorDefVar {
+    QLatin1String id;
+    QLatin1String spec;
+    CellAttributes32 attr;
+};
+
+struct DircolorDefExt {
+    QLatin1String id;
+    QLatin1String spec;
+};
+
+#define CA(x, y, z) { Dircolors::CategorySet|x, y, z }
+#define LS_SKIP 4
+
+static const DircolorDefCat s_dirCats[] = {
+    { A("ga"), A("01;04;38;5;28"), Dircolors::GitIndex, CA(0x93, 28, 0) },
+    { A("gm"), A("01;04;31"), Dircolors::GitWorking, CA(0x93, 1, 0) },
+    { A("gi"), A("01;04;38;5;244"), Dircolors::GitIgnored, CA(0x93, 244, 0) },
+    { A("gu"), A("01;05;37;41"), Dircolors::GitUnmerged, CA(0x21f, 7, 1) },
+    { A("di"), A("38;5;33"), Dircolors::Dir, CA(0x3, 33, 0) },
+    { A("ln"), A("36"), Dircolors::Link, CA(0x3, 6, 0) },
+    { A("pi"), A("40;38;5;11"), Dircolors::Fifo, CA(0xf, 11, 0) },
+    { A("so"), A("38;5;13"), Dircolors::Sock, CA(0x3, 13, 0) },
+    { A("bd"), A("48;5;232;38;5;11"), Dircolors::Blk, CA(0xf, 11, 232) },
+    { A("cd"), A("48;5;232;33"), Dircolors::Chr, CA(0xf, 3, 232) },
+    { A("or"), A("48;5;232;38;5;196"), Dircolors::Orphan, CA(0xf, 196, 232) },
+    { A("mi"), A("01;05;37;41"), Dircolors::Missing, CA(0x21f, 7, 1) },
+    { A("su"), A("48;5;196;38;5;231"), Dircolors::SetUID, CA(0xf, 231, 196) },
+    { A("sg"), A("48;5;226;38;5;16"), Dircolors::SetGID, CA(0xf, 16, 226) },
+    { A("ca"), A("48;5;196;38;5;226"), Dircolors::Setcap, CA(0xf, 226, 196) },
+    { A("tw"), A("48;5;40;38;5;16"), Dircolors::StickyOtherW, CA(0xf, 16, 40) },
+    { A("ow"), A("48;5;40;38;5;21"), Dircolors::OtherW, CA(0xf, 21, 40) },
+    { A("st"), A("48;5;21;38;5;231"), Dircolors::Sticky, CA(0xf, 231, 21) },
+    { A("ex"), A("38;5;40"), Dircolors::Exec, CA(0x3, 40, 0) },
+};
+
+static const DircolorDefVar s_dirVars[] = {
+    { A("archive"), A("38;5;9"), { 0x3, 9, 0 } },
+    { A("video"), A("35"), { 0x3, 5, 0 } },
+    { A("audio"), A("38;5;45"), { 0x3, 45, 0 } },
+};
+static const DircolorDefExt s_dirExts[] = {
+    { A("7z"), A("archive") },
+    { A("Z"), A("archive") },
+    { A("ace"), A("archive") },
+    { A("alz"), A("archive") },
+    { A("arc"), A("archive") },
+    { A("arj"), A("archive") },
+    { A("bz"), A("archive") },
+    { A("bz2"), A("archive") },
+    { A("cab"), A("archive") },
+    { A("cpio"), A("archive") },
+    { A("deb"), A("archive") },
+    { A("dwm"), A("archive") },
+    { A("dz"), A("archive") },
+    { A("ear"), A("archive") },
+    { A("esd"), A("archive") },
+    { A("gz"), A("archive") },
+    { A("jar"), A("archive") },
+    { A("lha"), A("archive") },
+    { A("lrz"), A("archive") },
+    { A("lz"), A("archive") },
+    { A("lz4"), A("archive") },
+    { A("lzh"), A("archive") },
+    { A("lzma"), A("archive") },
+    { A("lzo"), A("archive") },
+    { A("rar"), A("archive") },
+    { A("rpm"), A("archive") },
+    { A("rz"), A("archive") },
+    { A("sar"), A("archive") },
+    { A("swm"), A("archive") },
+    { A("t7z"), A("archive") },
+    { A("tar"), A("archive") },
+    { A("taz"), A("archive") },
+    { A("tbz"), A("archive") },
+    { A("tbz2"), A("archive") },
+    { A("tgz"), A("archive") },
+    { A("tlz"), A("archive") },
+    { A("txz"), A("archive") },
+    { A("tz"), A("archive") },
+    { A("tzo"), A("archive") },
+    { A("tzst"), A("archive") },
+    { A("war"), A("archive") },
+    { A("wim"), A("archive") },
+    { A("xz"), A("archive") },
+    { A("z"), A("archive") },
+    { A("zip"), A("archive") },
+    { A("zoo"), A("archive") },
+    { A("zst"), A("archive") },
+    { A("asf"), A("video") },
+    { A("avi"), A("video") },
+    { A("bmp"), A("video") },
+    { A("cgm"), A("video") },
+    { A("dl"), A("video") },
+    { A("emf"), A("video") },
+    { A("flc"), A("video") },
+    { A("fli"), A("video") },
+    { A("flv"), A("video") },
+    { A("gif"), A("video") },
+    { A("gl"), A("video") },
+    { A("jpeg"), A("video") },
+    { A("jpg"), A("video") },
+    { A("m2v"), A("video") },
+    { A("m4v"), A("video") },
+    { A("mjpeg"), A("video") },
+    { A("mjpg"), A("video") },
+    { A("mkv"), A("video") },
+    { A("mng"), A("video") },
+    { A("mov"), A("video") },
+    { A("mp4"), A("video") },
+    { A("mp4v"), A("video") },
+    { A("mpeg"), A("video") },
+    { A("mpg"), A("video") },
+    { A("nuv"), A("video") },
+    { A("ogm"), A("video") },
+    { A("ogv"), A("video") },
+    { A("ogx"), A("video") },
+    { A("pbm"), A("video") },
+    { A("pcx"), A("video") },
+    { A("pgm"), A("video") },
+    { A("png"), A("video") },
+    { A("ppm"), A("video") },
+    { A("qt"), A("video") },
+    { A("rm"), A("video") },
+    { A("rmvb"), A("video") },
+    { A("svg"), A("video") },
+    { A("svgz"), A("video") },
+    { A("tga"), A("video") },
+    { A("tif"), A("video") },
+    { A("tiff"), A("video") },
+    { A("vob"), A("video") },
+    { A("webm"), A("video") },
+    { A("wmv"), A("video") },
+    { A("xbm"), A("video") },
+    { A("xcf"), A("video") },
+    { A("xpm"), A("video") },
+    { A("xwd"), A("video") },
+    { A("yuv"), A("video") },
+    { A("aac"), A("audio") },
+    { A("au"), A("audio") },
+    { A("flac"), A("audio") },
+    { A("m4a"), A("audio") },
+    { A("mid"), A("audio") },
+    { A("midi"), A("audio") },
+    { A("mka"), A("audio") },
+    { A("mp3"), A("audio") },
+    { A("mpc"), A("audio") },
+    { A("oga"), A("audio") },
+    { A("ogg"), A("audio") },
+    { A("opus"), A("audio") },
+    { A("ra"), A("audio") },
+    { A("spx"), A("audio") },
+    { A("wav"), A("audio") },
+    { A("xspf"), A("audio") },
+};

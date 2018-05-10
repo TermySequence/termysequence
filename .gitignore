@@ -1,0 +1,11 @@
+/build/
+/notes.txt
+*.tar.*
+
+*~
+.#*
+*.bak
+*.orig
+*.rej
+*.swp
+.directory

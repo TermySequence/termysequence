@@ -1,0 +1,268 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @SERVER_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.B @SERVER_NAME@ \"m2rprog
+\- @FRIENDLY_NAME@ terminal multiplexer server
+
+.SH SYNOPSIS
+.B @SERVER_NAME@ \"m2rprog
+[\fIoptions\fR]
+
+.SH DESCRIPTION
+.B @SERVER_NAME@ \"m2rprog
+is a multiplexing terminal emulator server implementing the
+.I @FRIENDLY_NAME@
+protocol.
+The emulator aims for
+XTerm \"m2rweb
+compatibility and supports modern terminal extensions
+such as 256-color text, mouse tracking, shell integration, and inline image
+display. In addition, the
+.I @FRIENDLY_NAME@
+protocol provides many features beyond standard terminal
+emulation, including flexible, efficient connectivity between servers,
+file monitoring and transfer, and multi-user terminal sharing and collaboration.
+
+.I Note:
+.B @SERVER_NAME@ \"m2rprog
+does not provide a text-based user interface in the manner of
+.BR tmux (1) \"m2rman
+or
+.BR screen (1). \"m2rman
+A separate client program such as
+.BR @APP_NAME@ (1) \"m2rdoc
+must be used to interact with the terminals themselves. The client program will
+typically launch the server automatically, making it unnecessary to run
+.B @SERVER_NAME@ \"m2rprog
+directly in most cases. The intent is to
+separate the display and user interface components from the server, allowing
+a single server implementation to support a wide variety of clients, including
+clients such as
+.BR @APP_NAME@ (1) \"m2rdoc
+specifically built for graphical windowing systems.
+
+By default,
+.B @SERVER_NAME@ \"m2rprog
+forks into the background, services
+standard input, and listens on a private, per-user Unix-domain socket for
+additional connections.
+If the socket is found to be already bound to another
+.B @SERVER_NAME@ \"m2rprog
+instance, standard input will be forwarded to the existing server
+(using file descriptor
+passing when possible to avoid copying overhead). This makes it
+possible to run a server using e.g.
+.BR ssh (1) \"m2rman
+or
+.BR sudo (8), \"m2rman
+gaining access to an existing multiplexer running on another host or as
+another user (see
+.BR @CONNECT_NAME@ (1)). \"m2rdoc
+When forwarding standard input, the server changes its name to
+.BR @FORWARDER_NAME@ . \"m2rprog
+
+The command line options to
+.B @SERVER_NAME@ \"m2rprog
+are used to control the lifecycle of
+the server. The default behavior described above can be modified to support
+private, standalone servers and socket-only daemon servers, including
+socket-activated servers suitable for use with
+.BR systemd (1) \"m2rman
+per-user instances. In all cases, the server exits on receipt of
+.IR SIGTERM ,
+.IR SIGINT ,
+or
+.IR SIGHUP ,
+or when all clients have disconnected and all terminals have closed.
+
+Each
+.B @SERVER_NAME@ \"m2rprog
+instance forks a companion process,
+.BR @MONITOR_NAME@ (1), \"m2rdoc
+to collect system-specific information such as the hostname and IP address.
+Three additional customizable programs:
+.IR monitor-script ,
+.IR attr-script ,
+and
+.I id-script
+are also optionally read by
+.B @SERVER_NAME@ \"m2rprog
+to override the default monitor process, provide additional system-specific
+information, and to determine the UUID of the local machine, respectively (see
+.B FILES \"m2rsect
+below). The system-specific information consists of arbitrary UTF-8 key-value
+pairs which can be used to customize terminal appearance within supporting
+.I @FRIENDLY_NAME@
+clients such as
+.BR @APP_NAME@ (1). \"m2rdoc
+
+.SH OPTIONS
+.IP --nofork
+Do not fork off a daemon process after startup. Note that even when forking,
+if standard input is being serviced, the parent process will remain running
+after the fork as long as standard input is active.
+
+.IP --nostdin
+Do not treat standard input as a client connection; accept client connections on
+the per-user local socket only. If another
+.B @SERVER_NAME@ \"m2rprog
+instance is already listening on the socket, exit immediately.
+
+.IP --activated
+Listen on a local socket passed in via systemd socket activation. Implies
+--nofork, --nostdin, and --rundir
+.IR @SERVER_XDG_DIR@ . \"m2rfile
+Won't work unless
+.B @SERVER_NAME@ \"m2rprog
+was compiled with systemd support.
+
+.IP --nolisten
+Do not listen on a per-user local socket for additional client connections;
+service standard input only. Note that a connection will still be made to the
+socket to determine if another
+.B @SERVER_NAME@ \"m2rprog
+instance is already running, and if so, standard input will be forwarded to it
+(see --standalone). Implies --nofork.
+
+.IP --standalone
+Service standard input without attempting to either listen on or connect to the
+per-user local socket. The server (and all terminals) will exit after standard
+input is closed. Implies --nofork.
+
+.IP --client
+Attempt to connect to an existing
+.B @SERVER_NAME@ \"m2rprog
+instance over the per-user local socket and hand off standard input for
+servicing. If no existing instance is listening, exit immediately.
+
+.IP -t,--rundir\ \fIdir\fR
+Use runtime directory
+.IR dir .
+It will be created if necessary, but its parent directory must exist. The
+specifiers %t and %U, if present, are expanded to
+.I $XDG_RUNTIME_DIR \"m2renv
+and the user UID respectively. The default location is
+.I @SERVER_TMP_DIR@ \"m2rfile
+unless --activated is set, in which case this option is ignored. See
+.B NOTES \"m2rsect
+below for more information.
+
+.IP --nogit
+Disable monitoring for and reporting of git-specific file attributes and branch
+information. Only applicable if
+.B @SERVER_NAME@ \"m2rprog
+was compiled with libgit2 support.
+
+.IP --nofdpurge
+Don't look for and close leaked file descriptors on startup. This is useful
+when debugging the server with tools such as valgrind.
+
+.IP --help
+Print basic help
+
+.IP --version
+Print version information
+
+.IP --man
+Attempt to show this man page
+
+.IP --about
+Print license information and disclaimer of warranty
+
+.SH FILES
+.I $XDG_CONFIG_HOME/@SERVER_NAME@/id-script \"m2rfile
+.br
+.I /etc/@SERVER_NAME@/id-script \"m2rfile
+.br
+.I @CMAKE_INSTALL_PREFIX@/lib/@SERVER_NAME@/id-script \"m2rfile
+
+Programs executed by
+.B @SERVER_NAME@ \"m2rprog
+to determine the UUID of the local machine. The program should print the UUID on
+standard output. By default,
+.I /etc/machine-id \"m2rfile
+is used; the
+.I id-script
+programs can be used as an override or replacement for that file. One or the
+other must be present; the
+.I @FRIENDLY_NAME@
+protocol requires each machine to have a unique identifier.
+
+.I $XDG_CONFIG_HOME/@SERVER_NAME@/attr-script \"m2rfile
+.br
+.I /etc/@SERVER_NAME@/attr-script \"m2rfile
+
+Programs executed by
+.B @SERVER_NAME@ \"m2rprog
+to set system-specific UTF-8 key-value pairs reported to clients. The program
+should print lines of the form key=value and must exit quickly. Refer to
+.BR @MONITOR_NAME@ (1) \"m2rdoc
+for more information. These scripts are optional and are not required to be
+present.
+
+.I $XDG_CONFIG_HOME/@SERVER_NAME@/monitor-script \"m2rfile
+.br
+.I /etc/@SERVER_NAME@/monitor-script \"m2rfile
+
+Programs executed by
+.B @SERVER_NAME@ \"m2rprog
+to set system-specific UTF-8 key-value pairs reported to clients. The program
+should print lines of the form key=value and may run as long as necessary,
+however it must exit on receipt of
+.I SIGTERM
+or when its standard input is closed. By default
+.BR @MONITOR_NAME@ (1) \"m2rdoc
+is used for this purpose; the
+.I monitor-script
+programs can be used as an override or replacement for this program. These
+scripts are optional and are not required to be present.
+
+.B @SERVER_NAME@ \"m2rprog
+runs the scripts on startup, and re-runs the attribute and monitor scripts on
+receipt of
+.IR SIGUSR1 .
+
+.SH NOTES
+.B @SERVER_NAME@ \"m2rprog
+is not intended to be run setuid or setgid, and will exit on startup if it
+detects this condition.
+
+When attempting to connect to an existing server, the following
+locations are searched for the per-user local socket in this order:
+
+.I @SERVER_XDG_DIR@ \"m2rfile
+(only if systemd support is enabled)
+.br
+.I @SERVER_RUN_DIR@ \"m2rfile
+(only if systemd support is enabled)
+.br
+.I @SERVER_TMP_DIR@ \"m2rfile
+
+The specifiers %t and %U are expanded to
+.I $XDG_RUNTIME_DIR \"m2renv
+and the user UID respectively.
+
+When listening, the per-user local socket and PID file are placed under
+.I @SERVER_XDG_DIR@ \"m2rfile
+if --activated is set. Otherwise,
+.I @SERVER_TMP_DIR@ \"m2rfile
+is used unless changed using the --rundir option.
+
+The server verifies that the runtime directory is owned by the user and has
+mode 0700. When making connections over the per-user local socket, the
+.I SO_PASSCREDS
+socket option is used to verify that the peer has the same UID. Refer to
+.BR socket (7) \"m2rman
+and
+.BR unix (7) \"m2rman
+for more information.
+
+.SH SEE ALSO
+@MONITOR_NAME@(1), @CONNECT_NAME@(1), @ABBREV_NAME@-ssh(1), \"m2rdocs
+@ABBREV_NAME@-su(1), @ABBREV_NAME@-sudo(1) \"m2rdocs
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

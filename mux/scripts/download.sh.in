@@ -1,0 +1,91 @@
+#!/bin/bash
+# Copyright © 2018 TermySequence LLC
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+# Base64-encoded size cannot exceed 8 MiB
+size_error_threshold=6000000
+
+if ([ "$1" = "--help" ] || [ $# -lt 1 ]); then
+    echo "Usage: @ABBREV_NAME@-download -|file..." 1>&2
+    exit 1
+fi
+if [ "$1" = "--version" ]; then
+    echo "@ABBREV_NAME@-download @PROJECT_VERSION@"
+    exit
+fi
+
+canonicalize_filename() {
+    # Credit: http://stackoverflow.com/a/21188136
+    if [ -d "$(dirname "$1")" ]; then
+        echo -n "file://$HOSTNAME$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+    else
+        echo -n "$1"
+    fi
+}
+
+exitcode=0
+busy=0
+tmpfile=
+
+cleanup() {
+    if [ $busy -eq 1 ]; then
+        # Send some invalid Base64 to cancel the upload
+        printf "!\acanceled"
+    fi
+    if [ "$tmpfile" ]; then
+        rm "$tmpfile"
+    fi
+}
+trap cleanup EXIT
+
+# Function to upload a file using the OSC 1337 sequence
+# $1: input file
+# $2: 0 for file input, 1 for stdin
+# $3: display name
+send_file() {
+    if [ ! -r "$1" ]; then
+        echo "Error: $1: Cannot open for reading" 1>&2
+        exitcode=2
+        return
+    elif [ -d "$1" ]; then
+        echo "Error: $1: Is a directory" 1>&2
+        exitcode=2
+        return
+    fi
+
+    filesize=$(wc -c "$1" | awk '{print $1}')
+    namespec=
+
+    if [ "$filesize" -ge $size_error_threshold ]; then
+        echo "Error: $3: Too large to send via the terminal" 1>&2
+        echo "Recommend using direct file download instead" 1>&2
+        exitcode=3
+        return
+    fi
+    if [ "$2" -eq 0 ]; then
+        fullname=$(canonicalize_filename "$1" | base64)
+        namespec="name=${fullname}"
+    fi
+
+    echo -n "Uploading $3..."
+    busy=1
+    printf "\033]1337;File=${namespec}:"
+    base64 < "$1"
+    printf '\a'
+    busy=0
+    echo ' done'
+}
+
+if [ "$1" = "-" ]; then
+    tmpfile=$(mktemp /tmp/@ABBREV_NAME@-download.XXXXXX)
+    cat >"$tmpfile"
+    send_file "$tmpfile" 1 "(stdin)"
+else
+    while [ $# -gt 0 ]; do
+        send_file "$1" 0 "$1"
+        shift
+    done
+fi
+
+exit $exitcode

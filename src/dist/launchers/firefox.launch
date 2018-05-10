@@ -1,0 +1,8 @@
+[Command]
+Command=firefox, firefox, %u
+
+[Launcher]
+DisplayIcon=firefox
+LaunchType=1
+MountType=1
+UnmountIdleTime=0

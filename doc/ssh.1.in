@@ -1,0 +1,118 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @ABBREV_NAME@-ssh 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.BR @ABBREV_NAME@-ssh , \"m2rprog
+.BR @ABBREV_NAME@-sudo , \"m2rprog
+.B @ABBREV_NAME@-su \"m2rprog
+\- Establish a connection between @FRIENDLY_NAME@ servers using
+common helper programs
+
+.SH SYNOPSIS
+.B @ABBREV_NAME@-ssh \"m2rprog
+[\fIssh-options\fR] [\fIuser@\fR]\fIhost\fR
+.br
+.B @ABBREV_NAME@-sudo \"m2rprog
+[\fIsu-options\fR]
+.br
+.B @ABBREV_NAME@-su \"m2rprog
+[\fIuser\fR]
+
+.SH DESCRIPTION
+.B @ABBREV_NAME@-ssh \"m2rprog
+is a wrapper around
+.BR @CONNECT_NAME@ (1) \"m2rdoc
+for running
+.BR @SERVER_NAME@ (1) \"m2rdoc
+on a remote host using an instance of
+.BR ssh (1). \"m2rman
+The
+.IR ssh-options ,
+.IR user ,
+and
+.I host
+are passed to
+.BR ssh , \"m2rprog
+along with
+.I -q
+to disable printing of diagnostic messages, and
+.I -T
+to disable pseudoterminal allocation. The single command
+.B @SERVER_NAME@ \"m2rprog
+is requested to be run on the remote host.
+
+.I Important:
+Make sure that
+.BR @SERVER_NAME@ (1) \"m2rdoc
+is installed on the remote system and present on the remote user's
+.IR PATH . \"m2renv
+The shell run by
+.BR ssh (1) \"m2rman
+in single command mode is neither a login shell nor interactive, meaning that
+the remote user's
+.I .profile \"m2rfile
+and
+.I .bash_profile \"m2rfile
+will not be sourced. Furthermore,
+.I PATH \"m2renv
+customizations applied in the remote user's
+.I .bashrc \"m2rfile
+must be made before any test for interactivity that causes the script to exit.
+
+.I Important:
+Ensure that
+.I ssh-options
+does not contain any switches such as
+.I -v
+that interfere with the
+.I -q
+or
+.I -T
+switches added by
+.BR @ABBREV_NAME@-ssh . \"m2rprog
+Some situations might require direct use of
+.BR @CONNECT_NAME@ (1) \"m2rdoc
+or a more complex wrapper script.
+
+.B @ABBREV_NAME@-sudo \"m2rprog
+is a wrapper around
+.BR @CONNECT_NAME@ (1) \"m2rdoc
+for running
+.BR @SERVER_NAME@ (1) \"m2rdoc
+as a different user using
+.BR sudo (8). \"m2rman
+The
+.I sudo-options
+are passed to
+.BR sudo , \"m2rprog
+along with
+.I -i
+to start a login session, and
+.I -S
+to remove the need for a pseudoterminal. The command
+.B @SERVER_NAME@ \"m2rprog
+is requested to be run as the new user.
+
+.B @ABBREV_NAME@-su \"m2rprog
+is a wrapper around
+.BR @CONNECT_NAME@ (1) \"m2rdoc
+for running
+.BR @SERVER_NAME@ (1) \"m2rdoc
+as a different user using
+.BR su (1). \"m2rman
+The optional
+.I user
+argument is passed to
+.BR su . \"m2rprog
+The command
+.B @SERVER_NAME@ \"m2rprog
+is requested to be run as the new user.
+
+.SH SEE ALSO
+ssh(1), sudo(8), su(1), \"m2rmans
+@CONNECT_NAME@(1), @SERVER_NAME@(1), @MONITOR_NAME@(1) \"m2rdocs
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

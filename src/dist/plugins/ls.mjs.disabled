@@ -1,0 +1,194 @@
+// Copyright © 2018 TermySequence LLC
+// SPDX-License-Identifier: CC0-1.0
+// This file is free to build upon, enhance, and reuse, without restriction.
+
+// Parses "ls" output, creating semantic regions for files.
+
+// Command aliases
+// To enable this parser for aliases such as 'll', enter the aliases here
+// Use short_aliases for commands that output in the standard format
+// Use long_aliases for commands that output in "long" format
+// Note: if the flag -l is seen, long form will be used
+var short_aliases = [ 'ls' ];
+var long_aliases = [ 'll' ];
+
+function FileRegionParams(server, host, path) {
+    this.icon = 'file';
+    this.tooltip = 'file://' + host + path;
+    this.action1 = [ 'OpenFile', '', server, path ].join('|');
+    this.drag = { 'text/uri-list':this.tooltip, 'text/plain':this.tooltip };
+    this.uri = this.tooltip;
+
+    // Use the stock file menu
+    this.menu = [[ 5, this.uri ]];
+}
+
+// Split line into words (short format)
+var splitre = /\S+/g;
+// Match a line containing a filename (long format)
+var longre = /^\S[-rwxstT]{9}/;
+// Match last word of line (long format)
+var lastre = /\S+$/;
+// Match trailing slashes on a pathname
+var slashre = /\/+$/;
+// Match characters we can't handle within ls command line
+var badcmdre = /[><"'\|\\]/;
+// Match wildcards within ls command line
+var wildcmdre = /[?{}*\[\]]/;
+// Match characters we can't handle within ls output
+var badre = /["'\\]/;
+// Match a directory name heading within ls output
+var multire = /^(\S+):$/;
+
+function normalizeDir(str) {
+    return str.replace(slashre, '');
+}
+
+function setCurrentDir(dir) {
+    this.cur = dir.replace(slashre, '');
+
+    if (dir.startsWith('/')) {
+        this.curdir = this.cur;
+    } else if (!dir.startsWith('~')) {
+        this.curdir = this.basedir + this.cur;
+    } else if (this.home) {
+        this.curdir = this.home + this.cur.substr(1);
+    } else {
+        this.curdir = this.cur;
+    }
+
+    this.curdir += '/';
+}
+
+function addFile(context, file, start) {
+    var end = start + file.length;
+    var path = this.curdir + file;
+
+    if (file.startsWith('/')) {
+        path = file;
+    } else if (file.includes('/')) {
+        path = this.basedir + file;
+    } else if (file == this.cur && this.ambig) {
+        // This is an ambiguous case.
+        // The situation could be "foo" or "foo/foo"
+        // Just skip this case
+        return;
+    }
+
+    var menu = new FileRegionParams(this.server, this.host, path);
+    context.createRegion(start, end, menu);
+}
+
+function processShort(context, text) {
+    var result;
+
+    // Just give up if we see any quoting or backslashes
+    if (badre.test(text))
+        return false;
+
+    if (result = text.match(multire)) {
+        // New current dir
+        this.setCurrentDir(result[1]);
+        this.wild = this.ambig = false;
+    }
+    else if (!this.wild) {
+        while (result = splitre.exec(text)) {
+            this.addFile(context, result[0], result.index);
+        }
+    }
+
+    return true;
+}
+
+function processLong(context, text) {
+    var result;
+
+    // Just give up if we see any quoting or backslashes
+    if (badre.test(text))
+        return false;
+
+    if (result = text.match(multire)) {
+        // New current dir
+        this.setCurrentDir(result[1]);
+        this.wild = this.ambig = false;
+    }
+    else if (this.wild) {
+        // Ambiguous situation, don't know what the current dir is
+    }
+    else if (longre.test(text) && (result = text.match(lastre))) {
+        this.addFile(context, result[0], result.index);
+    }
+
+    return true;
+}
+
+function start(context, exitcode) {
+    return (exitcode == 0);
+}
+
+function LsParser(longform) {
+    this.start = start;
+    this.process = longform ? processLong : processShort;
+    this.setCurrentDir = setCurrentDir;
+    this.addFile = addFile;
+}
+
+function makeParser(context, cmdline, cmddir, args, longform) {
+    var fileargs = [];
+
+    // Just give up if we see any shell quoting or redirection in the command
+    if (badcmdre.test(cmdline)) {
+        return null;
+    }
+
+    for (var word of args) {
+        if (!word.startsWith('-')) {
+            fileargs.push(word);
+        } else if (word.includes('l')) {
+            longform = true;
+        }
+    }
+
+    var parser = new LsParser(longform);
+    parser.basedir = normalizeDir(cmddir) + '/';
+    parser.home = normalizeDir(context.getServerAttribute('home'));
+    parser.server = context.getServerId();
+    parser.host = context.getJobAttribute('host');
+    parser.wild = wildcmdre.test(cmdline);
+    parser.ambig = fileargs.length == 1 && !fileargs[0].endsWith('/');
+
+    if (fileargs.length > 0 && !parser.wild) {
+        parser.setCurrentDir(fileargs[0]);
+    } else {
+        parser.cur = '';
+        parser.curdir = parser.basedir;
+    }
+
+    return parser;
+}
+
+function match(context, cmdline, cmddir) {
+    var args = cmdline.match(splitre);
+    var cmd = args.shift();
+
+    for (var alias of short_aliases) {
+        if (cmd == alias)
+            return makeParser(context, cmdline, cmddir, args, false);
+    }
+    for (var alias of long_aliases) {
+        if (cmd == alias)
+            return makeParser(context, cmdline, cmddir, args, true);
+    }
+
+    return null;
+}
+
+if (plugin.majorVersion != 1) {
+    throw new Error("unsupported API version");
+}
+
+plugin.pluginName = 'LsPlugin';
+plugin.pluginDescription = 'Creates semantic file regions in ls output';
+plugin.pluginVersion = '1.0';
+
+plugin.registerSemanticParser(1, 'LsParser', match);

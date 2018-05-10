@@ -1,0 +1,166 @@
+#!/bin/bash
+# Copyright © 2018 TermySequence LLC
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+# Base64-encoded size cannot exceed 8 MiB
+size_error_threshold=6000000
+size_thumb_threshold=3000000
+pixels_per_row=80
+supported_formats="SVG BMP GIF JPEG PNG PBM PGM PPM XBM XPM"
+text_formats="SVG"
+defwidth=3
+defheight=3
+
+if ([ "$1" = "--help" ]); then
+    echo "Usage: @ABBREV_NAME@-imgls [-w <cells>] [-h <cells>] [file...]" 1>&2
+    exit
+fi
+if [ "$1" = "--version" ]; then
+    echo "@ABBREV_NAME@-imgls @PROJECT_VERSION@"
+    exit
+fi
+
+canonicalize_filename() {
+    # Credit: http://stackoverflow.com/a/21188136
+    if [ -d "$(dirname "$1")" ]; then
+        echo -n "file://$HOSTNAME$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+    else
+        echo -n "$1"
+    fi
+}
+
+exitcode=0
+busy=0
+width=
+height=
+numre='^[1-9][0-9]*$'
+thumbfile=
+
+if ! identify --version 2>/dev/null | grep -q ImageMagick; then
+    echo 'Error: ImageMagick tools not found' 1>&1
+    exit 1
+fi
+
+cleanup() {
+    if [ $busy -eq 1 ]; then
+        # Send some invalid Base64 to cancel the upload
+        printf "!\acanceled"
+    fi
+    if [ "$thumbfile" ]; then
+        rm "$thumbfile"
+    fi
+}
+trap cleanup EXIT
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--height)
+            shift
+            height=$1
+            ;;
+        -w|--width)
+            shift
+            width=$1
+            ;;
+        -?*)
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+if ! [[ $width =~ $numre ]]; then width=$defwidth; fi
+if ! [[ $height =~ $numre ]]; then height=$defheight; fi
+
+list_file() {
+    if ([ ! -r "$1" ] || [ -d "$1" ]); then
+        ls -ld "$1"
+        return
+    fi
+
+    outfile="$1"
+    imagefmt=unknown
+
+    #
+    ## Use ImageMagick to perform image computations
+    ## Try to determine image format and dimensions
+    #
+    imageinfo=$(identify -format "%m %w %h\n" "$1" 2>/dev/null | head -1)
+    if [ "$imageinfo" ]; then imagefmt=$(echo "$imageinfo" | awk '{print $1}'); fi
+    if ! [[ $supported_formats =~ "$imagefmt" ]]; then
+        ls -ld "$1"
+        return
+    fi
+    imagew=$(echo "$imageinfo" | awk '{print $2}')
+    imageh=$(echo "$imageinfo" | awk '{print $3}')
+    imagedim="${imagew}x${imageh}"
+    if ! [[ "$imageh" =~ $numre ]]; then
+        ls -ld "$1"
+        return
+    fi
+    if ! [[ $text_formats =~ "$imagefmt" ]]; then
+        #
+        ## Try to determine the size of the binary image
+        #
+        isize=$(wc -c "$1" 2>/dev/null | awk '{print $1}')
+        if ! [[ "$isize" =~ $numre ]]; then isize=0; fi
+
+        #
+        ## If the height and size exceed a threshold, try to generate a thumbnail
+        #
+        if ([ $imageh -gt $(($height*$pixels_per_row)) ] && [ $isize -gt $size_thumb_threshold ])
+        then
+            imageh=$(($height*$pixels_per_row))
+            thumbfile=$(mktemp /tmp/@ABBREV_NAME@-imgls.XXXXXX)
+            if convert "$1" -thumbnail "${imageh}x${imageh}^" $thumbfile; then
+                outfile="$thumbfile"
+            else
+                rm "$thumbfile"
+                thumbfile=
+            fi
+        fi
+    fi
+
+    filesize=$(wc -c "$outfile" | awk '{print $1}')
+
+    if [ "$filesize" -ge $size_error_threshold ]; then
+        echo "Error: $1: Too large to send via the terminal" 1>&2
+        exitcode=3
+        if [ "$thumbfile" ]; then
+            rm "$thumbfile"
+            thumbfile=
+        fi
+        return
+    fi
+
+    fullname=$(canonicalize_filename "$1" | base64)
+    namespec="name=${fullname};"
+
+    busy=1
+    printf "\033]1337;File=width=${width};height=${height};${namespec}inline=1:"
+    base64 < "$outfile"
+    printf '\a'
+    busy=0
+    printf "\033[A ${imagedim} "
+    ls -ld "$1"
+    if [ "$thumbfile" ]; then
+        rm "$thumbfile"
+        thumbfile=
+    fi
+}
+
+if [ $# -eq 0 ]; then
+    for file in *; do
+        list_file "$file"
+    done
+else
+    for file in "$@"; do
+        list_file "$file"
+    done
+fi
+
+echo
+exit $exitcode

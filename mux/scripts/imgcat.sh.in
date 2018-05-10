@@ -1,0 +1,202 @@
+#!/bin/bash
+# Copyright © 2018 TermySequence LLC
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+# Base64-encoded size cannot exceed 8 MiB
+size_error_threshold=6000000
+size_thumb_threshold=3000000
+pixels_per_row=80
+supported_formats="SVG BMP GIF JPEG PNG PBM PGM PPM XBM XPM"
+text_formats="SVG"
+
+if ([ "$1" = "--help" ] || [ $# -lt 1 ]); then
+    echo "Usage: @ABBREV_NAME@-imgcat [-p][-s] [-w <cells>] [-h <cells>] -|file..." 1>&2
+    exit 1
+fi
+if [ "$1" = "--version" ]; then
+    echo "@ABBREV_NAME@-imgcat @PROJECT_VERSION@"
+    exit
+fi
+
+canonicalize_filename() {
+    # Credit: http://stackoverflow.com/a/21188136
+    if [ -d "$(dirname "$1")" ]; then
+        echo -n "file://$HOSTNAME$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+    else
+        echo -n "$1"
+    fi
+}
+
+exitcode=0
+busy=0
+print_filename=0
+stretch=0
+width=0
+height=0
+numre='^[1-9][0-9]*$'
+dimspec=
+have_im=0
+rows=
+tmpfile=
+thumbfile=
+
+if identify --version 2>/dev/null | grep -q ImageMagick; then have_im=1; fi
+
+cleanup() {
+    if [ $busy -eq 1 ]; then
+        # Send some invalid Base64 to cancel the upload
+        printf "!\acanceled"
+    fi
+    if [ "$tmpfile" ]; then
+        rm "$tmpfile"
+    fi
+    if [ "$thumbfile" ]; then
+        rm "$thumbfile"
+    fi
+}
+trap cleanup EXIT
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -p|--print)
+            print_filename=1
+            ;;
+        -s|--stretch)
+            stretch=1
+            ;;
+        -h|--height)
+            shift
+            height=$1
+            ;;
+        -w|--width)
+            shift
+            width=$1
+            ;;
+        -?*)
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+if ! [[ $width =~ $numre ]]; then width=0; fi
+if ! [[ $height =~ $numre ]]; then height=0; fi
+if [ $width -gt 0 ]; then dimspec="width=${width};"; fi
+if [ $height -gt 0 ]; then dimspec="${dimspec}height=${height};"; fi
+if [ $stretch -eq 1 ]; then dimspec="${dimspec}preserveAspectRatio=0;"; fi
+
+#
+## If no height is specified, assume 1/3 of the terminal height
+## If we can't even determine that, assume 12 rows
+#
+rows=$height
+if [ $rows -eq 0 ]; then
+    rows=$(tput lines)
+    if [[ $rows =~ $numre ]]; then rows=$(($rows/3)); else rows=12; fi
+fi
+
+# Function to upload a file using the OSC 1337 sequence
+# $1: input file
+# $2: 0 for file input, 1 for stdin
+# $3: display name
+send_file() {
+    if [ ! -r "$1" ]; then
+        echo "Error: $1: Cannot open for reading" 1>&2
+        exitcode=2
+        return
+    elif [ -d "$1" ]; then
+        echo "Error: $1: Is a directory" 1>&2
+        exitcode=2
+        return
+    fi
+
+    outfile="$1"
+
+    #
+    ## Use ImageMagick to perform image computations
+    #
+    if [ $have_im -eq 1 ]; then
+        #
+        ## Try to determine what format the image is
+        #
+        imagefmt=unknown
+        imageinfo=$(identify -format "%m %w %h\n" "$1" 2>/dev/null | head -1)
+        if [ "$imageinfo" ]; then imagefmt=$(echo "$imageinfo" | awk '{print $1}'); fi
+        if ! [[ $supported_formats =~ "$imagefmt" ]]; then
+            echo "Error: $1: not a supported format ($supported_formats)" 1>&2
+            exitcode=2
+            return
+        fi
+        if ! [[ $text_formats =~ "$imagefmt" ]]; then
+            #
+            ## Try to determine the height and size of the binary image
+            #
+            imageh=$(echo "$imageinfo" | awk '{print $3}')
+            if ! [[ "$imageh" =~ $numre ]]; then imageh=0; fi
+            isize=$(wc -c "$1" 2>/dev/null | awk '{print $1}')
+            if ! [[ "$isize" =~ $numre ]]; then isize=0; fi
+
+            #
+            ## If the height and size exceed a threshold, try to generate a thumbnail
+            #
+            if ([ $imageh -gt $(($rows*$pixels_per_row)) ] && [ $isize -gt $size_thumb_threshold ])
+            then
+                imageh=$(($rows*$pixels_per_row))
+                thumbfile=$(mktemp /tmp/@ABBREV_NAME@-imgcat.XXXXXX)
+                if convert "$1" -thumbnail "${imageh}x${imageh}^" $thumbfile; then
+                    outfile="$thumbfile"
+                else
+                    rm "$thumbfile"
+                    thumbfile=
+                fi
+            fi
+        fi
+    fi
+
+    filesize=$(wc -c "$outfile" | awk '{print $1}')
+    namespec=
+
+    if [ "$filesize" -ge $size_error_threshold ]; then
+        echo "Error: $3: Too large to send via the terminal" 1>&2
+        exitcode=3
+        if [ "$thumbfile" ]; then
+            rm "$thumbfile"
+            thumbfile=
+        fi
+        return
+    fi
+    if [ "$2" -eq 0 ]; then
+        fullname=$(canonicalize_filename "$1" | base64)
+        namespec="name=${fullname};"
+    fi
+
+    busy=1
+    printf "\033]1337;File=${dimspec}${namespec}inline=1:"
+    base64 < "$outfile"
+    printf '\a'
+    busy=0
+    echo
+    if [ $print_filename -eq 1 ]; then
+        echo "$3"
+    fi
+    if [ "$thumbfile" ]; then
+        rm "$thumbfile"
+        thumbfile=
+    fi
+}
+
+if [ "$1" = "-" ]; then
+    tmpfile=$(mktemp /tmp/@ABBREV_NAME@-imgcat.XXXXXX)
+    cat >"$tmpfile"
+    send_file "$tmpfile" 1 "(stdin)"
+else
+    while [ $# -gt 0 ]; do
+        send_file "$1" 0 "$1"
+        shift
+    done
+fi
+
+exit $exitcode

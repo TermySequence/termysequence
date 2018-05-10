@@ -1,0 +1,11 @@
+[Command]
+Command=inkscape, inkscape, %F
+
+[Launcher]
+DisplayIcon=inkscape
+LaunchType=1
+MountType=1
+UnmountIdleTime=0
+
+[Match]
+FileExtensions=svg vsd

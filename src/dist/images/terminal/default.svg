@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg6361" width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs id="defs3">
+  <radialGradient id="radialGradient2207" cx="26.544" cy="28.459" r="22.376" gradientTransform="matrix(2.5942 .012475 -.013633 2.8307 -17.86 -69.201)" gradientUnits="userSpaceOnUse">
+   <stop id="stop2935" stop-color="#9cbcde" offset="0"/>
+   <stop id="stop2937" stop-color="#204a87" offset="1"/>
+  </radialGradient>
+  <radialGradient id="radialGradient2437" cx="-19.516" cy="16.856" r="8.7536" gradientTransform="matrix(4.446 0 0 6.8665 67.251 -104.67)" gradientUnits="userSpaceOnUse">
+   <stop id="stop2433" stop-color="#fff" offset="0"/>
+   <stop id="stop2435" stop-color="#b8b8b8" offset="1"/>
+  </radialGradient>
+ </defs>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+    <dc:date>2005-11-06</dc:date>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Tuomas Kuosmanen</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>help</rdf:li>
+      <rdf:li>browser</rdf:li>
+      <rdf:li>documentation</rdf:li>
+      <rdf:li>docs</rdf:li>
+      <rdf:li>man</rdf:li>
+      <rdf:li>info</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+    <dc:contributor>
+     <cc:Agent>
+      <dc:title>Jakub Steiner, Andreas Nilsson</dc:title>
+     </cc:Agent>
+    </dc:contributor>
+    <dc:source>http://tigert.com</dc:source>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="matrix(1.0667 0 0 1.0667 0 48.8)">
+  <circle id="path2093" cx="46.875" cy="1.125" r="45.828" fill="url(#radialGradient2207)" stroke="#204a87" stroke-width="2.0949"/>
+  <ellipse id="path2209" cx="46.872" cy="1.1304" rx="41.758" ry="41.753" fill="none" opacity=".96023" stroke="#fff" stroke-width="5.7849"/>
+  <path id="path1554" transform="matrix(1.8972 0 0 1.8639 86.45 -33.356)" d="m-20.25 5.8652c-1.059 2.62e-5 -2.1418 0.12519-3.2754 0.3457-1.1329 0.22043-2.3977 0.54337-3.7676 1.0059a0.13496 0.13496 0 0 0 -0.0918 0.12695v5.1562a0.13496 0.13496 0 0 0 0.20703 0.11328c1.1424-0.71904 2.2353-1.2535 3.2832-1.6113a0.13496 0.13496 0 0 0 2e-3 0c1.0481-0.36876 2.0294-0.55467 2.9238-0.55469 0.94922 2e-5 1.6527 0.2125 2.1641 0.62695a0.13496 0.13496 0 0 0 2e-3 0c0.50872 0.40209 0.76171 0.97132 0.76172 1.707-1e-5 0.48066-0.12466 0.9436-0.41797 1.4297a0.13496 0.13496 0 0 0 -2e-3 2e-3c-0.28299 0.48702-0.74417 1.0285-1.3789 1.5918l-1.0918 0.9375a0.13496 0.13496 0 0 0 -2e-3 2e-3c-1.2015 1.0805-1.9873 1.9969-2.373 2.7246-0.38256 0.71107-0.57813 1.52-0.57812 2.4375v0.8125a0.13496 0.13496 0 0 0 0.13477 0.13467h6.0938a0.13496 0.13496 0 0 0 0.13477 -0.13477v-0.75c-1.2e-5 -0.4682 0.13079-0.88699 0.35742-1.2754a0.13496 0.13496 0 0 0 0 -2e-3c0.22229-0.39128 0.71198-0.94645 1.4727-1.6211l1.0625-0.9375a0.13496 0.13496 0 0 0 2e-3 -2e-3c1.0666-0.98231 1.8268-1.8905 2.2773-2.7559 0.44927-0.87405 0.70311-1.8734 0.70312-2.9688-1.9e-5 -2.1263-0.76525-3.7477-2.2402-4.8574-1.4752-1.1209-3.5946-1.6835-6.3633-1.6835zm-3.5137 19.156a0.13496 0.13496 0 0 0 -0.12109 0.13477v5.8438a0.13496 0.13496 0 0 0 0.13477 0.13477h6.0938a0.13496 0.13496 0 0 0 0.13477 -0.13477v-5.8438a0.13496 0.13496 0 0 0 -0.13477 -0.13477h-6.0938a0.13496 0.13496 0 0 0 -0.01367 0z" fill="url(#radialGradient2437)" stroke="#fff" stroke-opacity=".78613" stroke-width="1.0995px" xlink:href="#text2215"/>
+ </g>
+</svg>

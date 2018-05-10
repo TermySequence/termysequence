@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg1" width="100" height="100" version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs id="defs3">
+  <linearGradient id="linearGradient6621">
+   <stop id="stop6622" stop-color="#f5a108" stop-opacity="0" offset="0"/>
+   <stop id="stop6623" stop-color="#fefdc3" stop-opacity=".74251" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient7881" x1="22.82" x2="12.85" y1="28.829" y2="12.239" gradientTransform="matrix(2.3772 0 0 1.3786 -1.3151 -2.6053)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient6621"/>
+  <linearGradient id="linearGradient1697" x1="11.355" x2="6.3578" y1="32.757" y2="6.1003" gradientTransform="matrix(5.0515 0 0 3.0551 -8.5946 -17.854)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient6621"/>
+  <linearGradient id="linearGradient3117" x1="34.798" x2="17.445" y1="29.173" y2="-6.889" gradientTransform="matrix(2.2678 0 0 2.5556 -4.8283 -7.901)" gradientUnits="userSpaceOnUse">
+   <stop id="stop3113" stop-color="#fff" offset="0"/>
+   <stop id="stop3115" stop-color="#fff" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+    <dc:date>2005-02-01</dc:date>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:source>http://jimmac.musichall.cz/</dc:source>
+    <dc:contributor>
+     <cc:Agent>
+      <dc:title>Andreas Nilsson &lt;nisses.mail@home.se&gt;</dc:title>
+     </cc:Agent>
+    </dc:contributor>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <path id="path5378" d="m45.194 88.653c0.14452-0.2441 2.5022 3.1451 2.5022 3.1451 10.338-12.675 36.723-36.359 43.921-56.111-14.556 18.193-38.339 47.462-46.423 52.966z" fill="#d4572d" fill-rule="evenodd"/>
+ <path id="path7876" d="m27.38 7.1111c-12.045-0.66813-17.657 8.0517-20.692 16.347-3.0123 10.924 1.2458 31.556 22.112 29.986 11.902 0 16.633-13.755 22.897-17.326 5.6928-2.4257 6.1409-2.6428 12.155-2.6428 8.3584 0 23.474-6.8167 23.474-13.58-2.5692-5.4275-9.39-15.093-21.924-13.446-7.9782 1.0464-15.526 7.473-17.498 10.671-4.8298-4.8005-10.997-10.009-20.525-10.009z" fill="url(#linearGradient7881)" fill-rule="evenodd"/>
+ <path id="path920" d="m49.368 11.408c20.843-23.488 49.487-1.839 49.298 20.437-0.17227 20.364-13.945 30.117-48.545 66.338-36.216-33.696-48.976-41.467-48.788-65.628 0.18841-25.01 24.71-43.781 48.034-21.147z" fill="#c71807" fill-rule="evenodd" stroke="#820000" stroke-width="2.6649"/>
+ <path id="path922" d="m2.0569 31.734c-0.54722 20.311 1.9948 17.093 6.5878 23.528 4.5153 6.326 24.204 2.3445 41.878-16.434 17.885-19.003 36.115-8.247 44.952-18.827-6.5833-12.721-27.131-28.134-46.047-6.7759-24.242-24.688-46.823-2.028-47.37 18.509z" fill="url(#linearGradient1697)" fill-rule="evenodd" opacity=".625"/>
+ <path id="path3109" d="m49.612 14.932c19.818-24.14 46.902-3.9721 46.727 16.78-0.16047 18.971-13.993 29.411-46.225 63.154-33.738-31.391-46.627-39.759-46.452-62.267 0.17552-23.299 24.222-41.689 45.95-17.667z" fill="none" opacity=".39205" stroke="url(#linearGradient3117)" stroke-width="2.6649"/>
+</svg>

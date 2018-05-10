@@ -1,0 +1,39 @@
+# Copyright © 2018 TermySequence LLC
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+IF (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+  SET(MAN_TRADENAME "${FRIENDLY_NAME}")
+ELSE()
+  SET(MAN_TRADENAME "${FRIENDLY_NAME}\\[tm]")
+ENDIF()
+
+FUNCTION(DEFMAN section source dest)
+  CONFIGURE_FILE(${source}.${section}.in ${dest}${ARGV3}.${section} @ONLY)
+  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${dest}${ARGV3}.${section}
+    DESTINATION share/man/man${section})
+ENDFUNCTION()
+
+IF (BUILD_SERVER)
+  DEFMAN(1 server ${SERVER_NAME})
+  DEFMAN(1 forwarder ${FORWARDER_NAME})
+  DEFMAN(1 monitor ${MONITOR_NAME})
+  DEFMAN(1 connect ${CONNECT_NAME})
+  DEFMAN(1 query ${QUERY_NAME})
+  DEFMAN(1 ssh ${ABBREV_NAME}-ssh ${DEBUG_SUFFIX})
+  DEFMAN(1 sudo ${ABBREV_NAME}-sudo ${DEBUG_SUFFIX})
+  DEFMAN(1 su ${ABBREV_NAME}-su ${DEBUG_SUFFIX})
+  DEFMAN(1 download ${ABBREV_NAME}-download ${DEBUG_SUFFIX})
+  DEFMAN(1 imgcat ${ABBREV_NAME}-imgcat ${DEBUG_SUFFIX})
+  DEFMAN(1 imgls ${ABBREV_NAME}-imgls ${DEBUG_SUFFIX})
+  DEFMAN(1 ctl ${ABBREV_NAME}ctl ${DEBUG_SUFFIX})
+
+  IF (USE_SYSTEMD)
+    DEFMAN(1 setup ${SYSTEMD_SETUP_NAME})
+  ENDIF()
+ENDIF()
+
+IF (BUILD_QTGUI)
+  DEFMAN(1 gui ${APP_NAME})
+  DEFMAN(1 pipe ${PIPE_NAME})
+ENDIF()

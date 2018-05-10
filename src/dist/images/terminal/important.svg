@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg1800" width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+    <dc:title/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>emblem</rdf:li>
+      <rdf:li>photos</rdf:li>
+      <rdf:li>pictures</rdf:li>
+      <rdf:li>raw</rdf:li>
+      <rdf:li>jpeg</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="matrix(1.0667 0 0 1.0667 0 48.8)">
+  <circle id="path1650" cx="46.875" cy="1.125" r="45.833" fill="#f57900" stroke="#914900" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.0833"/>
+  <ellipse id="path3392" cx="47.182" cy=".92368" rx="44.351" ry="44.351" fill="none" stroke="#fcaf3e" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.016"/>
+  <path id="rect1872" d="m40.629-23.193c-0.28213 0-0.51722 0.38468-0.51722 0.84635l2.3474 31.836c0 0.46167 0.23509 0.84635 0.51722 0.84636 0 0 1.8537 0.02623 3.3818 0 0.50339-0.0086 0.65744 0.04477 1.114 0 1.5281 0.02623 3.3818 0 3.3818 0 0.28213 0 0.51722-0.38469 0.51722-0.84636l2.3474-31.836c0-0.46167-0.23509-0.78125-0.51722-0.78125h-5.6894c-0.02094-0.0041-0.01807-0.0651-0.0398-0.0651h-6.8432z" fill="#fff"/>
+  <ellipse id="path2062" cx="47.013" cy="20.492" rx="5.0781" ry="5.0781" fill="#fff"/>
+  <path id="path3068" d="m89.596-0.91872c0 23.877-13.342-9.4934-41.17 0.85182-28.048 10.427-45.341 23.025-45.341-0.85182 0-23.877 19.378-43.255 43.255-43.255s43.255 19.378 43.255 43.255z" fill="#fffeff" fill-opacity=".2139"/>
+ </g>
+</svg>

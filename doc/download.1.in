@@ -1,0 +1,120 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @ABBREV_NAME@-download 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.BR @ABBREV_NAME@-download , \"m2rprog
+.BR @ABBREV_NAME@-imgcat , \"m2rprog
+.B @ABBREV_NAME@-imgls \"m2rprog
+\- Display inline content within @FRIENDLY_NAME@ terminals
+
+.SH SYNOPSIS
+.B @ABBREV_NAME@-download \"m2rprog
+-|file...
+.br
+.B @ABBREV_NAME@-imgcat \"m2rprog
+[-ps] [-w \fIcells\fR] [-h \fIcells\fR] -|\fIfile\fR...
+.br
+.B @ABBREV_NAME@-imgls \"m2rprog
+[-w \fIcells\fR] [-h \fIcells\fR] [\fIfile\fR...]
+
+.SH DESCRIPTION
+.B @ABBREV_NAME@-download \"m2rprog
+sends one or more files to a terminal running in an instance of
+.BR @SERVER_NAME@ (1). \"m2rdoc
+The file data will be kept in the server's memory and can be downloaded by
+connected clients.
+
+.I Note:
+The
+.I @FRIENDLY_NAME@
+protocol supports direct file downloads. For a number of reasons, direct
+downloads should generally be preferred over inline downloads using
+.BR @ABBREV_NAME@-download . \"m2rprog
+See
+.B NOTES \"m2rsect
+below.
+
+.B @ABBREV_NAME@-imgcat \"m2rprog
+sends one or more images to a terminal for inline display. Command line
+options can be used to specify the width and height of the image in character
+cells and whether names should be printed with the images.
+.B @ABBREV_NAME@-imgcat \"m2rprog
+uses the
+.BR ImageMagick (1) \"m2rman
+suite of tools to query the format and dimensions of input images. If the image
+dimensions and file size exceed hard-coded thresholds, a thumbnail image will be
+generated and uploaded in place of the original.
+
+.B @ABBREV_NAME@-imgls \"m2rprog
+produces a long-format directory listing with inline image thumbnails. Command
+line options can be used to specify the width and height of the thumbnails in
+character cells. Input images are processed as with
+.BR @ABBREV_NAME@-imgcat . \"m2rprog
+
+.SH OPTIONS
+.IP -
+Read data from standard input. Cannot be used with other filename arguments.
+
+.IP -w,--width\ \fIn\fR
+Set the image or thumbnail width to
+.I n
+character cells.
+
+.IP -h,--height\ \fIn\fR
+Set the image or thumbnail height to
+.I n
+character cells.
+
+.IP -s,--stretch
+Request that the image be stretched to fit the display area, rather than
+preserving its aspect ratio.
+
+.IP -p,--print
+Print filenames with images.
+
+.IP --help
+Print basic help
+
+.IP --version
+Print version information
+
+.SH NOTES
+.I Caution:
+There is a size limit on files and images uploaded using these tools.
+
+Currently this limit is 8 MiB, but since file data is Base64 encoded, the actual
+maximum size for input files is roughly 6 MB. Furthermore, once uploaded, file
+data is kept in the server's memory until the terminal is closed, its scrollback
+buffer is cleared, or the insertion point leaves the scrollback buffer.
+For these reasons, it is recommended that direct file downloads be used for
+fetching files from remote servers. Direct downloads are not subject to a size
+limitation and do not consume server memory.
+
+.BR @SERVER_NAME@ (1) \"m2rdoc
+hashes uploaded files and images and only stores one copy of each
+uploaded file. Re-displaying the same inline image multiple times in the same
+terminal will not consume additional server memory beyond the first instance.
+
+How inline images are displayed and which image formats are supported is left
+up to each
+.I @FRIENDLY_NAME@
+client. The server simply stores the data for download. Some clients may not
+support inline image display or inline downloads. The list of supported
+image formats (SVG BMP GIF JPEG PNG PBM PGM PPM XBM XPM) coded into
+.B @ABBREV_NAME@-imgcat \"m2rprog
+and
+.B @ABBREV_NAME@-imgls \"m2rprog
+reflects the formats supported by the
+.BR @APP_NAME@ (1) \"m2rdoc
+client and the
+.BR ImageMagick (1) \"m2rman
+tools used for preprocessing.
+
+.SH SEE ALSO
+ImageMagick(1), \"m2rmans
+@SERVER_NAME@(1) \"m2rdocs
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

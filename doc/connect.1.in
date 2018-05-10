@@ -1,0 +1,162 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @CONNECT_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.B @CONNECT_NAME@ \"m2rprog
+\- Establish connection between @FRIENDLY_NAME@ servers
+
+.SH SYNOPSIS
+.B @CONNECT_NAME@ \"m2rprog
+[\fIoptions\fR] [--] \fIcommand\fR [\fIarg...\fR]
+
+.SH DESCRIPTION
+.B @CONNECT_NAME@ \"m2rprog
+is used to establish a connection between a local instance of
+.BR @SERVER_NAME@ (1) \"m2rdoc
+and an instance running on a different host, as a different user, or in a
+container.
+.B @CONNECT_NAME@ \"m2rprog
+runs a helper program, specified by
+.I command
+and
+.IR args ,
+which must itself execute an instance of
+.BR @SERVER_NAME@ (1) \"m2rdoc
+on the desired remote system and make it accessible over standard input and
+standard output. After the handshake from the remote server is received,
+.B @CONNECT_NAME@ \"m2rprog
+connects to the local
+.BR @SERVER_NAME@ (1) \"m2rdoc
+instance, sets up the link between the two servers, and exits. File descriptor
+passing is used to hand the helper process over to the local server, making it
+unnecessary for
+.B @CONNECT_NAME@ \"m2rprog
+to forward traffic.
+
+Separate convenience scripts are provided for commonly used helper programs:
+.BR @ABBREV_NAME@-ssh (1), \"m2rdoc
+.BR @ABBREV_NAME@-sudo (1), \"m2rdoc
+and
+.BR @ABBREV_NAME@-su (1). \"m2rdoc
+However, any program that can be used to execute
+an instance of 
+.BR @SERVER_NAME@ (1) \"m2rdoc
+in a remote environment can be used with
+.BR @CONNECT_NAME@ . \"m2rprog
+The convenience scripts are simple wrappers for
+.B @CONNECT_NAME@ \"m2rprog
+and are documented further in their own man pages.
+
+Until
+.B @CONNECT_NAME@ \"m2rprog
+sees a valid
+.I @FRIENDLY_NAME@
+protocol handshake, any output produced by the helper program is relayed to
+standard output, and standard input is relayed to the helper program (with
+terminal echo disabled). This allows passwords, pass phrases, and other input to
+be collected from the user to establish the connection. Once the connection is
+established and
+.B @CONNECT_NAME@ \"m2rprog
+has exited, the helper program will be detached from the terminal and running in
+the background.
+
+However, a side effect of this feature is that any diagnostic messages printed by
+the helper program once the connection is established will interrupt the protocol
+stream. Furthermore, the default "raw" encoding of the
+.I @FRIENDLY_NAME@
+protocol cannot be used if the helper program interferes with the data stream,
+such as by providing escape sequences to interrupt the connection. Helper
+programs should be run with appropriate arguments to minimize the number of
+messages printed and to (ideally) make the data stream 8-bit safe.
+.B @CONNECT_NAME@ \"m2rprog
+provides options to change the variant of the
+.I @FRIENDLY_NAME@
+protocol used as necessary to ensure a clean connection. See
+.B OPTIONS \"m2rsect
+below for further details.
+
+.SH OPTIONS
+.IP -p,--pty
+Run
+.I command
+in a pseudoterminal. Use this option if the helper program expects standard input
+to be connected to a terminal.
+
+.IP -P,--nopty
+Do not run
+.I command
+in a pseudoterminal (a socket or pipe is used). This is the default.
+
+.IP -r,--raw
+Use the 8-bit "raw" encoding of the
+.I @FRIENDLY_NAME@
+protocol. This encoding offers the best performance, but cannot be used if the
+data stream is not 8-bit safe. This is the default.
+
+.IP -R,--noraw
+Use the 7-bit "term" encoding of the
+.I @FRIENDLY_NAME@
+protocol. This encoding uses Base64 encoded terminal escape sequences, and will
+function in non-8-bit-safe data streams. It is also somewhat robust against
+occasional diagnostic messages being printed into the data stream.
+
+.IP -k,--keepalive\ \fIn\fR
+Enable keep-alive probes with a timeout of
+.I n
+seconds on the connection. A timeout of 0 disables keep-alive probes. The
+default timeout is 25 seconds and the minimum (nonzero) timeout is 5 seconds.
+
+.IP -d,--dir\ \fIdir\fR
+Start
+.I command
+in directory
+.IR dir .
+Relative paths are interpreted relative to
+.IR $HOME . \"m2renv
+By default
+.I $HOME \"m2renv
+is used.
+
+.IP -0,--arg0\ \fIarg\fR
+Use
+.I arg
+as the first argument vector element when running
+.IR command .
+
+.IP -n,--noosc
+Do not issue
+.I @FRIENDLY_NAME@
+escape sequences if standard input is a tty. Use when running in a terminal
+emulator other than
+.BR @SERVER_NAME@ (1). \"m2rdoc
+
+.IP -t,--runtime\ \fIdir\fR
+Look for the per-user local socket in runtime directory
+.IR dir .
+
+.IP --help
+Print basic help
+
+.IP --version
+Print version information
+
+.IP --man
+Attempt to show this man page
+
+.IP --about
+Print license information and disclaimer of warranty
+
+.SH NOTES
+.B @CONNECT_NAME@ \"m2rprog
+is an alias for
+.BR @SERVER_NAME@ ; \"m2rdoc
+both functions are implemented by the same binary.
+
+.SH SEE ALSO
+@SERVER_NAME@(1), @ABBREV_NAME@-ssh(1), \"m2rdocs
+@ABBREV_NAME@-su(1), @ABBREV_NAME@-sudo(1) \"m2rdocs
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

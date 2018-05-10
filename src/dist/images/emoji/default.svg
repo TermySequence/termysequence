@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg11300" width="48" height="48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <defs id="defs3">
+  <linearGradient id="linearGradient16280" x1="12.487" x2="31.081" y1="3.7319" y2="36.033" gradientTransform="matrix(1.2519 0 0 1.3362 -4.4777 -.21168)" gradientUnits="userSpaceOnUse">
+   <stop id="stop16177" stop-color="#D2D2D2" stroke-width="1.2167" offset="0"/>
+   <stop id="stop16179" stop-color="#EDEDED" stroke-width="1.2167" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient3561" cx="26.728" cy="38.349" r="17.926" gradientTransform="matrix(1.8969 0 0 1.4159 -24.028 -15.067)" gradientUnits="userSpaceOnUse">
+   <stop id="stop3557" stop-color="#f2f2f2" offset="0"/>
+   <stop id="stop3559" stop-color="#d0d0d0" offset="1"/>
+  </radialGradient>
+  <linearGradient id="linearGradient3569" x1="28.107" x2="22.169" y1="34.869" y2="9.8662" gradientTransform="matrix(1.0262 0 0 1.0984 -2.1713 .93161)" gradientUnits="userSpaceOnUse">
+   <stop id="stop3565" stop-color="#fff" offset="0"/>
+   <stop id="stop3567" stop-color="#939393" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:source>http://jimmac.musichall.cz</dc:source>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+    <dc:title>Broken Image</dc:title>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>image</rdf:li>
+      <rdf:li>picture</rdf:li>
+      <rdf:li>photo</rdf:li>
+      <rdf:li>missing</rdf:li>
+      <rdf:li>broken</rdf:li>
+      <rdf:li>404</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+    <dc:contributor>
+     <cc:Agent>
+      <dc:title>Garrett LeSage</dc:title>
+     </cc:Agent>
+    </dc:contributor>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="matrix(1.0667 0 0 1.0667 0 -3.2)">
+  <path id="path16181" d="m44.47 43.595c0 2.138-1.6274 3.8751-3.6304 3.8751h-36.68c-2.003 0-3.6304-1.7371-3.6304-3.8751v-36.19c0-2.138 1.6274-3.8751 3.6304-3.8751h36.68c2.003 0 3.6304 1.7371 3.6304 3.8751z" fill="url(#linearGradient16280)" stroke="#646464" stroke-width="1.0595"/>
+  <path id="path12125" d="m40.383 38.682h-35.766v-26.364h35.766z" fill="url(#radialGradient3561)" stroke="url(#linearGradient3569)" stroke-opacity=".61658" stroke-width="1.0595"/>
+  <path id="path11975" d="m43.448 43.053c0 2.0458-1.007 3.319-2.9169 3.319h-35.972c-1.9098 0-3.0076-1.176-3.0076-3.2218v-35.008c0-2.0458 1.5517-3.5135 3.4616-3.5135h35.064c1.9098 0 3.3708 1.4677 3.3708 3.5135v34.522z" fill="none" stroke="#fff" stroke-opacity=".8601" stroke-width="1.0595"/>
+  <g id="g3551" transform="matrix(.76746 0 0 .83932 8.2571 10.872)" fill="#c00" stroke="#c00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6402">
+   <path id="path2565" d="m11.319 9.2241c5.3233 5.469 11.451 9.8996 17.892 13.707l-1.7691 1.2287c-6.3397-4.115-12.389-8.6608-18.257-13.508z" color="#000000"/>
+   <path id="path2575" d="m26.739 8.9211c-4.8713 7.0315-11.492 12.16-18.832 16.361l2.181-1.7608c-1.3635 0.85844 15.487-11.717 13.765-13.313z" color="#000000"/>
+  </g>
+ </g>
+</svg>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg11300" width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs id="defs3">
+  <linearGradient id="linearGradient12810">
+   <stop id="stop12812" stop-color="#fff" offset="0"/>
+   <stop id="stop12814" stop-color="#e5e5e5" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3152" x1="84.999" x2="62.591" y1="25.21" y2="12.022" gradientTransform="matrix(3.3344 0 0 3.9249 -216.23 -95.303)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient12810"/>
+  <radialGradient id="radialGradient3156" cx="88.593" cy="33.399" r="7.0056" gradientTransform="matrix(2.1584 .59762 -.43351 2.1693 -94.595 -93.807)" gradientUnits="userSpaceOnUse">
+   <stop id="stop12830" stop-color="#cccccd" offset="0"/>
+   <stop id="stop12862" stop-color="#adadae" offset="0"/>
+   <stop id="stop12832" stop-color="#8f8f90" stop-opacity="0" offset="1"/>
+  </radialGradient>
+  <linearGradient id="linearGradient3159" x1="88.75" x2="92.062" y1="31.656" y2="36.656" gradientTransform="matrix(3.3344 0 0 3.9249 -214.67 -94.385)" gradientUnits="userSpaceOnUse">
+   <stop id="stop12838" stop-color="#515152" offset="0"/>
+   <stop id="stop12840" stop-color="#515152" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3166" x1="65.624" x2="87.529" y1="21.46" y2="21.46" gradientTransform="matrix(3.3344 0 0 3.9249 -216.23 -95.303)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient12810"/>
+ </defs>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:source>http://jimmac.musichall.cz</dc:source>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+    <dc:title/>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="matrix(1.0667 0 0 1.0667 0 48.8)">
+  <path id="path12803" d="m21.346-43.298-18.548 19.134 0.6252 17.539 43.66 46.24 28.134-30.663 0.6252-19.134z" color="#000000" fill="#484848" fill-rule="evenodd" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="5.2656"/>
+  <path id="path12787" d="m2.5861-23.761 0.59869 16.913 44.303 45.806-0.59869-18.322z" color="#000000" fill="#a6a6a6" fill-rule="evenodd"/>
+  <path id="path12789" d="m46.889 20.636v18.675l28.139-30.655 0.59869-19.027z" color="#000000" fill="#7f7f7f" fill-rule="evenodd"/>
+  <path id="path12791" d="m2.5861-23.73 44.902 45.07 28.139-31.007-54.481-33.826z" color="#000000" fill="url(#linearGradient3166)" fill-rule="evenodd"/>
+  <path id="path12793" d="m5.4886-26.656 6.9759 5.7135s1.6464 0.7047 2.3948 0c0.74837-0.7047 0.59869-2.8188 0.59869-2.8188l-6.9759-6.4494z" color="#000000" fill="#ffc11a" fill-rule="evenodd"/>
+  <path id="path12795" d="m10.668-32.293 7.1843 5.7135s1.6464 0.7047 2.3948 0c0.74836-0.7047 0.59869-2.8188 0.59869-2.8188l-6.9759-6.4494z" color="#000000" fill="#ffc11a" fill-rule="evenodd"/>
+  <path id="path12797" d="m15.966-37.824 6.9759 5.9588s1.6464 0.70471 2.3948 0c0.74837-0.70471 0.59869-2.8188 0.59869-2.8188l-7.1843-6.6947z" color="#000000" fill="#ffc11a" fill-rule="evenodd"/>
+  <path id="path12820" d="m21.416-41.725-17.186 18.955 0.57929 15.27 41.912 44.315 26.902-29.392 0.57928-16.011z" color="#000000" fill="none" opacity=".34225" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2.6328"/>
+  <path id="path12822" d="m66.878 20.663s14.171 6.6232 21.674 20.115c7.5025 13.492 11.671 33.116 11.671 33.116" color="#000000" fill="none" stroke="url(#linearGradient3159)" stroke-linecap="round" stroke-linejoin="bevel" stroke-miterlimit="10" stroke-width="13.164"/>
+  <path id="path12824" d="m68.423 16.441c-2.021 0.28816-3.6189 2.1525-3.8815 4.5287s0.87688 4.6597 2.768 5.5468c0 0 11.85 7.6128 15.819 14.75 4.3408 7.806 7.2376 20.561 7.2376 20.561 0.61496 2.8049 3.0452 4.4919 5.4282 3.7681 2.3829-0.72385 3.8162-3.5845 3.2012-6.3894 0 0-2.6705-13.458-8.351-23.673-6.0523-10.884-19.995-18.682-19.995-18.682-0.70021-0.35899-1.4671-0.50003-2.227-0.40957z" color="#000000" fill="url(#radialGradient3156)" fill-rule="evenodd"/>
+  <path id="path12801" d="m28.929-14.6 36.52 32.416c4.1909 3.1712 8.232-0.52853 10.776-4.2282 2.5444-3.6997 2.0954-8.1041-0.5987-10.571l-38.915-24.665z" color="#000000" fill="#a0a0a1" fill-rule="evenodd"/>
+  <path id="path12799" d="m27.432-14.6 37.418 26.779c2.0954 1.7618 6.5856-0.35235 8.3817-2.8188 1.7961-2.4665 0.29936-5.99-1.1974-7.0471l-35.622-25.017z" color="#000000" fill="url(#linearGradient3152)" fill-rule="evenodd"/>
+ </g>
+</svg>

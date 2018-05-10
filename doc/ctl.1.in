@@ -1,0 +1,121 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @ABBREV_NAME@ctl 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.B @ABBREV_NAME@ctl \"m2rprog
+\- Set or clear @FRIENDLY_NAME@ session attributes
+
+.SH SYNOPSIS
+.B @ABBREV_NAME@ctl \"m2rprog
+[\fIoptions\fR] [\fIcommand\fR] [\fIarg\fR]
+
+.SH DESCRIPTION
+.B @ABBREV_NAME@ctl \"m2rprog
+is used to set and clear various useful attributes from within a
+.I @FRIENDLY_NAME@
+terminal session. The effects of setting these attributes will vary depending
+on the specific client program being used.
+
+.SH COMMANDS
+.IP set-icon\ \fIname\fR
+Set an icon name for the terminal session. If the client supports this
+attribute, the corresponding icon will be displayed with the terminal
+thumbnail or otherwise associated with the terminal.
+
+.IP clear-icon
+Unset the custom icon name for the terminal session, which will cause the
+client to revert to its default behavior for the terminal icon.  Note that
+setting the empty string is the same as clearing the icon; to force display
+of no icon in
+.BR @APP_NAME@ (1), \"m2rdoc
+set the name "none".
+
+.IP set-badge\ \fIformat\fR
+Set the badge format for the terminal session. This is a text string which
+may optionally contain attribute names of the form "\\(name)", which will
+be expanded to the attribute's value dynamically. Quote the text if it
+contains spaces. Setting the empty string indicates that no badge should
+be displayed.
+
+The
+.I @FRIENDLY_NAME@
+protocol specifies many useful attributes that can be displayed in terminal
+badges, and custom attributes can be set as well. The client may have a means
+of inspecting the available attributes, such as the "View Terminal Information"
+action within
+.BR @APP_NAME@ (1). \"m2rdoc
+
+.IP clear-badge
+Unset the custom badge for the terminal session, which will cause the client to
+revert to its default behavior for the terminal badge.
+
+.IP set-layout\ \fIspec\fR
+This is a
+.BR @APP_NAME@ (1)-specific \"m2rdoc
+option which sets the layout of the terminal viewport and its supporting
+widgets. The argument is a comma-separated list of numbers (without spaces)
+where each number refers to a specific widget:
+
+0) the terminal viewport itself
+.br
+1) marks widget
+.br
+2) plain scroll bar
+.br
+3) minimap widget
+.br
+4) timing widget
+
+The letter "s" may be placed between
+numbers in the list to request a separator line. A minus sign in front of
+a number will place the widget at the given location but hide it.
+Example: "-4,1,s,0,-2,3"
+
+.IP clear-layout
+Unset the custom layout for the terminal session, which will cause the client
+to revert to the default layout.
+
+.IP set-fills\ \fIspec\fR
+This is a
+.BR @APP_NAME@ (1)-specific \"m2rdoc
+option which sets column fills (vertical lines) at specific column positions in
+the terminal viewport. The argument is a comma-separated list of fill
+definitions, each taking the form "<\fIcolumn\fR>[:<\fIcolor\fR>]" where
+\fIcolumn\fR is the column number at which to place the fill, and \fIcolor\fR is
+a 256-color palette index in the range 0 to 255. If color is omitted, the
+terminal foreground color is used. Example: "78,80:9"
+
+.IP clear-fills
+Unset custom column fills for the terminal session, which will cause the client
+to revert to the default fills.
+
+.SH OPTIONS
+.IP --help
+Print basic help
+
+.IP --version
+Print version information
+
+.IP --man
+Attempt to show this man page
+
+.SH NOTES
+When using
+.BR @APP_NAME@ (1) \"m2rdoc
+it is possible to manage these settings strictly on the client side using
+settings profiles. This script is provided for completeness.
+
+.B @ABBREV_NAME@ctl \"m2rprog
+is a wrapper script that uses
+.BR @QUERY_NAME@ (1). \"m2rdoc
+to set the session attributes. The escape sequences used are specific to
+.IR @FRIENDLY_NAME@ .
+Running this script under other terminal emulators will have undefined results.
+
+.SH SEE ALSO
+@SERVER_NAME@(1), @APP_NAME@(1) \"m2rdocs
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

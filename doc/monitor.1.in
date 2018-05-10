@@ -1,0 +1,142 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @MONITOR_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.B @MONITOR_NAME@ \"m2rprog
+\- @FRIENDLY_NAME@ information monitor
+
+.SH SYNOPSIS
+.B @MONITOR_NAME@ \"m2rprog
+[\fI--initial\fR|\fI--monitor\fR]
+
+.SH DESCRIPTION
+.B @MONITOR_NAME@ \"m2rprog
+is a utility program executed by
+.BR @SERVER_NAME@ (1) \"m2rdoc
+to monitor the local system for useful information to report to terminal clients.
+This includes the hostname, kernel version, time zone, and primary IP address of
+the system, but can consist of any number of arbitrary single-line UTF-8
+key-value pairs. Run
+.B @MONITOR_NAME@ \"m2rprog
+from a shell prompt to see what information is reported.
+
+.B @MONITOR_NAME@ \"m2rprog
+has two modes of operation. When run with the --initial option, the program
+should print lines of the form
+"key=value" \"m2rtt
+on standard output and then exit
+immediately. When run with no arguments, the program should do the same thing,
+but may keep running until receipt of
+.I SIGTERM
+or until its standard input is closed. The intent is for the program to print
+an initial set of values on startup in the first mode, then run continuously in
+the second mode, printing key-value pairs in response to system changes.
+
+Each
+.BR @SERVER_NAME@ (1) \"m2rdoc
+instance forks its own instances of
+.B @MONITOR_NAME@ \"m2rprog
+as necessary. In addition, two customizable scripts,
+.I monitor-script
+and
+.I attr-script
+can be used to override or replace
+.B @MONITOR_NAME@ \"m2rprog
+entirely, see
+.B FILES \"m2rsect
+below. On receipt of
+.IR SIGUSR1 ,
+.BR @SERVER_NAME@ (1) \"m2rdoc
+restarts the monitor program.
+
+It is possible for terminal clients to send commands to the monitor program,
+which will be written to its standard input, followed by a newline.
+An advanced monitor program may support commands telling it to report certain
+data. For example, the default
+.B @MONITOR_NAME@ \"m2rprog
+implementation will respond to the command "loadavg" by reporting the system
+load average every ten seconds for the next half hour.
+
+.SH OPTIONS
+.IP --initial
+Print a set of initial key-value pairs immediately and then exit.
+
+.IP --monitor
+Run continuously, printing key-value pairs as changes occur, until standard input
+is closed or
+.I SIGTERM
+is received. This is the default behavior.
+
+.IP --help
+Print basic help
+
+.IP --version
+Print version information
+
+.SH FILES
+.I $XDG_CONFIG_HOME/@SERVER_NAME@/attr-script \"m2rfile
+.br
+.I /etc/@SERVER_NAME@/attr-script \"m2rfile
+.br
+.I @CMAKE_INSTALL_PREFIX@/lib/@SERVER_NAME@/attr-script \"m2rfile
+
+Programs executed by
+.BR @SERVER_NAME@ (1) \"m2rdoc
+to set system-specific UTF-8 key-value pairs reported to clients. Only the first
+script found using the order shown is executed. The program should print lines of
+the form
+key=value \"m2rtt
+on standard output and must exit quickly. Values output by the
+program override the values printed by @MONITOR_NAME@ --initial.
+These scripts are optional and are not required to be present.
+
+.I $XDG_CONFIG_HOME/@SERVER_NAME@/monitor-script \"m2rfile
+.br
+.I /etc/@SERVER_NAME@/monitor-script \"m2rfile
+.br
+.I @CMAKE_INSTALL_PREFIX@/lib/@SERVER_NAME@/monitor-script \"m2rfile
+
+Programs executed by
+.BR @SERVER_NAME@ (1) \"m2rdoc
+to set system-specific UTF-8 key-value pairs reported to clients. The program
+should print lines of the form
+key=value \"m2rtt
+on standard out and may run as long as
+necessary, however it must exit on receipt of
+.I SIGTERM
+or when its standard input is closed.  Only the first script found
+using the order shown is executed, and if a script is found,
+.B @MONITOR_NAME@ \"m2rprog
+is not executed. These scripts are optional and are not required to be present.
+
+.SH NOTES
+The default
+.B @MONITOR_NAME@ \"m2rprog
+implementation obtains attributes from the files
+.BR os-release (5) \"m2rman
+and
+.BR machine-info (5) \"m2rman
+and from calls to
+.BR uname (3) \"m2rman
+and
+.BR getaddrinfo (3). \"m2rman
+On Linux,
+.BR netlink (7) \"m2rman
+is used to monitor for network address changes, and if sd-bus support was
+compiled in, the D-Bus interfaces
+.I org.freedesktop.hostname1
+and
+.I org.freedesktop.timedate1
+are used to monitor for hostname and timezone changes.
+
+A small number of basic attributes, such as the UID, are set directly by
+.BR @SERVER_NAME@ (1) \"m2rdoc
+and cannot be changed from the monitor or from scripts.
+
+.SH SEE ALSO
+@SERVER_NAME@(1) \"m2rdocs
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

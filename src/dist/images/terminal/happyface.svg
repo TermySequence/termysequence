@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg4376" width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <defs id="defs3">
+  <radialGradient id="radialGradient2714" cx="29.288" cy="15.721" r="8.9021" fx="29.158" fy="15.756" gradientTransform="matrix(5.2656 0 0 5.2656 -116.95 -98.967)" gradientUnits="userSpaceOnUse">
+   <stop id="stop3292" stop-color="#fffcde" offset="0"/>
+   <stop id="stop3294" stop-color="#f6e76a" offset=".64486"/>
+   <stop id="stop3296" stop-color="#ffb738" offset="1"/>
+  </radialGradient>
+  <radialGradient id="aigrd2" cx="25.053" cy="39.593" r="15.757" gradientTransform="matrix(3.1597 0 0 3.1597 -30.839 -91.08)" gradientUnits="userSpaceOnUse">
+   <stop id="stop8602" stop-color="#777" offset="0"/>
+   <stop id="stop8604" offset="1"/>
+  </radialGradient>
+ </defs>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>emoticon</rdf:li>
+      <rdf:li>emote</rdf:li>
+      <rdf:li>smiley</rdf:li>
+      <rdf:li>happy</rdf:li>
+      <rdf:li>:)</rdf:li>
+      <rdf:li>:-)</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:source>http://jimmac.musichall.cz</dc:source>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="matrix(1.0667 0 0 1.0667 0 48.8)">
+  <ellipse id="path4320" cx="46.875" cy="1.125" rx="45.611" ry="45.611" color="#000000" fill="url(#radialGradient2714)" fill-rule="evenodd" stroke="#9c8c0a" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5277"/>
+  <circle id="path4322" cx="46.875" cy="1.1251" r="43.348" color="#000000" fill="none" opacity=".67722" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5277"/>
+  <path id="path2659" d="m79.785 5.2061c-7.6248 13.207-16.54 22.724-32.411 22.724-15.419 0-26.707-10.97-33.751-23.171 6.4442 7.7245 15.882 16.598 33.081 16.598 20.551 0 24.144-7.3477 33.081-16.151z" color="#000000" fill="#fff" opacity=".36"/>
+  <path id="path8606" d="m79.785 3.4188c-7.6248 13.207-16.54 22.724-32.411 22.724-15.419 0-26.707-10.97-33.751-23.171 6.4442 7.7245 15.882 16.598 33.081 16.598 20.551 0 24.144-7.3477 33.081-16.151z" fill="url(#aigrd2)"/>
+  <g id="g8666" transform="matrix(2.5277 0 0 2.5277 -13.567 -51.231)">
+   <path id="path8610" d="m21.398 15.321c0 2.5-1.125 4.5-2.5 4.5s-2.625-2-2.625-4.5 1.125-4.5 2.5-4.5 2.5 2 2.5 4.5z" fill="#fff" opacity=".36"/>
+   <path id="path8612" d="m30.689 15.321c0 2.5-1.125 4.5-2.5 4.5s-2.5-2-2.5-4.5 1.125-4.5 2.5-4.5 2.5 2 2.5 4.5z" fill="#fff" opacity=".36"/>
+   <path id="path8614" d="m21.398 14.696c0 2.5-1.125 4.5-2.5 4.5s-2.5-2-2.5-4.5 1.125-4.5 2.5-4.5 2.5 2 2.5 4.5z"/>
+   <path id="path8616" d="m30.689 14.696c0 2.5-1.125 4.5-2.5 4.5s-2.5-2-2.5-4.5 1.125-4.5 2.5-4.5 2.5 2 2.5 4.5z"/>
+  </g>
+ </g>
+</svg>

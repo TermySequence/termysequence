@@ -1,0 +1,8 @@
+[Command]
+Command=vim, vim, %f, "%?l{+call cursor(%l,%c)}"
+
+[Launcher]
+DisplayIcon=generic-editor
+LaunchType=3
+MountType=1
+UnmountIdleTime=0

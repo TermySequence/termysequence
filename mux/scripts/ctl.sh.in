@@ -1,0 +1,69 @@
+#!/bin/bash
+# Copyright © 2018 TermySequence LLC
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+usage () {
+    echo "Usage: @ABBREV_NAME@ctl [options] command [arg]"
+    echo
+    echo "Set or clear @FRIENDLY_NAME@ session attributes."
+    echo
+    echo "Options:"
+    echo "  --man Launch man page"
+    echo "  --version Print version information"
+    echo
+    echo "Commands:"
+    echo "  set-icon NAME"
+    echo "  clear-icon"
+    echo "  set-badge FORMAT"
+    echo "  clear-badge"
+    echo "  set-layout SPEC"
+    echo "  clear-layout"
+    echo "  set-fills SPEC"
+    echo "  clear-fills"
+}
+
+if [[ $# -eq 0 ]]; then
+    usage
+    exit
+fi
+
+case $1 in
+    --help)
+        usage
+        ;;
+    --version)
+        echo @PROJECT_VERSION@
+        ;;
+    --man)
+        exec man @ABBREV_NAME@ctl@DEBUG_SUFFIX@
+        ;;
+    set-icon)
+        @QUERY_NAME@ set "session.icon" "$2"
+        ;;
+    clear-icon)
+        @QUERY_NAME@ clear "session.icon"
+        ;;
+    set-badge)
+        @QUERY_NAME@ set "session.badge" "$2"
+        ;;
+    clear-badge)
+        @QUERY_NAME@ clear "session.badge"
+        ;;
+    set-layout)
+        @QUERY_NAME@ set "session.layout" "$2"
+        ;;
+    clear-layout)
+        @QUERY_NAME@ clear "session.layout"
+        ;;
+    set-fills)
+        @QUERY_NAME@ set "session.fills" "$2"
+        ;;
+    clear-fills)
+        @QUERY_NAME@ clear "session.fills"
+        ;;
+    *)
+        echo "Unknown command $1" 1>&2
+        exit 1
+        ;;
+esac

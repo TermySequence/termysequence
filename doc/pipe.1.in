@@ -1,0 +1,137 @@
+.\" Copyright © 2018 TermySequence LLC
+.\" SPDX-License-Identifier: CC-BY-SA-4.0
+.\"
+.TH @PIPE_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
+.OS
+.SH NAME
+.B @PIPE_NAME@ \"m2rprog
+\- send commands and pipe requests to a running
+.B @APP_NAME@ \"m2rdoc
+instance
+
+.SH SYNOPSIS
+.B @PIPE_NAME@
+[\fIcommand\fR] [\fIarg...\fR]
+
+.SH DESCRIPTION
+.B @PIPE_NAME@ \"m2rprog
+is a command-line interface to certain features of the
+.BR @APP_NAME@ (1) \"m2rdoc
+graphical multiplexing terminal emulator client.
+The primary use of
+.B @PIPE_NAME@ \"m2rprog
+is to pipe input or output from a remote server, sending the data stream over
+the
+.I @FRIENDLY_NAME@
+protocol.
+A secondary use of
+.B @PIPE_NAME@ \"m2rprog
+is performing application actions programmatically. See
+.B EXAMPLES \"m2rsect
+below.
+
+For comprehensive documentation of the many features offered by
+.BR @APP_NAME@ , \"m2rdoc
+refer to the support pages at https://@PRODUCT_DOMAIN@/doc/
+
+.SH COMMANDS
+.IP to\ \fIuser@host\fR
+Pipe standard input to a named pipe on the remote server, which must be
+connected within
+.BR @APP_NAME@ . \"m2rdoc
+The
+.BR @SERVER_NAME@ (1)
+instance on the remote server will create a named pipe (fifo) which may be used
+as standard input to a remote command. The path to the fifo will be printed on
+standard error (keep in mind that this path is on the remote server). A "Pipe
+To" task will be created within
+.B @APP_NAME@ \"m2rdoc
+which may be used to track the status of the upload.
+
+.IP from\ \fIuser@host\fR
+Pipe standard output from a named pipe on the remote server. Analogous to the
+.I to
+command, except with data flowing in the opposite direction. A "Pipe From" task
+will be created within
+.B @APP_NAME@ \"m2rdoc
+which may be used to track the status of the download.
+
+.IP list-servers
+List the currently connected servers.
+
+.IP invoke\ \fIaction...\fR
+Run the given application action within the
+.B @APP_NAME@ \"m2rdoc
+instance. The format is identical to the "Perform action" key binding, including
+arguments separated by vertical bar (|) characters if needed. Quote the action
+string if necessary. More than one action string may be given; multiple actions
+will be run sequentially.
+
+.SH OPTIONS
+.IP --help
+Print basic help
+
+.IP --version
+Print version information
+
+.IP --man
+Attempt to show this man page
+
+.SH FILES
+.I $XDG_RUNTIME_DIR/@SERVER_NAME@/ \"m2rfile
+
+Location where
+.B @SERVER_NAME@ \"m2rdoc
+creates named pipes.
+
+.I $XDG_RUNTIME_DIR/@APP_NAME@/ \"m2rfile
+
+Location of the socket file used by
+.B @APP_NAME@ \"m2rdoc
+to accept connections from
+.B @PIPE_NAME@ \"m2rprog
+(see
+.B NOTES \"m2rsect
+below).
+
+.SH EXAMPLES
+.IP Pipe\ Example
+To compute a local
+.BR md5sum (1) \"m2rman
+of the contents of a file on the connected remote server
+.IR user@example.com :
+first, execute the local pipe command: \"m2rcode
+
+   $\ @PIPE_NAME@\ from\ user@example.com\ |\ md5sum \"m2rpre
+.br \"m2rprebr
+   Reading\ from\ /run/user/1000/@SERVER_NAME@/p1 on server user@example.com \"m2rpre
+
+Second, on the remote server, redirect the desired file into the named
+pipe: \"m2rcode
+
+   $\ cat foo.dat\ |\ /run/user/1000/@SERVER_NAME@/p1 \"m2rpre
+
+.IP Invoke\ Example
+To create a new terminal programmatically,
+use: \"m2rcode
+
+   $\ @PIPE_NAME@\ invoke\ NewTerminal \"m2rpre
+
+Or, to create two new terminals using settings profiles Foo and Bar,
+use: \"m2rcode
+
+   $\ @PIPE_NAME@\ invoke\ 'NewTerminal|Foo'\ 'NewTerminal|Bar' \"m2rpre
+
+.SH NOTES
+If more than one instance of
+.BR @APP_NAME@ (1) \"m2rdoc
+is run by the user, it is unspecified which instance
+.B @PIPE_NAME@ \"m2rprog
+will connect to.
+
+.SH SEE ALSO
+@APP_NAME@(1), @SERVER_NAME@(1), @CONNECT_NAME@(1), \"m2rdocs
+@ABBREV_NAME@-ssh(1), @ABBREV_NAME@ctl(1) \"m2rdocs
+.br \"m2rexit
+.I @FRIENDLY_NAME@
+\- https://@PRODUCT_DOMAIN@

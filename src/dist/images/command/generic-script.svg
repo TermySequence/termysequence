@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg249" width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <defs id="defs3">
+  <linearGradient id="linearGradient2193" x1="99.777" x2="153" y1="15.424" y2="248.63" gradientTransform="matrix(.20068 0 0 .20068 25.333 3.1574)" gradientUnits="userSpaceOnUse">
+   <stop id="stop53300" stop-color="#464646" offset="0"/>
+   <stop id="stop53302" stop-color="#cdcdcd" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3088" x1="44.593" x2="65.863" y1="9.9125" y2="43.317" gradientUnits="userSpaceOnUse">
+   <stop id="stop3084" stop-color="#fff" offset="0"/>
+   <stop id="stop3086" stop-color="#fff" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>Generic Script</dc:title>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>text</rdf:li>
+      <rdf:li>plaintext</rdf:li>
+      <rdf:li>regular</rdf:li>
+      <rdf:li>script</rdf:li>
+      <rdf:li>shell</rdf:li>
+      <rdf:li>bash</rdf:li>
+      <rdf:li>python</rdf:li>
+      <rdf:li>perl</rdf:li>
+      <rdf:li>php</rdf:li>
+      <rdf:li>ruby</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:source>http://jimmac.musichall.cz</dc:source>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer5" transform="matrix(1.0667 0 0 1.0667 0 48.8)">
+  <g id="g2186" transform="matrix(2.2411 -2.2377 2.2411 2.2377 -127.25 52.018)">
+   <path id="path53304" d="m50.205 47.405-19.911-19.911 19.911-19.911 19.911 19.911z" fill="url(#linearGradient2193)" stroke="#3e3e3e" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4208"/>
+   <path id="path53361" d="m34.845 31.353 0.73845-1.0242c0.63675 0.26849 1.3006 0.48507 1.9862 0.64488l-0.0058 1.5769c0.42773 0.08834 0.86301 0.15614 1.3041 0.20437l0.48177-1.5019c0.34404 0.02848 0.69176 0.04417 1.0434 0.04417 0.35121 0 0.69912-0.0155 1.0432-0.04417l0.48178 1.5019c0.44129-0.04824 0.87638-0.11604 1.3041-0.20437l-6e-3 -1.5771c0.68576-0.15962 1.3494-0.3762 1.9862-0.64469l0.92248 1.2795c0.40235-0.18209 0.79424-0.38259 1.1749-0.60052l-0.49282-1.498c0.59723-0.36225 1.1617-0.77332 1.6875-1.228l1.2721 0.93178c0.32564-0.29658 0.63733-0.60827 0.93372-0.93391l-0.93158-1.2719c0.45485-0.52575 0.86592-1.09 1.2282-1.6877l1.498 0.49301c0.21793-0.38085 0.41862-0.77293 0.60033-1.1751l-1.2793-0.92229c0.26849-0.63675 0.48507-1.3006 0.64508-1.9864l1.5767 0.0058c0.08834-0.42773 0.15614-0.86301 0.20418-1.3043l-1.5017-0.48177c0.02886-0.34385 0.04417-0.69176 0.04417-1.0432s-0.01569-0.69912-0.04417-1.0434l1.5017-0.48176c-0.047847-0.44109-0.11604-0.87618-0.20398-1.3041l-1.5771 6e-3c-0.15982-0.68576-0.37639-1.3496-0.64469-1.9862l1.2793-0.92229c-0.18171-0.40235-0.38259-0.79424-0.60014-1.1751l-1.4982 0.49301c-0.36225-0.59742-0.77332-1.1617-1.228-1.6873l0.93159-1.2721c-0.27837-0.30588-0.57108-0.598-0.87541-0.87812l-18.839 18.839 1.0069 1.0069 0.29871-0.21871c0.52575 0.45465 1.09 0.86572 1.6875 1.228l-0.24195 0.73516 1.1081 1.1081z" fill="#fff" opacity=".5"/>
+   <path id="path53363" d="m54.368 36.399c0-6.4847 4.2339-11.979 10.087-13.874l-2.227-2.2272c-0.01685 7e-3 -0.0339 0.01298-0.05056 0.02015l-0.18151-0.25183-1.412-1.412c-0.46318 0.2189-0.91667 0.45446-1.3593 0.70765l0.69409 2.1092c-0.84131 0.50967-1.6357 1.0887-2.3757 1.7287l-1.7911-1.3117c-0.45872 0.41746-0.8973 0.85604-1.3146 1.3146l1.3115 1.7909c-0.64004 0.7402-1.2189 1.5346-1.7287 2.3757l-2.1094-0.69409c-0.30665 0.5364-0.58909 1.0883-0.84499 1.6547l1.8012 1.2983c-0.37794 0.89633-0.68285 1.831-0.90776 2.7965l-2.22-0.0085c-0.12417 0.60227-0.21987 1.2152-0.28748 1.8361l2.1144 0.6784c-0.04029 0.48429-0.06199 0.97401-0.06199 1.4686 0 0.49475 0.0217 0.98447 0.06199 1.4688l-2.1144 0.67782c0.06761 0.62125 0.1633 1.234 0.28767 1.8362l2.2198-0.0083c0.22491 0.96549 0.52982 1.9002 0.90776 2.7965l-1.8012 1.2985c0.14238 0.31479 0.29387 0.62493 0.45214 0.93042l3.804-3.8036c-0.61602-1.6142-0.95425-3.3658-0.95425-5.1963l1.93e-4 -1.94e-4z" fill="#fff" opacity=".5"/>
+   <path id="path3078" d="m50.205 45.707-18.213-18.213 18.213-18.213 18.213 18.213z" fill="none" opacity=".52047" stroke="url(#linearGradient3088)" stroke-width="1.4208"/>
+  </g>
+ </g>
+</svg>

@@ -1,0 +1,74 @@
+# Copyright © 2018 TermySequence LLC
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+FIND_PACKAGE(Qt5 5.9.2 REQUIRED COMPONENTS Core Widgets Svg LinguistTools)
+FIND_PACKAGE(SQLite 3.8.0 REQUIRED)
+FIND_PACKAGE(V8 6.2.91 REQUIRED)
+FIND_PACKAGE(ZLIB 1.2.5 REQUIRED)
+IF (USE_FUSE)
+  FIND_PACKAGE(Fuse 3.1 REQUIRED)
+ENDIF()
+
+FILE(GLOB app_SOURCES app/*.cpp base/*.cpp settings/*.cpp)
+FILE(GLOB app_TR_SCAN app base settings cli ../mux/app ../mux/base ../mux/xterm ../lib)
+FILE(GLOB app_TR_TS i18n/*.ts)
+FILE(GLOB app_RESOURCES *.qrc)
+FILE(GLOB cli_SOURCES cli/*.cpp)
+
+IF (USE_SYSTEMD)
+  LIST(APPEND app_SOURCES setup/systemdsetup.cpp)
+ENDIF()
+
+INCLUDE_DIRECTORIES(BEFORE .)
+SET_DIRECTORY_PROPERTIES(PROPERTIES CLEAN_NO_CUSTOM true)
+
+SET(CMAKE_AUTOMOC ON)
+QT5_ADD_RESOURCES(app_RCC ${app_RESOURCES})
+SET_PROPERTY(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/qrc_resource.cpp PROPERTY SKIP_AUTOMOC ON)
+
+IF (MAINTAINER_MODE)
+  QT5_CREATE_TRANSLATION(app_TR_QM ${app_TR_SCAN} ${app_TR_TS} OPTIONS
+    -tr-function-alias QT_TRANSLATE_NOOP+=TN,QT_TRANSLATE_NOOP3+=T3,translate+=TL
+    -no-obsolete -locations none)
+ELSE()
+  QT5_ADD_TRANSLATION(app_TR_QM ${app_TR_TS})
+ENDIF()
+
+ADD_EXECUTABLE(${PIPE_NAME} ${cli_SOURCES})
+TARGET_LINK_LIBRARIES(${PIPE_NAME} os common Qt5::Core)
+
+IF (1)
+  SET(_target ${APP_NAME})
+  ADD_EXECUTABLE(${_target} ${app_SOURCES} ${app_RCC} ${app_TR_QM})
+
+  SET(_desktop ${APP_NAME}.desktop)
+  CONFIGURE_FILE(desktop.in ${_desktop}  @ONLY)
+  SET(_appdata ${APP_NAME}.appdata.xml)
+  CONFIGURE_FILE(appdata.in ${_appdata} @ONLY)
+
+  INSTALL(TARGETS ${_target} ${PIPE_NAME} DESTINATION bin)
+  INSTALL(DIRECTORY dist/ DESTINATION share/${APP_NAME})
+  INSTALL(FILES ${app_TR_QM} DESTINATION share/${APP_NAME}/i18n)
+  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_desktop} DESTINATION share/applications)
+  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_appdata} DESTINATION share/metainfo)
+  INSTALL(FILES icon${DEBUG_SUFFIX}.svg DESTINATION share/pixmaps RENAME ${APP_NAME}.svg)
+ENDIF()
+
+IF (USE_FUSE)
+  TARGET_LINK_LIBRARIES(${_target} l::Fuse)
+ENDIF()
+TARGET_LINK_LIBRARIES(${_target} os common
+  Qt5::Core Qt5::Widgets Qt5::Svg l::V8 l::SQLite ZLIB::ZLIB Threads::Threads)
+
+IF (NOT ${CMAKE_BUILD_TYPE} MATCHES "Debug")
+  TARGET_COMPILE_DEFINITIONS(${_target} PRIVATE QT_NO_DEBUG_OUTPUT)
+  TARGET_COMPILE_DEFINITIONS(${PIPE_NAME} PRIVATE QT_NO_DEBUG_OUTPUT)
+ENDIF()
+
+IF (MAINTAINER_MODE)
+  FILE(GLOB icontool_SOURCES icontool/*.cpp)
+  ADD_EXECUTABLE(${ICONTOOL_NAME} ${icontool_SOURCES})
+  TARGET_INCLUDE_DIRECTORIES(${ICONTOOL_NAME} BEFORE PRIVATE icontool)
+  TARGET_LINK_LIBRARIES(${ICONTOOL_NAME} Qt5::Core Qt5::Widgets)
+ENDIF()

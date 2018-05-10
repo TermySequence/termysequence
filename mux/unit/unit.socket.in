@@ -1,0 +1,11 @@
+[Unit]
+Description=@FRIENDLY_NAME@ Per-User Local Socket
+Documentation=man:@SERVER_NAME@(1) @DOCUMENTATION_ROOT@
+
+[Socket]
+ListenStream=@SERVER_XDG_DIR@@SOCKET_FILE@
+SocketMode=0600
+DirectoryMode=0700
+
+[Install]
+WantedBy=sockets.target

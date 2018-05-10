@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2018 TermySequence LLC -->
+<component type="desktop-application">
+  <id>@APP_NAME@</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0-only</project_license>
+  <name>@FRIENDLY_NAME@</name>
+  <summary>@FRIENDLY_NAME@ Terminal Emulator Client</summary>
+
+  <description>
+    <p>
+      @APP_NAME@
+      is a graphical multiplexing terminal emulator client implementing the
+      @FRIENDLY_NAME@
+      protocol using the
+      @SERVER_NAME@(1)
+      multiplexing terminal emulator server.
+      The emulator aims for XTerm compatibility and supports modern terminal extensions
+      such as 256-color text, mouse tracking, shell integration, and inline image
+      display. In addition, the
+      @FRIENDLY_NAME@
+      protocol provides many features beyond standard terminal
+      emulation, including flexible, efficient connectivity between servers,
+      file monitoring and transfer, and multi-user terminal sharing and collaboration.
+    </p>
+  </description>
+
+  <categories>
+    <category>System</category>
+    <category>TerminalEmulator</category>
+  </categories>
+
+  <launchable type="desktop-id">@APP_NAME@.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://@PRODUCT_DOMAIN@/_images/screenshot.png</image>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://@PRODUCT_DOMAIN@</url>
+  <developer_name>@ORG_NAME@</developer_name>
+</component>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg1709" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <title id="title857">TermySequence</title>
+ <defs id="defs1703">
+  <linearGradient id="linearGradient2362" x1="23.954" x2="99.79" y1="236.29" y2="278.52" gradientUnits="userSpaceOnUse">
+   <stop id="stop2358" stop-opacity="0" offset="0"/>
+   <stop id="stop2356" stop-color="#fff" stop-opacity=".26667" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient2376" x1="126.41" x2="249.68" y1="248.89" y2="316.76" gradientTransform="matrix(1.2477 0 0 1 -160.45 -14.919)" gradientUnits="userSpaceOnUse">
+   <stop id="stop2372" stop-color="#fff" stop-opacity="0" offset="0"/>
+   <stop id="stop2370" stop-color="#fff" offset="1"/>
+  </linearGradient>
+  <clipPath id="clipPath853">
+   <rect id="rect855" y="197" width="100" height="100" rx="20" ry="20" fill="#7f7f7f"/>
+  </clipPath>
+ </defs>
+ <metadata id="metadata1706">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>TermySequence</dc:title>
+    <cc:license rdf:resource="http://creativecommons.org/licenses/by/4.0/"/>
+    <dc:date>2018-01-20</dc:date>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Eamon Walsh</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:rights>
+     <cc:Agent>
+      <dc:title>Copyright © 2018 TermySequence LLC</dc:title>
+     </cc:Agent>
+    </dc:rights>
+    <dc:publisher>
+     <cc:Agent>
+      <dc:title>TermySequence LLC</dc:title>
+     </cc:Agent>
+    </dc:publisher>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/licenses/by/4.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:requires rdf:resource="http://creativecommons.org/ns#Notice"/>
+    <cc:requires rdf:resource="http://creativecommons.org/ns#Attribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(0,-197)">
+  <g id="g851" clip-path="url(#clipPath853)">
+   <rect id="rect2339" x="-7.1054e-15" y="197" width="100" height="100"/>
+   <rect id="rect6607" x="47.5" y="258.86" width="34" height="15" fill="#0e0"/>
+   <circle id="path6491-4" cx="50" cy="274.12" r="8.5" fill="#ff0"/>
+   <path id="path6584" d="m21.685 271.42 34.407-27.179-34.407-27.448v54.627" fill="#faf" fill-rule="evenodd" stroke="#faf" stroke-width="5.2155"/>
+   <circle id="path6491-1" cx="21" cy="274.12" r="8.5" fill="#ff0"/>
+   <circle id="path6491-7" cx="79" cy="274.12" r="8.5" fill="#ff0"/>
+   <path id="path2366" d="m0 197h84.68c-37.386 21.762-47.368 58.166-47.19 100h-37.49z" fill="url(#linearGradient2376)" fill-rule="evenodd"/>
+   <rect id="rect2339-6" y="197" width="100" height="100" fill="url(#linearGradient2362)"/>
+  </g>
+ </g>
+</svg>

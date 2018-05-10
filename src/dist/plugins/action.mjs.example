@@ -1,0 +1,244 @@
+// Copyright © 2018 TermySequence LLC
+// SPDX-License-Identifier: CC0-1.0
+// This file is free to build upon, enhance, and reuse, without restriction.
+
+//
+// An example custom action for use with the qtermy application.
+// Note: Reading from the bottom of the file up is recommended for better
+// understanding of the control flow within the plugin.
+//
+// See documentation at https://termysequence.io/doc/plugins/action.html
+//
+// To enable this plugin, remove the ".example" extension from the file.
+// To activate any custom action defined in this plugin, bind its name
+// prefixed with "Custom" in the keymap editor, and append any arguments
+// separated by | characters. For example, "CustomHello|world"
+//
+
+//
+// Function called by the application to execute the action.
+// The manager argument is an API handle used to access the application.
+// The remaining arguments are the supplemental arguments provided to the
+// action in the form of strings separated by | characters
+//
+
+// Simple hello notifier
+function helloHandler(manager, arg) {
+    var str = 'Hello, ' + arg + '!';
+    manager.notifySend('CustomHello', str);
+    console.log(str);
+}
+
+// Creates four terminals with different themes, arranges in quad split view
+function quadHandler(manager) {
+    var themeNames = [ "Default Light", "Default Dark",
+                       "Solarized Light", "Solarized Dark" ];
+
+    var server = manager.getActiveServer();
+    var profile = server.getDefaultProfile();
+    var themes = manager.listThemes();
+    var terminals = [];
+
+    for (var term of manager.listTerminals())
+        if (term.getPrivateData('isRainbowTerm'))
+            terminals.push(term);
+
+    while (terminals.length < 4) {
+        var overrides = { 'theme' : themes.get(themeNames[terminals.length]) };
+        var term = manager.createTerminal(server, profile, overrides);
+        term.setPrivateData('isRainbowTerm', 1);
+        terminals.push(term);
+    }
+
+    if (manager.listPanes().length != 4) {
+        manager.invoke('SplitViewCloseOthers');
+        manager.invoke('SplitViewQuadFixed');
+    }
+
+    for (var i = 0; i < 4; ++i) {
+        manager.invoke('SwitchTerminal', terminals[i].id, i);
+    }
+}
+
+// Updates terminal text color based on the server's load average
+function loadavgCallback(server, value /*, key */) {
+    // Check inputs
+    if (value == undefined)
+        return true; // attribute not present
+    if (!this._terminal.isValid())
+        return false; // terminal was removed
+
+    // Parse the loadavg variable
+    var fields = value.split(' ');
+    var cores = parseInt(fields[3], 10);
+    if (isNaN(cores) || cores < 1)
+        cores = 1;
+    var avg = parseFloat(fields[0]);
+    if (isNaN(avg) || avg < 0)
+        avg = 0;
+
+    // Compute custom foreground color
+    avg = Math.round(avg * 510 / cores);
+    if (avg > 510)
+        avg = 510;
+    var red = (avg >= 255) ? 255 : avg;
+    var green = (avg <= 255) ? 255 : (510 - avg);
+
+    this._terminal.palette[260] = (red << 16) | (green << 8);
+    return true;
+}
+
+function loadavgHandler(manager) {
+    var terminal = manager.getActiveTerminal();
+    var server = terminal.getServer();
+
+    // Check if a monitor has already been launched on this terminal
+    var monitor = terminal.getPrivateData('loadavgMonitor');
+    if (!monitor) {
+        // Monitor for changes to the server's load average variable
+        monitor = new Object();
+        monitor.callback = loadavgCallback;
+        monitor._terminal = terminal;
+        server.setAttributeNotifier(monitor, 'loadavg', 18600); // 31m timeout
+        terminal.setPrivateData('loadavgMonitor', monitor);
+
+        // Disable all special colors and dircolors in the terminal palette
+        // Set the terminal colors to white on black
+        // Set the terminal badge to track the server's load average variable
+        var palette = new Array();
+        for (var i = 256; i < 300; ++i)
+            palette[i] = 0x1000000;
+        palette[260] = 0xffffff;
+        palette[261] = 0;
+        palette.dircolors = 'rs=0';
+
+        terminal.palette = palette;
+        terminal.badge = '\\(server.loadavg)';
+    }
+
+    // Tell the server's monitor to start reporting load average
+    manager.invoke('SendMonitorInput', server.id, 'loadavg');
+    // Run callback immediately
+    monitor.callback(server, server.getAttribute('loadavg'));
+}
+
+// Start and stop a timer
+var globalTimer = new Object();
+globalTimer.callback = function() {
+    console.log('testTimer: ' + this._count);
+    ++this._count;
+};
+globalTimer._count = 0;
+
+function testTimerHandler(manager, arg)
+{
+    if (parseInt(arg) == 1) {
+        globalTimer._handle = manager.setInterval(globalTimer, 10);
+    } else if (globalTimer._handle) {
+        globalTimer._handle.cancel();
+        globalTimer._handle = null;
+    }
+}
+
+// Find and select the first occurrence of text after the existing
+// selection (if present) or in the viewport
+function findSelectHandler(manager, arg)
+{
+    if (!arg) {
+        var prompt = new Object();
+        prompt.callback = findSelectHandler;
+        manager.prompt(prompt, 'Enter search string');
+    } else {
+        var viewport = manager.getActiveViewport();
+        var selection = viewport.getSelection();
+        var cursor = selection ? selection.getEnd() : viewport.getStart();
+        var offset = cursor.offset;
+
+        while (cursor.row < viewport.rows.length) {
+            if ((offset = cursor.text.indexOf(arg, offset)) != -1) {
+                cursor.moveToOffset(offset);
+                var cursor2 = cursor.clone().moveByOffset(arg.length);
+                viewport.createSelection(cursor, cursor2);
+                // viewport.createFlash(cursor, cursor2);
+                // viewport.getTerminal().createNote(cursor, cursor2);
+                // viewport.getTerminal().createRegion(cursor, cursor2);
+                break;
+            }
+            cursor.moveByRows(1);
+            offset = 0;
+        }
+    }
+}
+
+// Select the word under the mouse cursor
+function mouseSelectHandler(manager)
+{
+    var viewport = manager.getActiveViewport();
+    var cursor = viewport.getMousePosition();
+    var text = cursor.text;
+    var start = cursor.offset, end = start;
+
+    while (start > 0) {
+        if (text.charAt(start - 1) == ' ')
+            break;
+        else
+            --start;
+    }
+    while (end < text.length) {
+        if (text.charAt(end) == ' ')
+            break;
+        else
+            ++end;
+    }
+
+    cursor.moveToOffset(start);
+    var cursor2 = cursor.clone().moveToOffset(end);
+
+    viewport.createSelection(cursor, cursor2);
+    // viewport.createFlash(cursor, cursor2);
+    // viewport.getTerminal().createNote(cursor, cursor2);
+
+    // Write the selected word to a file
+    /*
+    var fh = plugin.createOutputFile('word.txt');
+    fh.print(text.substr(start, end - start));
+    fh.close();
+    console.log('Wrote ' + fh.path);
+    */
+}
+
+//
+// If necessary, the plugin API major and minor versions can be checked.
+//
+if (plugin.majorVersion != 1) {
+    throw new Error("unsupported API version");
+}
+
+//
+// Set some information about this plugin.
+// This will be visible in the Manage Plugins dialog within the application.
+//
+plugin.pluginName = 'ExampleActionPlugin';
+plugin.pluginDescription = 'A custom action demonstration';
+plugin.pluginVersion = '1.0';
+
+//
+// Register the action with the application. The first argument is
+// the API version requested, currently 1. The second argument is the
+// name of the action to register, which will be prefixed with 'Custom'
+// The third argument is the execution function, defined above.
+// Throws an exception if the action name is already registered.
+// Note: new actions can only be registered in the global scope.
+//
+plugin.registerCustomAction(1, 'Hello', helloHandler,
+                            'A Hello World custom action');
+plugin.registerCustomAction(1, 'QuadRainbow', quadHandler,
+                            'Quad-split terminals with different themes');
+plugin.registerCustomAction(1, 'LoadavgText', loadavgHandler,
+                            'Update terminal text color based on server load average');
+plugin.registerCustomAction(1, 'TestTimer', testTimerHandler,
+                            'Start and stop a timer which prints log messages');
+plugin.registerCustomAction(1, 'FindAndSelect', findSelectHandler,
+                           'Find and select a search string in the viewport');
+plugin.registerCustomAction(1, 'MouseSelect', mouseSelectHandler,
+                           'Select the word under the mouse cursor');

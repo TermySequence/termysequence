@@ -1,0 +1,15 @@
+#!/bin/sh
+# Copyright © 2018 TermySequence LLC
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+if [ "$1" = "--help" ]; then
+    echo "Usage: @ABBREV_NAME@-sudo [sudo options]" 1>&2
+    exit 1
+fi
+if [ "$1" = "--version" ]; then
+    echo "@ABBREV_NAME@-sudo @PROJECT_VERSION@"
+    exit
+fi
+
+exec @CONNECT_NAME@ -- sudo "$@" -Si @SERVER_NAME@

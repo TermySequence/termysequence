@@ -1,0 +1,180 @@
+#!/bin/bash
+# Copyright © 2018 TermySequence LLC
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+usage () {
+    echo "Usage: @SYSTEMD_SETUP_NAME@ [options]"
+    echo
+    echo "Set up @SERVER_NAME@ as a systemd user service."
+    echo
+    echo "Options:"
+    echo "  --server-pid <pid> PID of currently running server"
+    echo "  --enable-linger Just enable long-running services"
+    echo "  --man Launch man page"
+    echo "  --version Print version information"
+}
+
+failure () {
+    echo
+    if [ $1 -eq 0 ]; then
+        echo "Setup stopped."
+    else
+        echo "Setup failed."
+    fi
+    echo "Retry setup at any time by running @SYSTEMD_SETUP_NAME@"
+    echo
+    echo "Press enter to exit..."
+    read
+    exit $1
+}
+
+enable_linger () {
+    if [ "$XDG_SESSION_ID" ]; then
+        loginctl enable-linger
+        exit $?
+    else
+        echo "Error: XDG_SESSION_ID not set" 1>&2
+        echo "Please run this command from within a desktop, ssh, or machinectl login session managed by systemd-logind" 1>&2
+        echo "Note: @FRIENDLY_NAME@ terminals on the persistent user server won't work, use the transient local server instead" 1>&2
+        exit 1
+    fi
+}
+
+if [ "$1" ]; then
+    case "$1" in
+        --help)
+            usage
+            exit 0
+            ;;
+        --version)
+            echo @PROJECT_VERSION@
+            exit 0
+            ;;
+        --man)
+            exec man @SYSTEMD_SETUP_NAME@
+            ;;
+        --server-pid)
+            server_pid=$2
+            ;;
+        --enable-linger | enable-linger)
+            enable_linger
+            ;;
+        *)
+            echo "Unknown argument $1" 1>&2
+            exit 1
+            ;;
+    esac
+fi
+
+echo
+echo "This is @SYSTEMD_SETUP_NAME@, version @PROJECT_VERSION@"
+
+#
+##
+### Step 1
+##
+#
+echo
+echo "Step 1: Enable systemd user service"
+echo
+echo "    The following commands will be run:"
+echo "        systemctl --user enable @SERVER_NAME@.socket"
+echo "        systemctl --user start @SERVER_NAME@.socket"
+echo
+
+if ! read -p "Proceed to run these commands? (y/n) [y] "; then exit 2; fi
+if [ "${REPLY:-y}" != y -a "${REPLY:-y}" != Y ]; then failure 0; fi
+
+systemctl --user enable @SERVER_NAME@.socket || failure 1
+systemctl --user start @SERVER_NAME@.socket || failure 1
+
+echo
+echo "Success."
+
+#
+##
+### Step 2
+##
+#
+echo
+echo "Step 2: Enable long-running services"
+echo
+
+if [ "$XDG_SESSION_ID" ]
+then
+    echo "Note: this may prompt for a password"
+    echo
+    echo "    The following command will be run:"
+    echo "        loginctl enable-linger"
+    echo
+
+    if ! read -p "Proceed to run this command? (y/n) [y] "; then exit 2; fi
+    if [ "${REPLY:-y}" != y -a "${REPLY:-y}" != Y ]; then failure 0; fi
+
+    if loginctl enable-linger; then
+        echo
+        echo "Success."
+    else
+        echo
+        echo "That didn't work, but we'll proceed anyway."
+        loginfail=1
+    fi
+else
+    echo "    Skipping this step because XDG_SESSION_ID is not set"
+    loginfail=1
+fi
+
+if [ "$loginfail" ]; then
+    echo
+    echo "    Please run the following command at a later time:"
+    echo "        @SYSTEMD_SETUP_NAME@ --enable-linger"
+    echo
+    echo "Press enter to continue..."
+    read || exit 127
+fi
+
+#
+##
+### Step 3
+##
+#
+echo
+echo "Step 3: Stop existing @SERVER_NAME@"
+echo
+
+pidfile="/tmp/@SERVER_NAME@$UID/pid"
+if [ -z "$server_pid" -a -f $pidfile ]; then
+    server_pid=$(<$pidfile)
+fi
+
+numre='^[0-9]+$'
+if [[ "$server_pid" =~ $numre ]]
+then
+    echo -e "\033[1mImportant\033[m:"
+    echo "    - Terminals on the existing server will be lost."
+    if [ "$@ENV_NAME@" ]; then
+        echo "    - The application may report that a connection has been lost."
+        echo -ne "      \033[1mThis is normal\033[m. "
+        echo "Close and restart the application to proceed."
+    fi
+    echo
+    echo "    The following command will be run:"
+    echo "        kill $server_pid"
+    echo
+
+    if ! read -p "Proceed to run this command? (y/n) [y] "; then exit 2; fi
+    if [ "${REPLY:-y}" != y -a "${REPLY:-y}" != Y ]; then failure 0; fi
+
+    kill $server_pid || failure 1
+
+    echo
+    echo "Success."
+else
+    echo "    No existing instance of @SERVER_NAME@ found"
+fi
+
+echo
+echo "Setup finished! Press enter to exit..."
+read
+exit 0

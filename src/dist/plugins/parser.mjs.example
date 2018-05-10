@@ -1,0 +1,216 @@
+// Copyright © 2018 TermySequence LLC
+// SPDX-License-Identifier: CC0-1.0
+// This file is free to build upon, enhance, and reuse, without restriction.
+
+//
+// An example semantic parser for use with the qtermy application.
+// Note: Reading from the bottom of the file up is recommended for better
+// understanding of the control flow within the plugin.
+//
+// See documentation at https://termysequence.io/doc/plugins/parser.html
+//
+// To enable this plugin, remove the ".example" extension from the file.
+// To activate the parser, run "echo Hello" with shell integration enabled.
+//
+
+//
+// A wrapper object for parameters passed to the createRegion function below.
+// In simple cases, this could be implemented as a simple map rather than
+// a class as done here.
+//
+function ExampleRegionParams(regionid) {
+    // Icon from the "semantic" class, loaded from
+    // /usr/share/qtermy/images/semantic/ or the user's
+    // $HOME/.local/share/qtermy/images/semantic/
+    this.icon = 'link';
+
+    // Data to use when dragging the region.
+    // A map of MIME types to data.
+    // Note: all data must be textual, as it will be parsed as UTF-8.
+    this.drag = { 'text/uri-list':'https://termysequence.io',
+                  'text/plain':'https://termysequence.io' };
+
+    // URI associated with the region, use file:// for local file paths.
+    this.uri = 'https://termysequence.io';
+
+    // Action triggered on double-click
+    this.action1 = 'OpenDesktopUrl|https://termysequence.io';
+
+    // The region's tooltip
+    this.tooltip = 'Try double-clicking, right-clicking, or dragging me!';
+
+    // Description of the context menu for the region.
+    // A list of menu items, where each menu item is a list containing:
+    // 0. Flags: 1 for menu item, 0 for separator
+    // 1. Item action, identical to the actions available through the keymap,
+    //    with any parameters delimited by | characters
+    // 2. Item menu text
+    // 3. Item icon name, loaded from system theme
+    // 4. Item tooltip
+    this.menu = [
+        [ 1, 'WriteFilePath|Hello', 'Say Hello', 'paste',
+          'Write a Hello to the current terminal' ],
+        [ 1, 'RunCommand||sleep 30', 'Go to Sleep', 'execute',
+          'Run a sleep command on the current server' ],
+        [ 1, 'ScrollRegionRelative|' + regionid + '|-100', 'Move on Up',
+          'scroll-page-up', 'Scroll up 100 rows' ],
+
+        [ 0 ],
+
+        [ 1, 'CloneTerminal', 'Open a Terminal', 'new-terminal',
+          'Clone the current terminal' ],
+        [ 1, 'RandomTerminalTheme', 'Random Color Theme', 'random-theme',
+          'Use a random color theme in the current terminal' ],
+        [ 1, 'IncreaseFont', 'Increase Font Size', 'increase-font',
+          'Increase the font size in the current terminal' ],
+
+        [ 0 ],
+
+        [ 1, 'EventLog', 'Show Event Log', 'event-log',
+          'Show the application event log!' ],
+    ];
+}
+
+//
+// Method called by the application on the parser object when a line of command
+// output is ready to be parsed. Lines will be passed to this function in
+// ascending order. A single line may occupy more than one terminal row due to
+// line wrapping. The startrow and endrow arguments specify the bounds of the
+// line. The context argument has methods used to create new semantic regions.
+//
+function process(context, text, startrow, endrow) {
+    if (text == 'Hello') {
+        //
+        // Pass the desired start and end character offsets of the region,
+        // and an object containing parameters for the new region (see above).
+        // The region will be created in the current line.
+        //
+        context.createRegion(0, 5, new ExampleRegionParams(this.id));
+        //
+        // Pass the desired starting row and starting character offset,
+        // ending row and ending character offset,
+        // and an object containing parameters for the new region (see above).
+        // Note: only row numbers given as the startrow argument to the process
+        // method should be passed to this method.
+        //
+        // context.createRegionAt(startrow, 0, startrow, 5,
+        //                        new ExampleRegionParams(this.id));
+    }
+
+    // Return false to stop processing the current command
+    return true;
+}
+
+//
+// Method called by the application on the parser object after all lines
+// of command output have been processed. Note regions can be created
+// from this method, but only by using the createRegionAt method.
+// The nrows argument is the same as that passed to the start method.
+//
+function finish(context, nrows) {
+
+    // Print a log message that will appear in the application event log
+    // This can be called from anywhere in the plugin code
+    console.log('Finished processing a hello command in ' + this.cmddir);
+}
+
+//
+// Method called by the application on the parser object before parsing begins.
+// The exitcode argument is the exit status of the command.
+// The nrows argument is the size of the output region, in terminal rows
+// (but there may be fewer lines of text due to line wrapping, see the process
+// method above). Context is reserved for future use and should be ignored.
+//
+function start(context, exitcode, nrows) {
+
+    // Print a log message that will appear in the application event log
+    // This can be called from anywhere in the plugin code
+    console.log('Started processing a hello command on host ' + this.hostname);
+
+    // Return false to stop processing the current command.
+    return (exitcode == 0);
+}
+
+//
+// The parser object returned from the match function below.
+// An instance of this object is created for each command that is matched.
+// Contains methods called by the application when parsing the command output,
+// along with any state that the parser needs, such as the current directory
+// of the command.
+//
+function ExampleParser(cmddir, regionid, hostname) {
+    // Saved state that the parser will be using
+    this.cmddir = cmddir;
+    this.id = regionid;
+    this.hostname = hostname;
+
+    // Methods called by the application, defined above
+    this.start = start;
+    this.process = process;
+    this.finish = finish;
+}
+
+//
+// Function called by the application to match the command line.
+// If the command line matches, return a parser object containing methods
+// that will be used to parse the command output and create semantic regions.
+// Otherwise, return null.
+// The context argument has methods used to find out more information
+// about the command, terminal, and server. This information can be
+// saved in the returned parser object for later use.
+//
+function match(context, cmdline, cmddir) {
+
+    // Get the ID of the command region
+    var regionid = context.getJobId();
+    // Get the hostname of the server where the command is running
+    var hostname = context.getServerAttribute('host');
+
+    if (cmdline == 'echo Hello') {
+        return new ExampleParser(cmddir, regionid, hostname);
+    } else {
+        return null;
+    }
+
+    // More examples of retrieving information:
+    // Get the ID of the terminal where the command is running
+    var termid = context.getTerminalId();
+    // Get the server's IP address (as determined by the remote monitor;
+    // refer to termy-monitor(1))
+    var serverid = context.getServerAttribute('name');
+    // Get the directory where the command is running
+    var path = context.getJobAttribute('path');
+}
+
+//
+// If necessary, the plugin API major and minor versions can be checked.
+//
+if (plugin.majorVersion != 1) {
+    throw new Error("unsupported API version");
+}
+
+//
+// Set some information about this plugin.
+// This will be visible in the Manage Plugins dialog within the application.
+//
+plugin.pluginName = 'ExampleParserPlugin';
+plugin.pluginDescription = 'A semantic parser demonstration';
+plugin.pluginVersion = '1.0';
+
+//
+// Register the parser with the application. The first argument is
+// the API version requested, currently 1. The second argument is the
+// name of the parser (more than one parser can be created per plugin).
+// The third argument is the matching function, defined above.
+// Note: new parsers can only be registered in the global scope.
+//
+plugin.registerSemanticParser(1, 'HelloParser', match);
+
+//
+// The standard parser waits until all rows of output have finished downloading
+// and the exit status is available. An alternate "fast" mode is available
+// in which rows will be handed to the process method as soon as they arrive.
+// In this mode, the start method will not be called.
+//
+// plugin.registerSematicParser(1, 'FastHelloParser', otherMatch, 1);
+//

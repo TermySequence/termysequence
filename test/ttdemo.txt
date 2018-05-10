@@ -1,0 +1,76 @@
+Character attributes
+(10)
+(13)
+[31;42m
+color
+[34;47m
+color
+[34;107m
+color
+[35;49m
+color
+(10)
+(13)
+[0;4m
+underline
+[0;1m
+bold
+[0;5m
+blink
+[m
+(10)
+(13)
+(10)
+(13)
+
+Double-width text:
+(10)
+(13)
+
+Hello
+(10)
+Hello
+(10)
+Hello
+(10)
+
+(13)
+[3A
+*#6
+[B
+*#3
+[B
+*#4
+[B
+(10)
+(13)
+
+Color query:
+(10)
+(13)
+-
+]10;?;?;?
+*\
+]4;20;?;200;?;99;?;101;?
+(7)
+<
++
+(10)
+(13)
+
+Clipboard getting and setting
+(10)
+(13)
+]52;p;SGVsbG8hISE=
+*\
+-
+]52;p;?
+*\
+<
++
+(10)
+(13)
+
+# Top and bottom margins:
+# [1;10r
+# [r

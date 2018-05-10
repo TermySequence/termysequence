@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg11300" width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <defs id="defs3">
+  <linearGradient id="linearGradient4307" x1="8.9156" x2="9.8855" y1="37.197" y2="52.091" gradientTransform="matrix(6.7031 0 0 2.0808 -72.687 -89.317)" gradientUnits="userSpaceOnUse">
+   <stop id="stop2154" stop-color="#9aa29a" offset="0"/>
+   <stop id="stop2156" stop-color="#b5beb5" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient4309" cx="11.329" cy="10.584" r="15.532" gradientTransform="matrix(2.9132 0 0 2.9132 -.46518 -48.33)" gradientUnits="userSpaceOnUse">
+   <stop id="stop10655" stop-color="#f3f4ff" offset="0"/>
+   <stop id="stop10657" stop-color="#9193af" offset="1"/>
+  </radialGradient>
+  <radialGradient id="radialGradient4311" cx="11.902" cy="10.045" r="29.293" gradientTransform="matrix(2.4973 0 0 2.4973 6.09 -41.31)" gradientUnits="userSpaceOnUse">
+   <stop id="stop2147" stop-color="#fffffd" offset="0"/>
+   <stop id="stop2149" stop-color="#cbcbc9" offset="1"/>
+  </radialGradient>
+  <linearGradient id="linearGradient4313" x1="6.3422" x2="22.218" y1="7.7893" y2="25.884" gradientTransform="matrix(2.4973 0 0 2.4973 6.09 -41.31)" gradientUnits="userSpaceOnUse">
+   <stop id="stop42176" stop-color="#a0a0a0" offset="0"/>
+   <stop id="stop42178" stop-color="#fff" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient5202" cx="23.375" cy="10.973" r="3.3478" gradientTransform="matrix(13.788 0 0 14.212 -274.31 -154.66)" gradientUnits="userSpaceOnUse">
+   <stop id="stop5198" stop-color="#c4a000" offset="0"/>
+   <stop id="stop5200" stop-color="#c4a000" stop-opacity="0" offset="1"/>
+  </radialGradient>
+  <linearGradient id="linearGradient5210" x1="19.667" x2="20.33" y1="4.2571" y2="5.2846" gradientTransform="matrix(3.7979 0 0 3.7979 -40.793 -43.814)" gradientUnits="userSpaceOnUse">
+   <stop id="stop5206" stop-color="#c4a000" offset="0"/>
+   <stop id="stop5208" stop-color="#c4a000" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient5212" cx="8.7468" cy="6.8283" r="29.89" gradientTransform="matrix(3.0718 0 0 3.0718 -3.0411 -50.821)" gradientUnits="userSpaceOnUse">
+   <stop id="stop37937" stop-color="#9497b3" offset="0"/>
+   <stop id="stop37939" stop-color="#4c4059" offset="1"/>
+  </radialGradient>
+ </defs>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:source>http://jimmac.musichall.cz</dc:source>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+    <dc:title/>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>appointment</rdf:li>
+      <rdf:li>new</rdf:li>
+      <rdf:li>meeting</rdf:li>
+      <rdf:li>rvsp</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="matrix(1.0667 0 0 1.0667 0 48.8)">
+  <path id="path14341" d="m35.622-44.258-30.815 35.819 2.7009 2.6676z" color="#000000" fill="url(#linearGradient4307)" fill-rule="evenodd"/>
+  <path id="path18921" d="m35.364-44.451-27.48 38.107 3.9258 3.4661z" fill="#fefefe" fill-rule="evenodd"/>
+  <circle id="path27786" cx="46.875" cy="1.125" r="45.802" fill="url(#radialGradient5212)" fill-rule="evenodd" stroke="#605773" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1458"/>
+  <circle id="path35549" cx="46.672" cy=".92184" r="37.237" fill="url(#radialGradient4311)" fill-rule="evenodd" stroke="url(#linearGradient4313)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7766"/>
+  <path id="path4120" d="m22.554-18.6a32.282 32.282 0 0 1 25.269 -12.395l0.16069 32.282z" color="#000000" fill="url(#radialGradient5202)" fill-rule="evenodd" stroke="url(#linearGradient5210)" stroke-width="2.1458"/>
+  <circle id="path34778" cx="47.618" cy="1.4227" r="5.422" fill="#f3f3f3" fill-rule="evenodd" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1458"/>
+  <path id="path35559" d="m43.323-2.8137-19.357-16.26" fill="none" stroke="#000" stroke-linecap="round" stroke-width="2.1458"/>
+  <path id="path35561" d="m37.384 16.624 6.3516-9.6416" fill="none" stroke="#000" stroke-linecap="round" stroke-width="4.2916"/>
+  <circle id="path35563" cx="46.443" cy="-28.509" r="3.6503" fill="#b6b9b1" fill-rule="evenodd"/>
+  <circle id="path35565" cx="46.443" cy="29.896" r="3.6503" fill="#b6b9b1" fill-rule="evenodd"/>
+  <circle id="path35567" cx="17.241" cy=".69313" r="3.6503" fill="#b6b9b1" fill-rule="evenodd"/>
+  <circle id="path35569" cx="75.646" cy=".69313" r="3.6503" fill="#b6b9b1" fill-rule="evenodd"/>
+  <ellipse id="path10651" cx="46.875" cy=".93531" rx="43.438" ry="43.438" fill="none" stroke="url(#radialGradient4309)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1458"/>
+ </g>
+</svg>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg11300" width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs id="defs3">
+  <linearGradient id="linearGradient11494">
+   <stop id="stop11496" stop-color="#ef2929" offset="0"/>
+   <stop id="stop11498" stop-color="#ef2929" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient1352" cx="27.577" cy="16.049" r="3.8335" gradientTransform="matrix(6.7633 0 0 6.7633 -138.89 -119.66)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient11494"/>
+  <radialGradient id="radialGradient1354" cx="27.577" cy="15.048" r="3.8335" gradientTransform="matrix(13.223 0 0 13.223 -317.02 -235.75)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient11494"/>
+  <radialGradient id="radialGradient1356" cx="30.204" cy="44.565" r="6.566" gradientTransform="matrix(3.5794 0 0 1.2115 -59.753 -20.177)" gradientUnits="userSpaceOnUse">
+   <stop id="stop11510" offset="0"/>
+   <stop id="stop11512" stop-opacity="0" offset="1"/>
+  </radialGradient>
+  <radialGradient id="radialGradient1366" cx="24.446" cy="35.878" r="20.531" gradientTransform="matrix(4.555 0 0 4.555 -64.475 -134.16)" gradientUnits="userSpaceOnUse">
+   <stop id="stop11522" stop-color="#fff" offset="0"/>
+   <stop id="stop11524" stop-color="#dcdcdc" offset="1"/>
+  </radialGradient>
+ </defs>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:source>http://jimmac.musichall.cz</dc:source>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+    <dc:title/>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="matrix(1.0667 0 0 1.0667 0 48.8)">
+  <rect id="rect11518" x="1.1416" y="-44.608" width="91.467" height="91.467" rx="12.454" ry="12.454" color="#000000" fill="url(#radialGradient1366)" fill-rule="evenodd" stroke="#9b9b9b" stroke-linejoin="bevel" stroke-miterlimit="10" stroke-width="2.2831"/>
+  <path id="path11486" d="m37.238 36.288 10.491-33.325 12.137 33.325" color="#000000" fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="2.2831"/>
+  <ellipse id="path11482" cx="47.627" cy="1.8952" rx="5.2455" ry="5.2455" color="#000000" fill="#ef2929" fill-rule="evenodd"/>
+  <circle id="path11488" cx="47.627" cy="1.8951" r="18.131" color="#000000" fill="none" stroke="url(#radialGradient1352)" stroke-miterlimit="10" stroke-width="6.4251"/>
+  <circle id="path11490" cx="47.626" cy="1.8951" r="35.448" color="#000000" fill="none" stroke="url(#radialGradient1354)" stroke-miterlimit="10" stroke-width="6.4251"/>
+  <ellipse id="path11506" cx="48.357" cy="33.813" rx="23.502" ry="7.9546" color="#000000" fill="url(#radialGradient1356)" fill-rule="evenodd" opacity=".17647"/>
+  <path id="path11516" d="m45.428 12.581 6.6381 1.9524-9.762 6.6381 13.276 3.5143-16.4 6.6381 19.524 1.9524" color="#000000" fill="none" stroke="#000" stroke-linejoin="bevel" stroke-miterlimit="10" stroke-width="2.2831"/>
+ </g>
+</svg>

@@ -1,0 +1,8 @@
+[Command]
+Command=libreoffice, libreoffice, %U
+
+[Launcher]
+DisplayIcon=libreoffice
+LaunchType=1
+MountType=1
+UnmountIdleTime=0

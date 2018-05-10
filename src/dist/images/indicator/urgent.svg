@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg7854" width="100" height="100" version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs id="defs7856">
+  <linearGradient id="linearGradient5221" x1="29.456" x2="28.444" y1="43.948" y2="15.222" gradientTransform="matrix(2.489,0,0,2.489,-9.8542,-59.248)" gradientUnits="userSpaceOnUse">
+   <stop id="stop5207" stop-color="#f56e6e" offset="0"/>
+   <stop id="stop5209" stop-color="#ff2929" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient5229" x1="24" x2="26.878" y1="10.619" y2="70.744" gradientUnits="userSpaceOnUse">
+   <stop id="stop5225" stop-color="#fff" offset="0"/>
+   <stop id="stop5227" stop-color="#fff" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient5245" cx="17.125" cy="23.839" r="2" gradientTransform="matrix(-4.8005e-7,-15.822,7.3407,-5.8748e-7,-150.99,303.01)" gradientUnits="userSpaceOnUse">
+   <stop id="stop5241" stop-color="#fff" offset="0"/>
+   <stop id="stop5243" stop-color="#fff" stop-opacity="0" offset="1"/>
+  </radialGradient>
+ </defs>
+ <metadata id="metadata7859">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:source>http://jimmac.musichall.cz</dc:source>
+    <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+    <dc:title/>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(0 46.803)">
+  <path id="path4547" d="m93.44 36.579h-87.116l43.558-77.16z" color="#000000" fill="url(#linearGradient5221)" stroke="#a40000" stroke-linecap="round" stroke-linejoin="round" stroke-width="12.445"/>
+  <path id="path5219" d="m49.84-39.879a1.0079 1.0079 0 0 0 -0.83398 0.50976l-43.559 77.158a1.0079 1.0079 0 0 0 0.87695 1.5039h87.115a1.0079 1.0079 0 0 0 0.87695 -1.5039l-43.557-77.158a1.0079 1.0079 0 0 0 -0.91992 -0.50976z" color="#000000" fill="none" opacity=".59639" stroke="url(#linearGradient5229)" stroke-linecap="round" stroke-linejoin="round" xlink:href="#path4547"/>
+  <g id="g5235" transform="matrix(2.489,0,0,2.489,-9.8542,-59.248)" fill="url(#radialGradient5245)">
+   <circle id="path5231" transform="matrix(.65196 0 0 .65196 9.1495 10.638)" cx="22.716" cy="31.295" r="3.0052" color="#000000"/>
+   <path id="path5233" d="m23 28h2l1-9h-4z" color="#000000"/>
+  </g>
+ </g>
+</svg>

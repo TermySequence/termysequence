@@ -1,0 +1,15 @@
+#!/bin/sh
+# Copyright © 2018 TermySequence LLC
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+if ([ "$1" = "--help" ] || [ $# -gt 1 ]); then
+    echo "Usage: @ABBREV_NAME@-su [user]" 1>&2
+    exit 1
+fi
+if [ "$1" = "--version" ]; then
+    echo "@ABBREV_NAME@-su @PROJECT_VERSION@"
+    exit
+fi
+
+exec @CONNECT_NAME@ -- su -l -c @SERVER_NAME@ "$@"

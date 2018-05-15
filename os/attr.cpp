@@ -324,7 +324,7 @@ fallbackUser(std::unordered_map<std::string,std::string> &map)
         if (uid == ent->pw_uid) {
             const char *ptr = ent->pw_gecos;
             const char *rs = strchr(ptr, ',');
-            int count = rs ? (ptr - rs) : strlen(ptr);
+            size_t count = rs ? (rs - ptr) : strlen(ptr);
 
             map.emplace(Tsq::attr_USER, ent->pw_name);
             map.emplace(Tsq::attr_USERFULL, std::string(ptr, count));

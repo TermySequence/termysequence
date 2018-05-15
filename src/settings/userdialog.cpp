@@ -70,18 +70,18 @@ UserDialog::populateInfo(int type, const QString &user, ConnectSettings *info)
 
     switch (type) {
     default:
-        command = QStringList({"/bin/sudo", "/bin/sudo", "-Si", "-u", user, SERVER_NAME});
+        command = QStringList({"sudo", "sudo", "-Si", "-u", user, SERVER_NAME});
         break;
     case Tsqt::ConnectionUserSu:
-        command = QStringList({"/bin/su", "/bin/su", "-l", "-c", SERVER_NAME, user});
+        command = QStringList({"su", "su", "-l", "-c", SERVER_NAME, user});
         break;
     case Tsqt::ConnectionUserMctl:
-        command = QStringList({"/bin/machinectl", "/bin/machinectl", "shell",
+        command = QStringList({"machinectl", "machinectl", "shell",
                     user + "@.host", "/bin/sh", "-c", SERVER_NAME});
         raw = false;
         break;
     case Tsqt::ConnectionUserPkexec:
-        command = QStringList({"/bin/pkexec", "/bin/pkexec", "--user", user, SERVER_NAME});
+        command = QStringList({"pkexec", "pkexec", "--user", user, SERVER_NAME});
         break;
     }
 

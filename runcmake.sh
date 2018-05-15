@@ -64,7 +64,7 @@ args+=("-DCMAKE_BUILD_TYPE=$BUILD_TYPE")
 if [ -d "$V8_HOME" ]; then
     args+=("-DV8_STATIC=1")
     args+=("-DCMAKE_INCLUDE_PATH=$V8_HOME/include")
-    args+=("-DCMAKE_LIBRARY_PATH=$V8_HOME/out/native")
+    args+=("-DCMAKE_LIBRARY_PATH=$V8_OUTPUT_DIR")
     # Refer to cmake/FindV8.cmake for V8 detection
     # Refer to src/app/main.cpp for V8 initialization
     args+=("-DV8_BLOB_DIR=$V8_BLOB_DIR")

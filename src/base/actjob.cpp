@@ -684,6 +684,7 @@ TermManager::actionDownloadFile(QString serverId, QString remotePath, QString lo
     if (localPath == g_str_PROMPT_PROFILE || !QFileInfo(localPath).isReadable())
     {
         auto *box = saveBox(TR_TEXT1, m_parent);
+        box->selectFile(tu.fileName());
         box->connect(result, SIGNAL(destroyed()), SLOT(deleteLater()));
         connect(box, &QDialog::accepted, this, [=]{
             postDownloadFile(result, remotePath, box->selectedFiles().value(0), true);

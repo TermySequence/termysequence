@@ -2,7 +2,6 @@
 .\" SPDX-License-Identifier: CC-BY-SA-4.0
 .\"
 .TH @SERVER_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
-.OS
 .SH NAME
 .B @SERVER_NAME@ \"m2rprog
 \- @FRIENDLY_NAME@ terminal multiplexer server

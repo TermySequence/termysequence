@@ -2,7 +2,6 @@
 .\" SPDX-License-Identifier: CC-BY-SA-4.0
 .\"
 .TH @CONNECT_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
-.OS
 .SH NAME
 .B @CONNECT_NAME@ \"m2rprog
 \- Establish connection between @FRIENDLY_NAME@ servers

@@ -2,7 +2,6 @@
 .\" SPDX-License-Identifier: CC-BY-SA-4.0
 .\"
 .TH @ABBREV_NAME@ctl 1 "March 2018" "@MAN_TRADENAME@"
-.OS
 .SH NAME
 .B @ABBREV_NAME@ctl \"m2rprog
 \- Set or clear @FRIENDLY_NAME@ session attributes

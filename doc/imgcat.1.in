@@ -1,4 +1,4 @@
 .\" Copyright © 2018 TermySequence LLC
 .\" SPDX-License-Identifier: CC-BY-SA-4.0
 .\"
-.so @ABBREV_NAME@-download@DEBUG_SUFFIX@.1
+.so man1/@ABBREV_NAME@-download@DEBUG_SUFFIX@.1

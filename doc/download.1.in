@@ -2,7 +2,6 @@
 .\" SPDX-License-Identifier: CC-BY-SA-4.0
 .\"
 .TH @ABBREV_NAME@-download 1 "March 2018" "@MAN_TRADENAME@"
-.OS
 .SH NAME
 .BR @ABBREV_NAME@-download , \"m2rprog
 .BR @ABBREV_NAME@-imgcat , \"m2rprog

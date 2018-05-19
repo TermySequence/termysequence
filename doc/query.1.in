@@ -2,7 +2,6 @@
 .\" SPDX-License-Identifier: CC-BY-SA-4.0
 .\"
 .TH @QUERY_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
-.OS
 .SH NAME
 .B @QUERY_NAME@ \"m2rprog
 \- Get, set, and clear @FRIENDLY_NAME@ attributes

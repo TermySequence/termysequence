@@ -2,7 +2,6 @@
 .\" SPDX-License-Identifier: CC-BY-SA-4.0
 .\"
 .TH @PIPE_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
-.OS
 .SH NAME
 .B @PIPE_NAME@ \"m2rprog
 \- send commands and pipe requests to a running

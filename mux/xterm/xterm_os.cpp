@@ -565,7 +565,7 @@ XTermEmulator::osc4(const string &str, int offset, int max)
 
         // Parse the spec
         if (colorSpec == "?") {
-            char buf[32];
+            char buf[40];
             color = (*m_palette)[num] & PALETTE_COLOR;
             snprintf(buf, sizeof(buf),
                      "\xc2\x9d""4;%ld;rgb:%04x/%04x/%04x%s", num,
@@ -891,7 +891,7 @@ XTermEmulator::osc1337File(string &str)
     AttributeMap attributes;
     contentid_t id;
     bool isinline = false;
-    long w, h;
+    long w = 0, h = 0;
 
     while (!params.empty()) {
         size_t pos = params.find('=');

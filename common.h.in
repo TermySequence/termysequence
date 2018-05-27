@@ -4,6 +4,9 @@
 
 #pragma once
 
+/* Features */
+#define _FILE_OFFSET_BITS 64
+
 /* Globally included headers */
 #ifdef __cplusplus
 #include <cstddef>

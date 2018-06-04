@@ -5,6 +5,9 @@
 #pragma once
 
 /* Features */
+#ifndef NDEBUG
+#cmakedefine NDEBUG
+#endif
 #define _FILE_OFFSET_BITS 64
 
 /* Globally included headers */

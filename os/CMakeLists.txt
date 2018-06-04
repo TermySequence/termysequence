@@ -2,13 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-only
 
-IF (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -flto -ffat-lto-objects")
-  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -flto -ffat-lto-objects")
-  SET(CMAKE_AR "gcc-ar")
-  SET(CMAKE_RANLIB "gcc-ranlib")
-ENDIF()
-
 LIST(APPEND os_GLOBS *.cpp)
 
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -26,9 +19,12 @@ ENDIF()
 FILE(GLOB os_SOURCES ${os_GLOBS})
 
 ADD_LIBRARY(os STATIC ${os_SOURCES})
+LTO_LIBRARY(os)
 ADD_LIBRARY(osc STATIC ${osc_SOURCES})
+LTO_LIBRARY(osc)
 IF (USE_LIBGIT2)
   ADD_LIBRARY(dyngit STATIC dyn/git.c)
+  LTO_LIBRARY(dyngit)
 ENDIF()
 
 ADD_DEPENDENCIES(osc gitinfo)

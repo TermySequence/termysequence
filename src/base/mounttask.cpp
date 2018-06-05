@@ -4,7 +4,6 @@
 
 #include "common.h"
 #include "app/config.h"
-#include "app/fuseutil.h"
 #include "app/icons.h"
 #include "app/logging.h"
 #include "mounttask.h"
@@ -20,6 +19,8 @@
 #include <QUrl>
 #include <QMimeData>
 #include <unistd.h>
+
+#include "moc_mounttask.cpp"
 
 #define INITIALSIZE 8192
 #define HEADERSIZE 56

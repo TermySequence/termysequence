@@ -1,7 +1,10 @@
 INCLUDE(FindPackageHandleStandardArgs)
 
 # Use the bundled copy of UTF8-CPP
-SET(Utf8cpp_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/vendor/utf8cpp)
+FIND_PATH(Utf8cpp_INCLUDE_DIR
+  NAMES utf8.h
+  HINTS ${CMAKE_SOURCE_DIR}/vendor/utf8cpp
+  )
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Utf8cpp DEFAULT_MSG Utf8cpp_INCLUDE_DIR)
 

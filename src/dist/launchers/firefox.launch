@@ -4,5 +4,5 @@ Command=firefox, firefox, %u
 [Launcher]
 DisplayIcon=firefox
 LaunchType=1
-MountType=1
+MountType=2
 UnmountIdleTime=0

@@ -7,7 +7,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 CMAKE_POLICY(SET CMP0048 NEW)
 INCLUDE(GNUInstallDirs)
 
-PROJECT(termysequence VERSION 1.0.2)
+PROJECT(termysequence VERSION 1.0.3)
 
 OPTION(BUILD_SERVER "Build the server and monitor" ON)
 OPTION(BUILD_QTGUI "Build the Qt client" ON)

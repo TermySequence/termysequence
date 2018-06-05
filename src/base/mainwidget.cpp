@@ -95,10 +95,10 @@ MainWidget::replaceChild(SplitWidget *child, SplitWidget *replacement)
         m_split->setBase(this);
         m_split->setGeometry(rect());
         m_split->show();
+        m_split->takeFocus();
 
         child->hide();
         child->deleteLater();
-        m_split->takeFocus();
     }
 }
 

@@ -205,12 +205,14 @@ FixedWidget::handleSplitClose(SplitWidget *caller)
         widget = m_children.at(pos == 0);
         m_base->replaceChild(this, widget);
     } else {
-        widget = m_children.at(pos ? pos - 1 : 0);
-        delete m_children.at(pos);
+        widget = m_children.at(pos ? pos - 1 : 1);
+        widget->takeFocus();
+
         m_children.removeAt(pos);
         m_totalSize -= m_sizes.at(pos);
         m_sizes.removeAt(pos);
-        widget->takeFocus();
+        caller->hide();
+        caller->deleteLater();
 
         relayout();
     }
@@ -281,13 +283,12 @@ FixedWidget::replaceChild(SplitWidget *child, SplitWidget *replacement)
     replacement->setParent(this);
     replacement->setBase(this);
     replacement->show();
+    replacement->takeFocus();
 
     child->hide();
     child->deleteLater();
 
     relayout();
-
-    replacement->takeFocus();
 }
 
 void

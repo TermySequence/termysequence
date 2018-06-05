@@ -134,12 +134,13 @@ ResizeWidget::handleSplitClose(SplitWidget *caller)
     int pos = findWidget(m_splitter, caller);
 
     if (m_splitter->count() == 2) {
-        widget = m_splitter->widget(pos == 0 ? 1 : 0);
+        widget = m_splitter->widget(pos == 0);
         m_base->replaceChild(this, static_cast<SplitWidget*>(widget));
     } else {
-        widget = m_splitter->widget(pos ? pos - 1 : 0);
-        delete m_splitter->widget(pos);
+        widget = m_splitter->widget(pos ? pos - 1 : 1);
         static_cast<SplitWidget*>(widget)->takeFocus();
+        caller->hide();
+        caller->deleteLater();
     }
 }
 
@@ -204,15 +205,12 @@ void
 ResizeWidget::replaceChild(SplitWidget *child, SplitWidget *replacement)
 {
     int pos = findWidget(m_splitter, child);
-    QList<int> sizes = m_splitter->sizes();
 
     replacement->setBase(this);
-    m_splitter->insertWidget(pos, replacement);
-    delete child;
-
-    m_splitter->setSizes(sizes);
-
+    m_splitter->replaceWidget(pos, replacement);
     replacement->takeFocus();
+
+    child->deleteLater();
 }
 
 void

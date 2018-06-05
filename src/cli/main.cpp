@@ -25,7 +25,7 @@
 #define EXITCODE_SIGNAL         2
 #define EXITCODE_CONNECTERR     3
 
-#define XLATE_DIR L(PREFIX "/share/" APP_NAME "/i18n")
+#define XLATE_DIR L(DATADIR "/" APP_NAME "/i18n")
 const QString g_mtstr;
 
 static int

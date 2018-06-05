@@ -682,7 +682,7 @@ TermSettings::rescanLaunchers()
 
     // Also load launchers from the system dir
     // System data dir
-    QDir systemDir(L(PREFIX "/share/" APP_NAME "/launchers/"));
+    QDir systemDir(L(DATADIR "/" APP_NAME "/launchers/"));
     if (systemDir.exists()) {
         systemDir.setNameFilters(QStringList(L("*" LAUNCH_EXT)));
         systemDir.setFilter(QDir::Files|QDir::Readable);
@@ -1656,7 +1656,7 @@ TermSettings::rescanPlugins()
     m_pluginList.clear();
 
     QString userPath(m_dataPath + A("/plugins"));
-    QString systemPath(L(PREFIX "/share/" APP_NAME "/plugins"));
+    QString systemPath(L(DATADIR "/" APP_NAME "/plugins"));
     QString *paths[] = { &userPath, &systemPath };
     QSet<QString> filenames;
 

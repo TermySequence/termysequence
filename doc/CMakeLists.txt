@@ -11,7 +11,7 @@ ENDIF()
 FUNCTION(DEFMAN section source dest)
   CONFIGURE_FILE(${source}.${section}.in ${dest}${ARGV3}.${section} @ONLY)
   INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${dest}${ARGV3}.${section}
-    DESTINATION share/man/man${section})
+    DESTINATION ${CMAKE_INSTALL_MANDIR}/man${section})
 ENDFUNCTION()
 
 IF (BUILD_SERVER)

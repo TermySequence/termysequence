@@ -71,7 +71,7 @@ RendererManager::RendererManager(const char *subdir, StateSettingsKey key) :
     m_resourceDir.setSorting(QDir::Name);
 
     // System data dir
-    path = L(PREFIX "/share/" APP_NAME "/images/%1/");
+    path = L(DATADIR "/" APP_NAME "/images/%1/");
     m_systemDir = QDir(path.arg(subdir));
     if ((m_haveSystemDir = m_systemDir.exists())) {
         m_systemDir.setNameFilters(QStringList(L("*.svg")));
@@ -372,7 +372,7 @@ ThumbIcon::getThemePath(const std::string &name, const QLatin1String &size)
 {
     QString theme = g_global->iconTheme();
     if (!theme.isEmpty()) {
-        QString path = L(PREFIX "/share/" APP_NAME "/icons/%1/%2x%2/%3.png")
+        QString path = L(DATADIR "/" APP_NAME "/icons/%1/%2x%2/%3.png")
             .arg(theme, size, QString::fromStdString(name));
 
         if (QFileInfo(path).isReadable())
@@ -384,7 +384,7 @@ ThumbIcon::getThemePath(const std::string &name, const QLatin1String &size)
 void
 ThumbIconCache::initialize()
 {
-    QString path(L(PREFIX "/share/" APP_NAME "/icons"));
+    QString path(L(DATADIR "/" APP_NAME "/icons"));
     QDir dir(path, g_mtstr, QDir::Name, QDir::Dirs|QDir::NoDotAndDotDot);
 
     allThemes = dir.entryList();

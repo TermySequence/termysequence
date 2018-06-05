@@ -36,7 +36,7 @@ static int s_sigfd[2];
 #define V8_S V8_BLOB_DIR "snapshot_blob.bin"
 #define V8_I V8_ICU_DIR "icudtl.dat"
 #endif
-#define XLATE_DIR L(PREFIX "/share/" APP_NAME "/i18n")
+#define XLATE_DIR L(DATADIR "/" APP_NAME "/i18n")
 
 #define LC_PREFIX "app." APP_NAME "."
 #define LC_PREFIX_LEN (sizeof(LC_PREFIX) - 1)

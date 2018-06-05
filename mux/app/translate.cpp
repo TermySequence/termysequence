@@ -49,7 +49,7 @@ ArgParser::makeTranslator(std::string lang)
         lang.erase(idx);
 
     Translator scratch;
-    scratch.path = PREFIX "/share/" SERVER_NAME "/i18n/";
+    scratch.path = DATADIR "/" SERVER_NAME "/i18n/";
     scratch.path += lang + ".txt";
 
     if (osLoadFile(scratch.path.c_str(), scratch))

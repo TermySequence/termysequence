@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # -- BEGIN TERMYSEQUENCE CUSTOMIZATIONS --
 # Only run this script from inside a TermySequence terminal
 if [ "$TERMYSEQUENCE" ]; then

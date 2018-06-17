@@ -63,7 +63,6 @@
 #cmakedefine01 USE_FUSE
 #cmakedefine01 MEMDEBUG
 #cmakedefine01 NATIVE_DIALOGS
-#cmakedefine01 V8_STATIC
 
 #if USE_SYSTEMD
 #define SYSTEMD_SETUP_NAME "@SYSTEMD_SETUP_NAME@"

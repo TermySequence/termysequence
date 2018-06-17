@@ -31,11 +31,9 @@ Isolate* i;
 static int64_t s_sigtime;
 static int s_sigfd[2];
 
-#if V8_STATIC
+#define V8_BLOB_DIR DATADIR "/" APP_NAME "/v8/"
 #define V8_N V8_BLOB_DIR "natives_blob.bin"
 #define V8_S V8_BLOB_DIR "snapshot_blob.bin"
-#define V8_I V8_ICU_DIR "icudtl.dat"
-#endif
 #define XLATE_DIR L(DATADIR "/" APP_NAME "/i18n")
 
 #define LC_PREFIX "app." APP_NAME "."
@@ -79,9 +77,7 @@ run(QApplication *app)
 static int
 runV8(QApplication *app)
 {
-#if V8_STATIC
     V8::InitializeExternalStartupData(V8_BLOB_DIR);
-#endif
     Platform *v8p = platform::CreateDefaultPlatform();
     V8::InitializePlatform(v8p);
     V8::Initialize();
@@ -173,20 +169,12 @@ main(int argc, char **argv)
 
         if (doV8) {
             app.setProperty(OBJPROP_V8_SYSPLUGINS, sysplugins);
-#if V8_STATIC
             if (!osFileExists(V8_N)) {
                 doV8 = setV8Error(app, TR_ERROR1.arg(V8_N));
             }
             else if (!osFileExists(V8_S)) {
                 doV8 = setV8Error(app, TR_ERROR1.arg(V8_S));
             }
-            else if (!osFileExists(V8_I)) {
-                doV8 = setV8Error(app, TR_ERROR1.arg(V8_I));
-            }
-            else if (!V8::InitializeICUDefaultLocation(argv[0], V8_I)) {
-                doV8 = setV8Error(app, TR_ERROR2);
-            }
-#endif
         }
         rc = doV8 ? runV8(&app) : run(&app);
     }

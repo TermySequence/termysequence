@@ -4,7 +4,6 @@
 
 FIND_PACKAGE(Qt5 5.9.2 REQUIRED COMPONENTS Core Widgets Svg LinguistTools)
 FIND_PACKAGE(SQLite 3.8.0 REQUIRED)
-FIND_PACKAGE(V8 6.2.91 REQUIRED)
 FIND_PACKAGE(ZLIB 1.2.5 REQUIRED)
 IF (USE_FUSE)
   FIND_PACKAGE(Fuse 3.1 REQUIRED)
@@ -41,6 +40,7 @@ TARGET_LINK_LIBRARIES(${PIPE_NAME} os common Qt5::Core)
 IF (1)
   SET(_target ${APP_NAME})
   ADD_EXECUTABLE(${_target} ${app_SOURCES} ${app_RCC} ${app_TR_QM})
+  ADD_DEPENDENCIES(${_target} V8_build)
 
   SET(_desktop ${APP_NAME}.desktop)
   CONFIGURE_FILE(desktop.in ${_desktop}  @ONLY)

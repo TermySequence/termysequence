@@ -1,0 +1,3 @@
+[submodule "v8-linux"]
+	path = vendor/v8-linux
+	url = https://github.com/TermySequence/v8-linux.git

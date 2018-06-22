@@ -33,7 +33,7 @@ static int s_sigfd[2];
 
 #define V8_BLOB_DIR DATADIR "/" APP_NAME "/v8/"
 #define V8_N V8_BLOB_DIR "natives_blob.bin"
-#define V8_S V8_BLOB_DIR "snapshot_blob.bin"
+#define V8_S V8_BLOB_DIR "snapshot_blob_trusted.bin"
 #define XLATE_DIR L(DATADIR "/" APP_NAME "/i18n")
 
 #define LC_PREFIX "app." APP_NAME "."

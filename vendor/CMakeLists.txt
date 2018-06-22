@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
 IF (BUILD_QTGUI)
-  FIND_PACKAGE(ICU 60 REQUIRED COMPONENTS i18n uc data)
+  FIND_PACKAGE(ICU 60 REQUIRED COMPONENTS i18n uc)
 
   ADD_CUSTOM_TARGET(V8_build
     COMMAND make
@@ -11,29 +11,29 @@ IF (BUILD_QTGUI)
     ARMFP=${V8_ARMFP}
     CFLAGS="${CMAKE_C_FLAGS}"
     LDFLAGS="${CMAKE_STATIC_LINKER_FLAGS}"
-    BUILDDIR=${CMAKE_CURRENT_BINARY_DIR}
+    BUILDDIR=${CMAKE_CURRENT_BINARY_DIR}/v8
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/v8-linux)
 
   ADD_CUSTOM_TARGET(V8_clean
-    COMMAND make clean
+    COMMAND make
+    BUILDDIR=${CMAKE_CURRENT_BINARY_DIR}/v8
+    clean
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/v8-linux)
 
   ADD_LIBRARY(l::V8 INTERFACE IMPORTED GLOBAL)
   SET_TARGET_PROPERTIES(l::V8 PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/v8-linux/v8/include)
   TARGET_LINK_LIBRARIES(l::V8 INTERFACE
-    ${CMAKE_CURRENT_BINARY_DIR}/obj/libv8_libplatform.a
-    ${CMAKE_CURRENT_BINARY_DIR}/obj/libv8_base.a
-    ${CMAKE_CURRENT_BINARY_DIR}/obj/libv8_external_snapshot.a
-    ${CMAKE_CURRENT_BINARY_DIR}/obj/libv8_init.a
-    ${CMAKE_CURRENT_BINARY_DIR}/obj/libv8_initializers.a
-    ${CMAKE_CURRENT_BINARY_DIR}/obj/libv8_libbase.a
-    ${CMAKE_CURRENT_BINARY_DIR}/obj/libv8_libsampler.a
-    ICU::i18n ICU::uc ICU::data)
+    ${CMAKE_CURRENT_BINARY_DIR}/v8/obj/libv8_libplatform.a
+    ${CMAKE_CURRENT_BINARY_DIR}/v8/obj/libv8_base.a
+    ${CMAKE_CURRENT_BINARY_DIR}/v8/obj/libv8_external_snapshot.a
+    ${CMAKE_CURRENT_BINARY_DIR}/v8/obj/libv8_libbase.a
+    ${CMAKE_CURRENT_BINARY_DIR}/v8/obj/libv8_libsampler.a
+    ICU::i18n ICU::uc)
 
   INSTALL(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/natives_blob.bin
-    ${CMAKE_CURRENT_BINARY_DIR}/snapshot_blob.bin
+    ${CMAKE_CURRENT_BINARY_DIR}/v8/natives_blob.bin
+    ${CMAKE_CURRENT_BINARY_DIR}/v8/snapshot_blob_trusted.bin
     DESTINATION ${CMAKE_INSTALL_DATADIR}/${APP_NAME}/v8)
 ENDIF()
 

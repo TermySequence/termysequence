@@ -15,6 +15,7 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QTabWidget>
+#include <QKeyEvent>
 
 #define TR_TAB1 TL("tab-title", "Information")
 #define TR_TAB2 TL("tab-title", "Attributions")
@@ -97,4 +98,19 @@ AboutWindow::AboutWindow()
     show();
     raise();
     activateWindow();
+}
+
+bool
+AboutWindow::event(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::KeyPress:
+        if (static_cast<QKeyEvent*>(event)->matches(QKeySequence::Cancel))
+            close();
+        break;
+    default:
+        break;
+    }
+
+    return QWidget::event(event);
 }

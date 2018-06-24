@@ -8,6 +8,9 @@
 
 class AboutWindow final: public QWidget
 {
+protected:
+    bool event(QEvent *event);
+
 public:
     AboutWindow();
 };

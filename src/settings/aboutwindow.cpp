@@ -29,10 +29,27 @@
 #define ABOUT_TRADENAME FRIENDLY_NAME
 #endif
 
+static const char *s_features[] = {
+#if USE_FUSE
+    "+fuse",
+#endif
+#if USE_SYSTEMD
+    "+systemd",
+#endif
+    NULL
+};
+
 AboutWindow::AboutWindow()
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
     setAttribute(Qt::WA_QuitOnClose, false);
+
+    QStringList features;
+    for (const char **ptr = s_features; *ptr; ++ptr)
+        features.append(*ptr);
+    QString featureStr;
+    if (!features.isEmpty())
+        featureStr = A(" (") + features.join(' ') + ')';
 
     auto *mainLayout = new QVBoxLayout;
 
@@ -49,7 +66,7 @@ AboutWindow::AboutWindow()
     // Information tab
     auto *grid = new QGridLayout;
     grid->addWidget(new QLabel(TR_TEXT1), 0, 1);
-    grid->addWidget(new QLabel(APP_NAME " " PROJECT_VERSION), 0, 2);
+    grid->addWidget(new QLabel(PROJECT_VERSION + featureStr), 0, 2);
     grid->addWidget(new QLabel(TR_TEXT2), 1, 1);
     grid->addWidget(new QLabel(GITDESC), 1, 2);
     grid->addWidget(new QLabel(TR_TEXT3), 2, 1);

@@ -31,6 +31,7 @@
 #include "mountops.hpp"
 #endif
 
+#define TR_ERROR1 TL("error", "Remote mount feature disabled at compile time")
 #define TR_TASKOBJ1 TL("task-object", "This computer")
 #define TR_TASKOBJ2 TL("task-object", "File") + ':'
 #define TR_TASKSTAT1 TL("task-status", "Idle")
@@ -218,7 +219,7 @@ MountTask::start(TermManager *manager)
     auto i = s_activeTasks.constFind(m_mountId), j = s_activeTasks.cend();
 
     if (!USE_FUSE) {
-        failStart(manager, strerror(ENOTSUP));
+        failStart(manager, TR_ERROR1);
         unmount();
     }
     else if (m_launcher && i != j) {

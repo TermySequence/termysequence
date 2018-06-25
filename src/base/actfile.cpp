@@ -161,9 +161,10 @@ TermManager::actionManpageTerminal(QString manpage)
 {
     if (manpage.isEmpty())
         manpage = APP_NAME;
+    manpage = TermUrl::quoted(manpage);
 
     LaunchSettings *launcher = new LaunchSettings;
-    QString shell(A("man '%1'||(echo Closing terminal in 30s;sleep 30)"));
+    QString shell(A("man %1||(echo Closing terminal in 30s;sleep 30)"));
     QStringList command({"/bin/sh", "sh", "-c", shell.arg(manpage) });
     launcher->setCommand(command);
     launchTerm(g_listener->localServer(), launcher, AttributeMap());
@@ -403,7 +404,7 @@ TermManager::performFileDrop(TermInstance *term, ServerInstance *server,
         if (term) {
             QString tmp;
             for (auto &url: urls)
-                tmp.append(L("'%1' ").arg(url.toString()));
+                tmp.append(TermUrl::quoted(url.toString()) + ' ');
             term->pushInput(this, tmp);
         }
         return;

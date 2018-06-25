@@ -97,7 +97,7 @@ DropDialog::run()
     case DropPasteName:
         for (auto &url: m_urls) {
             url.setHost(g_mtstr);
-            tmp.append(L("'%1' ").arg(url.toLocalFile()));
+            tmp.append(TermUrl::quoted(url.toLocalFile()) + ' ');
         }
         m_term->pushInput(m_manager, tmp);
         break;

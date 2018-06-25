@@ -144,3 +144,10 @@ TermUrl::operator==(const TermUrl &o) const
 
     return QUrl::operator==(o);
 }
+
+QString
+TermUrl::quoted(QString str)
+{
+    str.replace(A("'"), A("'\\''"));
+    return '\'' + str + '\'';
+}

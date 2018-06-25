@@ -43,4 +43,6 @@ public:
     bool checkHost(const ServerInstance *server) const;
     bool checkHost() const;
     bool operator==(const TermUrl &url) const;
+
+    static QString quoted(QString str);
 };

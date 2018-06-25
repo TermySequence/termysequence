@@ -492,7 +492,9 @@ FileWidget::action(int type)
     switch (type) {
     case FileActSmartOpen:
         if (m_selectedUrl.fileIsDir()) {
-            tmp = L("WriteTextNewline|cd '%1'|%2").arg(m_selectedUrl.fileName(), term->idStr());
+            tmp = L("WriteTextNewline|cd %1|%2").arg(
+                TermUrl::quoted(m_selectedUrl.fileName()),
+                term->idStr());
             break;
         }
         // fallthru
@@ -555,7 +557,9 @@ FileWidget::action(int type, const QString &dir)
         tmp = L("UploadToDirectory|%1|%2").arg(server->idStr(), dir);
         break;
     case FileActSmartOpen:
-        tmp = L("WriteTextNewline|cd '%1'|%2").arg(dir, term->idStr());
+        tmp = L("WriteTextNewline|cd %1|%2").arg(
+            TermUrl::quoted(dir),
+            term->idStr());
         break;
     case FileActOpen:
         tmp = L("OpenFile||%1|%2").arg(server->idStr(), dir);

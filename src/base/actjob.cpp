@@ -909,7 +909,7 @@ TermManager::actionWriteFilePath(QString filePath)
     if (filePath.isEmpty())
         filePath = m_parent->filesWidget()->selectedUrl().path();
     if (m_term)
-        m_term->pushInput(this, L("'%1' ").arg(filePath));
+        m_term->pushInput(this, TermUrl::quoted(filePath) + ' ');
 }
 
 void
@@ -918,7 +918,7 @@ TermManager::actionWriteDirectoryPath(QString dirPath)
     if (dirPath.isEmpty())
         dirPath = m_parent->filesWidget()->selectedUrl().dir();
     if (m_term)
-        m_term->pushInput(this, L("'%1' ").arg(dirPath));
+        m_term->pushInput(this, TermUrl::quoted(dirPath) + ' ');
 }
 
 void

@@ -27,7 +27,6 @@ enum ClipboardCopyType {
 class TermManager final: public TermOrder
 {
     Q_OBJECT
-    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
 
     friend class TermListener;
 

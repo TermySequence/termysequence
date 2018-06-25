@@ -68,6 +68,11 @@ TermManager::setActive(bool active)
         m_active = active;
         emit activeChanged(active);
     }
+
+    // Fix for Alt focus bug on Ubuntu
+    if (active && m_stack) {
+        emit m_stacks[m_stack->pos()]->focusRequest();
+    }
 }
 
 void

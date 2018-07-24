@@ -446,6 +446,19 @@ populatePaletteHelper(Local<Value> val, TermPalette &palette)
     }
 }
 
+static Local<Object>
+readPaletteHelper(const TermPalette &palette)
+{
+    auto context = i->GetCurrentContext();
+    Local<Object> obj = Object::New(i);
+
+    for (unsigned k = 0; k < PALETTE_SIZE; ++k) {
+        obj->Set(context, k, Integer::NewFromUnsigned(i, palette[k])).ToChecked();
+    }
+    obj->Set(context, v8name("dircolors"), v8str(palette.dStr())).ToChecked();
+    return obj;
+}
+
 static void
 managerCreateTerminal(const FunctionCallbackInfo<Value> &args)
 {
@@ -671,6 +684,18 @@ termGetProfile(const FunctionCallbackInfo<Value> &args)
     declare_target_checked(term, TermInstance);
     declare_handle;
     v8ret(get_handle(Profile, term->profile()));
+}
+
+static void
+termGetTheme(const FunctionCallbackInfo<Value> &args)
+{
+    HandleScope scope(i);
+    declare_target_checked(term, TermInstance);
+    declare_handle;
+
+    for (auto *theme: g_settings->themes())
+        if (theme->content() == term->palette())
+            v8ret(get_handle(Theme, theme));
 }
 
 static void
@@ -1647,6 +1672,22 @@ profileGetKeymap(const FunctionCallbackInfo<Value> &args)
 }
 
 static void
+profileGetPalette(const FunctionCallbackInfo<Value> &args)
+{
+    HandleScope scope(i);
+    declare_target_checked(profile, ProfileSettings);
+    v8ret(readPaletteHelper(profile->content()));
+}
+
+static void
+themeGetPalette(const FunctionCallbackInfo<Value> &args)
+{
+    HandleScope scope(i);
+    declare_target_checked(theme, ThemeSettings);
+    v8ret(readPaletteHelper(theme->content()));
+}
+
+static void
 keymapLookupShortcut(const FunctionCallbackInfo<Value> &args)
 {
     HandleScope scope(i);
@@ -1747,6 +1788,7 @@ ActionFeature::initializeApi(PersistentObjectTemplate *apitmpl)
     tmpl->v8method("getAttribute", idbaseGetAttribute);
     tmpl->v8method("getActiveManager", idbaseGetActiveManager);
     tmpl->v8method("getProfile", termGetProfile);
+    tmpl->v8method("getTheme", termGetTheme);
     tmpl->v8method("getServer", termGetServer);
     tmpl->v8method("setAttributeNotifier", idbaseSetAttributeNotifier);
     tmpl->v8switch("getStart", termCreateCursor, 0);
@@ -1784,12 +1826,14 @@ ActionFeature::initializeApi(PersistentObjectTemplate *apitmpl)
     tmpl->v8switchget("name", cbGetProp, QVariant::String);
     tmpl->v8method("getSetting", settingsGetSetting);
     tmpl->v8method("getKeymap", profileGetKeymap);
+    tmpl->v8method("getPalette", profileGetPalette);
     apitmpl[ApiHandle::Profile].Reset(i, tmpl);
 
     // Theme
     setupTemplate(tmpl, true);
     tmpl->v8switchget("name", cbGetProp, QVariant::String);
     tmpl->v8method("getSetting", settingsGetSetting);
+    tmpl->v8method("getPalette", themeGetPalette);
     apitmpl[ApiHandle::Theme].Reset(i, tmpl);
 
     // Keymap

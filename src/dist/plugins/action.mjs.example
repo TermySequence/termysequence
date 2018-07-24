@@ -16,7 +16,7 @@
 //
 
 //
-// Function called by the application to execute the action.
+// Functions called by the application to execute each action.
 // The manager argument is an API handle used to access the application.
 // The remaining arguments are the supplemental arguments provided to the
 // action in the form of strings separated by | characters
@@ -227,6 +227,7 @@ plugin.pluginVersion = '1.0';
 // the API version requested, currently 1. The second argument is the
 // name of the action to register, which will be prefixed with 'Custom'
 // The third argument is the execution function, defined above.
+// The fourth argument is an optional per-action description.
 // Throws an exception if the action name is already registered.
 // Note: new actions can only be registered in the global scope.
 //

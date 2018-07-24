@@ -79,7 +79,7 @@ static const SettingDef s_connectDefs[] = {
     { "Connection/Environment", "environ", QVariant::StringList,
       TN("settings-category", "Connection"),
       TN("settings", "Environment"),
-      new EnvironWidgetFactory
+      new EnvironWidgetFactory(false)
     },
     { "Connection/UseRawProtocol", "raw", QVariant::Bool,
       TN("settings-category", "Connection"),

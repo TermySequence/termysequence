@@ -23,7 +23,7 @@ private:
     SettingsBase *m_settings;
 
     QPlainTextEdit *m_set, *m_clear;
-    QLineEdit *m_answerback;
+    QLineEdit *m_answerback = nullptr;
     QTabWidget *m_tabs;
 
 private slots:
@@ -34,7 +34,8 @@ protected:
     bool event(QEvent *event);
 
 public:
-    EnvironDialog(const SettingDef *def, SettingsBase *settings, QWidget *parent);
+    EnvironDialog(const SettingDef *def, SettingsBase *settings,
+                  bool answerback, QWidget *parent);
 
     void setContent(const QStringList &rules);
 

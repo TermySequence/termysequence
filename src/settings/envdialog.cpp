@@ -26,7 +26,8 @@
 #define TR_TEXT3 TL("window-text", "Specify answerback response string")
 #define TR_TITLE1 TL("window-title", "Set Environment")
 
-EnvironDialog::EnvironDialog(const SettingDef *def, SettingsBase *settings, QWidget *parent) :
+EnvironDialog::EnvironDialog(const SettingDef *def, SettingsBase *settings,
+                             bool answerback, QWidget *parent) :
     QDialog(parent),
     m_def(def),
     m_settings(settings)
@@ -40,7 +41,6 @@ EnvironDialog::EnvironDialog(const SettingDef *def, SettingsBase *settings, QWid
     m_set->setLineWrapMode(QPlainTextEdit::NoWrap);
     m_clear = new QPlainTextEdit;
     m_clear->setLineWrapMode(QPlainTextEdit::NoWrap);
-    m_answerback = new QLineEdit;
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(new QLabel(TR_TEXT1));
@@ -56,13 +56,15 @@ EnvironDialog::EnvironDialog(const SettingDef *def, SettingsBase *settings, QWid
     page->setLayout(layout);
     m_tabs->addTab(page, TR_TAB2);
 
-    layout = new QVBoxLayout;
-    layout->addWidget(new QLabel(TR_TEXT3));
-    layout->addWidget(m_answerback);
-    layout->addStretch(1);
-    page = new QWidget;
-    page->setLayout(layout);
-    m_tabs->addTab(page, TR_TAB3);
+    if (answerback) {
+        layout = new QVBoxLayout;
+        layout->addWidget(new QLabel(TR_TEXT3));
+        layout->addWidget(m_answerback = new QLineEdit);
+        layout->addStretch(1);
+        page = new QWidget;
+        page->setLayout(layout);
+        m_tabs->addTab(page, TR_TAB3);
+    }
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(
         QDialogButtonBox::Ok|QDialogButtonBox::Cancel|QDialogButtonBox::RestoreDefaults);
@@ -112,7 +114,7 @@ EnvironDialog::setContent(const QStringList &rules)
             m_clear->appendPlainText(i.mid(1));
             break;
         case '*':
-            if (i.startsWith(A(TSQ_ENV_ANSWERBACK)))
+            if (i.startsWith(A(TSQ_ENV_ANSWERBACK)) && m_answerback)
                 m_answerback->setText(i.mid(sizeof(TSQ_ENV_ANSWERBACK) - 1));
             break;
         }
@@ -138,8 +140,8 @@ EnvironDialog::handleAccept()
     for (auto &i: clears)
         rules.append('-' + i);
 
-    QString answerback = m_answerback->text();
-    if (!answerback.isEmpty())
+    QString answerback;
+    if (m_answerback && !(answerback = m_answerback->text()).isEmpty())
         rules.append(A(TSQ_ENV_ANSWERBACK) + answerback);
 
     m_settings->setProperty(m_def->property, rules);

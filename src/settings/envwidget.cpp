@@ -14,8 +14,10 @@
 #define TR_BUTTON1 TL("input-button", "Environment") + A("...")
 #define TR_TEXT1 TL("window-text", "%n Variable(s)", "", n)
 
-EnvironWidget::EnvironWidget(const SettingDef *def, SettingsBase *settings) :
-    SettingWidget(def, settings)
+EnvironWidget::EnvironWidget(const SettingDef *def, SettingsBase *settings,
+                             bool answerback) :
+    SettingWidget(def, settings),
+    m_answerback(answerback)
 {
     m_label = new QLabel;
 
@@ -36,7 +38,7 @@ void
 EnvironWidget::handleClicked()
 {
     if (!m_dialog)
-        m_dialog = new EnvironDialog(m_def, m_settings, this);
+        m_dialog = new EnvironDialog(m_def, m_settings, m_answerback, this);
 
     m_dialog->setContent(m_value.toStringList());
     m_dialog->exec();
@@ -50,8 +52,12 @@ EnvironWidget::handleSettingChanged(const QVariant &value)
 }
 
 
+EnvironWidgetFactory::EnvironWidgetFactory(bool answerback) :
+    m_answerback(answerback)
+{}
+
 QWidget *
 EnvironWidgetFactory::createWidget(const SettingDef *def, SettingsBase *settings) const
 {
-    return new EnvironWidget(def, settings);
+    return new EnvironWidget(def, settings, m_answerback);
 }

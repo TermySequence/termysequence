@@ -267,7 +267,7 @@ static const SettingDef s_profileDefs[] = {
     { TSQ_SETTING_ENVIRON, "environ", QVariant::StringList,
       TN("settings-category", "Emulator"),
       TN("settings", "Environment"),
-      new EnvironWidgetFactory
+      new EnvironWidgetFactory(true)
     },
     { TSQ_SETTING_EXITACTION, "exitAction", QVariant::Int,
       TN("settings-category", "Emulator"),

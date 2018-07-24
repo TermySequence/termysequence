@@ -128,7 +128,7 @@ static const SettingDef s_launchDefs[] = {
     { "Command/Environment", "environ", QVariant::StringList,
       TN("settings-category", "Command"),
       TN("settings", "Environment"),
-      new EnvironWidgetFactory
+      new EnvironWidgetFactory(false)
     },
     { "InputOutput/InputType", "inputType", QVariant::Int,
       TN("settings-category", "Input/Output"),

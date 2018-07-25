@@ -56,6 +56,7 @@ private:
 
     struct fuse_buf m_fbuf{};
     struct fuse_session *m_se = nullptr;
+    struct fuse_chan *m_ch = nullptr;
     struct fuse_args m_args{};
     QSocketNotifier *m_notifier = nullptr;
     int m_dirfd;

@@ -30,8 +30,10 @@
 #endif
 
 static const char *s_features[] = {
-#if USE_FUSE
-    "+fuse",
+#if USE_FUSE3
+    "+fuse3",
+#elif USE_FUSE2
+    "+fuse2",
 #endif
 #if USE_SYSTEMD
     "+systemd",

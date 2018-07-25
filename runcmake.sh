@@ -11,9 +11,10 @@ BUILD_PROFILE=${2:-client+server}
 BUILD_TYPE=${3:-Release}
 
 # More customization options:
+#args+=("-DUSE_FUSE3=OFF")
+#args+=("-DUSE_FUSE2=ON")
 #args+=("-DUSE_SYSTEMD=OFF")
 #args+=("-DUSE_LIBGIT2=OFF")
-#args+=("-DUSE_FUSE=OFF")
 #args+=("-DINSTALL_SHELL_INTEGRATION=ON")
 #args+=("-DCMAKE_INSTALL_PREFIX=/usr/local")
 

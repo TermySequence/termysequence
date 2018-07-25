@@ -154,7 +154,7 @@ for more information.
 .B @APP_NAME@ \"m2rprog
 has the ability to perform remote file and directory mounts using
 .BR fuse (8), \"m2rman
-but only if FUSE support was enabled at compile time, the FUSE 3 runtime is
+but only if FUSE support was enabled at compile time, the FUSE runtime is
 present on the system, and the user has the necessary permissions to establish
 unprivileged FUSE mounts.
 

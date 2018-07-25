@@ -22,12 +22,13 @@
 
 #include "moc_mounttask.cpp"
 
+#define HAVE_FUSE (USE_FUSE3 || USE_FUSE2)
 #define INITIALSIZE 8192
 #define HEADERSIZE 56
 #define MAXNAME 1024
 #define MAXSIZE 88 + MAXNAME
 
-#if USE_FUSE
+#if HAVE_FUSE
 #include "mountops.hpp"
 #endif
 
@@ -73,12 +74,19 @@ MountTask::MountTask(ServerInstance *server, const QString &infile,
 void
 MountTask::unmount()
 {
-#if USE_FUSE
+#if HAVE_FUSE
     if (m_se) {
         m_notifier->setEnabled(false);
         s_activeTasks.remove(m_mountId);
+#if USE_FUSE3
         fuse_session_unmount(m_se);
         fuse_session_destroy(m_se);
+#else // USE_FUSE2
+        fuse_session_remove_chan(m_ch);
+        fuse_session_destroy(m_se);
+        fuse_unmount(m_mountpoint.c_str(), m_ch);
+        m_ch = nullptr;
+#endif
         m_se = nullptr;
         free(m_fbuf.mem);
     }
@@ -218,7 +226,7 @@ MountTask::start(TermManager *manager)
 {
     auto i = s_activeTasks.constFind(m_mountId), j = s_activeTasks.cend();
 
-    if (!USE_FUSE) {
+    if (!HAVE_FUSE) {
         failStart(manager, TR_ERROR1);
         unmount();
     }
@@ -249,7 +257,7 @@ MountTask::start(TermManager *manager)
 void
 MountTask::handleResult(Tsq::ProtocolUnmarshaler *unm)
 {
-#if USE_FUSE
+#if HAVE_FUSE
     unsigned idx = unm->parseNumber();
     if (idx >= m_reqs.size())
         return;
@@ -316,7 +324,7 @@ MountTask::handleResult(Tsq::ProtocolUnmarshaler *unm)
 void
 MountTask::handleStart(unsigned flags)
 {
-#if USE_FUSE
+#if HAVE_FUSE
     m_ro = flags & 1;
     m_isdir = flags & 2;
     m_typeStr = m_isdir ? TR_TASKTYPE3 : (m_ro ? TR_TASKTYPE2 : TR_TASKTYPE1);
@@ -347,8 +355,12 @@ MountTask::handleStart(unsigned flags)
     if (!m_ro)
         m_args.argc -= 2;
     m_args.argv = (char **)s_mountargv;
+#if USE_FUSE3
     struct fuse_cmdline_opts opts;
     fuse_parse_cmdline(&m_args, &opts);
+#else // USE_FUSE2
+    fuse_parse_cmdline(&m_args, NULL, NULL, NULL);
+#endif
 
     struct fuse_lowlevel_ops mountops = { mountop_init };
     mountops.lookup = mountop_lookup;
@@ -373,19 +385,39 @@ MountTask::handleStart(unsigned flags)
         mountops.write_buf = mountop_write;
     }
 
+    int fd;
+#if USE_FUSE3
     m_se = fuse_session_new(&m_args, &mountops, sizeof(mountops), this);
     if (!m_se) {
-        pushCancel(errno);
-        return;
+        pushCancel(EINVAL);
+        goto mounterr;
     }
     if (fuse_session_mount(m_se, m_mountpoint.c_str()) != 0) {
-        pushCancel(errno);
+        pushCancel(EINVAL);
         fuse_session_destroy(m_se);
         m_se = nullptr;
-        return;
+        goto mounterr;
     }
+    fd = fuse_session_fd(m_se);
+#else // USE_FUSE2
+    m_ch = fuse_mount(m_mountpoint.c_str(), &m_args);
+    if (!m_ch) {
+        pushCancel(EINVAL);
+        goto mounterr;
+    }
+    m_se = fuse_lowlevel_new(&m_args, &mountops, sizeof(mountops), this);
+    if (!m_se) {
+        fuse_unmount(m_mountpoint.c_str(), m_ch);
+        pushCancel(EINVAL);
+        goto mounterr;
+    }
+    fuse_session_add_chan(m_se, m_ch);
+    fd = fuse_chan_fd(m_ch);
 
-    int fd = fuse_session_fd(m_se);
+    m_fbuf.size = fuse_chan_bufsize(m_ch);
+    m_fbuf.mem = malloc(m_fbuf.size);
+#endif
+
     m_notifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
     connect(m_notifier, SIGNAL(activated(int)), SLOT(handleFuse()));
     m_notifier->setEnabled(!m_throttles);
@@ -406,6 +438,10 @@ MountTask::handleStart(unsigned flags)
     } else {
         launch(m_mountfile);
     }
+    return;
+mounterr:
+    rmdir(m_mountpoint.c_str());
+    m_mountpoint.clear();
 #endif
 }
 
@@ -435,20 +471,33 @@ MountTask::handleOutput(Tsq::ProtocolUnmarshaler *unm)
 void
 MountTask::handleFuse()
 {
-#if USE_FUSE
+#if HAVE_FUSE
     int rc = 0;
 
-    if (fuse_session_exited(m_se))
-        goto stop;
+    if (!fuse_session_exited(m_se))
+    {
+#if USE_FUSE3
+        rc = fuse_session_receive_buf(m_se, &m_fbuf);
+#else // USE_FUSE2
+        struct fuse_chan *ch = m_ch;
+        struct fuse_buf buf = {
+            .size = m_fbuf.size,
+            .mem = m_fbuf.mem,
+        };
+        rc = fuse_session_receive_buf(m_se, &buf, &ch);
+#endif
+        if (rc == -EINTR)
+            return;
+        if (rc <= 0)
+            goto stop;
 
-    rc = fuse_session_receive_buf(m_se, &m_fbuf);
-    if (rc == -EINTR)
+#if USE_FUSE3
+        fuse_session_process_buf(m_se, &m_fbuf);
+#else // USE_FUSE2
+        fuse_session_process_buf(m_se, &buf, ch);
+#endif
         return;
-    if (rc <= 0)
-        goto stop;
-
-    fuse_session_process_buf(m_se, &m_fbuf);
-    return;
+    }
 stop:
     unmount();
     pushCancel(-rc);

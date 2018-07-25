@@ -60,7 +60,8 @@
 
 #cmakedefine01 USE_SYSTEMD
 #cmakedefine01 USE_LIBGIT2
-#cmakedefine01 USE_FUSE
+#cmakedefine01 USE_FUSE3
+#cmakedefine01 USE_FUSE2
 #cmakedefine01 MEMDEBUG
 #cmakedefine01 NATIVE_DIALOGS
 

@@ -150,12 +150,15 @@ extern "C" void
 mountop_init(void *, struct fuse_conn_info *conn)
 {
     conn->max_write = MAX_READ;
+#if USE_FUSE3
     conn->max_read = MAX_READ;
+#endif
     conn->max_readahead = MAX_READ;
 
     conn->want &= ~(FUSE_CAP_ASYNC_READ|FUSE_CAP_ATOMIC_O_TRUNC|FUSE_CAP_ASYNC_DIO|
                     FUSE_CAP_PARALLEL_DIROPS|FUSE_CAP_HANDLE_KILLPRIV);
-    conn->want |= (FUSE_CAP_SPLICE_WRITE|FUSE_CAP_SPLICE_MOVE|FUSE_CAP_SPLICE_READ);
+    conn->want |= (FUSE_CAP_SPLICE_WRITE|FUSE_CAP_SPLICE_MOVE|FUSE_CAP_SPLICE_READ|
+                   FUSE_CAP_IOCTL_DIR|FUSE_CAP_BIG_WRITES);
 
     conn->max_background = 1;
     conn->congestion_threshold = 0;
@@ -779,15 +782,21 @@ finished:
 
 extern "C" void
 mountop_rename(fuse_req_t req, fuse_ino_t, const char *oldnamec,
-               fuse_ino_t, const char *newnamec, unsigned int flags)
+               fuse_ino_t, const char *newnamec
+#if USE_FUSE3
+               , unsigned int flags
+#endif
+    )
 {
     declare_thiz;
     std::string oldname(oldnamec), newname(newnamec);
 
+#if USE_FUSE3
     if (flags) {
         fuse_reply_err(req, EINVAL);
         return;
     }
+#endif
     if (thiz->rootmap().count(oldname) == 0) {
         fuse_reply_err(req, ENOENT);
         return;

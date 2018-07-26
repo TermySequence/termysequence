@@ -16,8 +16,6 @@
 #define SK_KEYCOL A("Output/KeyColumn")
 #define SK_INSTDIR A("Output/InstallDir")
 
-#define REPO_NAME ABBREV_NAME "-icon-theme"
-
 IconSettings *g_settings;
 
 const struct {
@@ -26,7 +24,7 @@ const struct {
 } s_defSources[] = {
     { "adwaita", "adwaita-icon-theme/Adwaita", 0 },
     { "oxygen", "oxygen-icons", 1 },
-    { ABBREV_NAME, ABBREV_NAME "-icon-theme/icons/default", 0 },
+    { ABBREV_NAME, ABBREV_NAME "-custom-icons/icons/default", 0 },
     { NULL }
 };
 
@@ -76,7 +74,7 @@ IconSettings::workfile() const
 QString
 IconSettings::distdir() const
 {
-    return m_sources.value(ABBREV_NAME).path;
+    return repo() + A("/vendor/" ABBREV_NAME "-icon-theme/icons/default");
 }
 
 void

@@ -42,10 +42,6 @@ static QRegularExpression s_re(A("^#define (ICON_\\S+).*?\"(\\S+)(\"\\S*)(?:.*//
     "dest=\"$1/$subdir\"\n" \
     "mkdir -p \"$dest\" || return 1\n\n"
 
-#define SH_SVGLOOP "\nfor subdir in [0-9]*; do\n" \
-    "dest=\"$2/$subdir\"\n" \
-    "mkdir -p \"$dest\" || return 1"
-
 #define SH_ENDLOOP "\ndone\n"
 
 struct WorkRecord
@@ -59,18 +55,17 @@ struct WorkRecord
 
 struct InstallRecord {
     QString dest;
+    QString svgdest;
     QSet<int> sizes;
     int size;
     bool failed;
     QHash<QByteArray,QString> hashes;
     QStringList sizedSvg;
     QStringList unsizedSvg;
-    QString home;
 
     bool (*copy_func)(InstallRecord*, const IconRecord*, QString, const char*);
     bool (*link_func)(InstallRecord*, const char*, const char*);
 
-    FILE *distfh;
     FILE *instfh;
 };
 
@@ -222,7 +217,7 @@ WorkModel::doHelper(const WorkRecord *rec, InstallRecord *irec) const
 }
 
 static bool
-fileCopy(InstallRecord *irec, const IconRecord *, QString from, const char *to)
+doCopy(QString from, QString to)
 {
     int ifd, ofd;
     char buf[65536], *ptr;
@@ -230,7 +225,7 @@ fileCopy(InstallRecord *irec, const IconRecord *, QString from, const char *to)
     ifd = open(pr(from), O_RDONLY|O_CLOEXEC);
     if (ifd == -1)
         goto err;
-    ofd = open(pr(irec->dest + to), O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, 0644);
+    ofd = open(pr(to), O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, 0644);
     if (ofd == -1)
         goto err2;
 
@@ -261,6 +256,12 @@ err2:
 err:
     g_status->log(L("file copy of %1 to %2 failed").arg(from, to), 2);
     return false;
+}
+
+static bool
+fileCopy(InstallRecord *irec, const IconRecord *, QString from, const char *to)
+{
+    return doCopy(from, irec->dest + to);
 }
 
 static bool
@@ -387,8 +388,7 @@ findSvg(const IconRecord *theirs, InstallRecord *irec)
 
     for (const QString &result: results) {
         if (result == path) {
-            path.replace(irec->home, A("$HOME"));
-            irec->unsizedSvg += L("cp \"%1\" \"$2\"").arg(path);
+            doCopy(path, irec->svgdest + '/' + fi.fileName());
             return;
         }
     }
@@ -400,9 +400,9 @@ findSvg(const IconRecord *theirs, InstallRecord *irec)
         QString str = pat.arg(size);
         for (const QString &result: results) {
             if (result.endsWith(str)) {
-                str = result;
-                str.replace(irec->home, A("$HOME"));
-                irec->sizedSvg += L("cp \"%1\" \"$dest\"").arg(str);
+                str = irec->svgdest + L("/%1x%1").arg(size);
+                mkdir(pr(str), 0755);
+                doCopy(result, str + '/' + fi.fileName());
                 goto next;
             }
         }
@@ -417,24 +417,21 @@ findSvg(const IconRecord *theirs, InstallRecord *irec)
 static bool
 updateCopy(InstallRecord *irec, const IconRecord *theirs, QString from, const char *to)
 {
-    fprintf(irec->instfh, "install -m 644 $subdir/%s \"$dest\"\n", to);
+    if (irec->size == 16) {
+        fprintf(irec->instfh, "install -m 644 $subdir/%s \"$dest\"\n", to);
 
-    if (theirs->source != ABBREV_NAME) {
         if (theirs->needsvg)
             findSvg(theirs, irec);
-
-        from.replace(A("/16x16/"), A("/$subdir/"));
-        from.replace(irec->home, A("$HOME"));
-        fprintf(irec->distfh, "cp \"%s\" \"$dest/%s\"\n", pr(from), to);
     }
 
-    return true;
+    return fileCopy(irec, theirs, from, to);
 }
 
 static bool
 updateLink(InstallRecord *irec, const char *from, const char *to)
 {
-    fprintf(irec->instfh, "(cd \"$dest\" && ln -sf %s %s)\n", from, to);
+    if (irec->size == 16)
+        fprintf(irec->instfh, "(cd \"$dest\" && ln -sf %s %s)\n", from, to);
     return true;
 }
 
@@ -443,7 +440,11 @@ WorkModel::doUpdate(IconThread *thread) const
 {
     g_status->log(A("started update operation"));
     InstallRecord irec{};
+    char cmd[PATH_MAX];
     bool rc = true;
+
+    QString svgdir = m_target;
+    svgdir.replace(svgdir.lastIndexOf(A("/icons/")), 7, A("/svg/"));
 
     auto sorted = m_list;
     std::sort(sorted.begin(), sorted.end(), RecordSorter);
@@ -451,46 +452,41 @@ WorkModel::doUpdate(IconThread *thread) const
     irec.link_func = &updateLink;
     irec.sizes = g_settings->sizes();
     irec.sizes.insert(16);
-    irec.size = 16;
-    irec.dest = m_target;
-    irec.home = getenv("HOME");
+    irec.svgdest = svgdir;
 
     if (!(irec.instfh = fopen(pr(m_target + A("/install.sh")), "we")))
         goto err2;
-    if (!(irec.distfh = fopen(pr(m_target + A("/dist.sh")), "we")))
-        goto err3;
+
+    snprintf(cmd, sizeof(cmd), "find %s -name '*.png' -delete", pr(m_target));
+    system(cmd);
+    snprintf(cmd, sizeof(cmd), "find %s -name '*.svgz' -delete", pr(svgdir));
+    system(cmd);
 
     fputs(SH_MAINLOOP, irec.instfh);
-    fputs(SH_MAINLOOP, irec.distfh);
-    for (const auto *rec: sorted) {
-        thread->incProgress();
-        if (!doHelper(rec, &irec)) {
-            rc = false;
-            break;
+
+    for (int size: irec.sizes) {
+        irec.dest = L("%1/%2x%2").arg(m_target).arg(size);
+        irec.size = size;
+        mkdir(pr(irec.dest), 0755);
+        irec.dest += '/';
+        irec.hashes.clear();
+
+        for (const auto *rec: sorted) {
+            thread->incProgress();
+            if (!doHelper(rec, &irec)) {
+                rc = false;
+                break;
+            }
         }
     }
+
     fputs(SH_ENDLOOP, irec.instfh);
-    fputs(SH_ENDLOOP, irec.distfh);
-
-    fputs(SH_SVGLOOP, irec.distfh);
-    fputs(SH_ENDLOOP, irec.distfh);
-
-    std::sort(irec.sizedSvg.begin(), irec.sizedSvg.end());
-    fprintf(irec.distfh, "\n%s\n", pr(irec.sizedSvg.join('\n')));
-
-    std::sort(irec.unsizedSvg.begin(), irec.unsizedSvg.end());
-    fprintf(irec.distfh, "\n%s\n", pr(irec.unsizedSvg.join('\n')));
-
-    fclose(irec.distfh);
     fclose(irec.instfh);
     if (!rc)
         goto err;
 
     g_status->log(A("finished update operation (success)"));
     return;
-err3:
-    g_status->log(L("failed to open dist.sh: %1").arg(strerror(errno)), 2);
-    fclose(irec.instfh);
 err2:
     g_status->log(L("failed to open install.sh: %1").arg(strerror(errno)), 2);
 err:
@@ -501,11 +497,12 @@ void
 WorkModel::makeUpdate()
 {
     bool ok;
-    m_target = getInput(A("Update the install scripts in the icon theme source repository:"),
+    m_target = getInput(A("Update the icon theme source repository:"),
                         g_settings->distdir(), &ok);
     if (ok) {
         auto *thread = new IconThread(this, this, 2);
-        thread->setMsg(L("Updating %2 of %1").arg(rowCount()));
+        unsigned total = (g_settings->sizes().size() + 1) * rowCount();
+        thread->setMsg(L("Updating %2 of %1").arg(total));
         connect(thread, SIGNAL(finished()), SIGNAL(finished()));
         thread->start();
     }

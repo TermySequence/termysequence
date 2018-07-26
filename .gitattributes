@@ -1,3 +1,6 @@
-util/           export-ignore
+/util/          export-ignore
 /mkdist.sh      export-ignore
 .git*           export-ignore
+/vendor/v8-linux/         export-ignore
+/vendor/termy-emoji/      export-ignore
+/vendor/termy-icon-theme/ export-ignore

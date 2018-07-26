@@ -1,3 +1,9 @@
 [submodule "v8-linux"]
 	path = vendor/v8-linux
 	url = https://github.com/TermySequence/v8-linux.git
+[submodule "vendor/termy-emoji"]
+	path = vendor/termy-emoji
+	url = https://github.com/TermySequence/termy-emoji.git
+[submodule "vendor/termy-icon-theme"]
+	path = vendor/termy-icon-theme
+	url = https://github.com/TermySequence/termy-icon-theme

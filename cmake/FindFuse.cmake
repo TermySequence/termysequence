@@ -1,6 +1,6 @@
 INCLUDE(FindPackageHandleStandardArgs)
 
-IF (PACKAGE_FIND_VERSION_MAJOR EQUAL 3)
+IF (Fuse_FIND_VERSION_MAJOR EQUAL 3)
   SET(Fuse_NAME fuse3)
 ELSE()
   SET(Fuse_NAME fuse)

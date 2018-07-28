@@ -23,7 +23,7 @@ class TaskBase;
 struct OwnershipChange {
     Tsq::Uuid oldId;
     Tsq::Uuid newId;
-    AttributeMap attributes;
+    StringMap attributes;
 
     inline OwnershipChange(const Tsq::Uuid &nId) :
         newId(nId) {}
@@ -38,7 +38,7 @@ public:
         TermWriter *writer;
         TermReader *reader;
         std::string announce;
-        AttributeMap attributes;
+        StringMap attributes;
         unsigned hops;
         unsigned flags;
     };
@@ -122,8 +122,8 @@ public:
     void throttleTask(const Tsq::Uuid &taskId, const Tsq::Uuid &hopId);
     void resumeTasks(const Tsq::Uuid &hopId);
 
-    void getOwnerAttributes(const Tsq::Uuid &id, AttributeMap &map) const;
-    void getSenderAttributes(const Tsq::Uuid &id, AttributeMap &map) const;
+    void getOwnerAttributes(const Tsq::Uuid &id, StringMap &map) const;
+    void getSenderAttributes(const Tsq::Uuid &id, StringMap &map) const;
     bool getClientAttribute(const Tsq::Uuid &id, std::string &inout) const;
 };
 

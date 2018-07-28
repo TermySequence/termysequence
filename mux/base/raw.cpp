@@ -69,7 +69,7 @@ RawInstance::writeResponse(const char *buf, size_t len)
 }
 
 bool
-RawInstance::setMachine(Tsq::ProtocolMachine *newMachine, AttributeMap &attributes)
+RawInstance::setMachine(Tsq::ProtocolMachine *newMachine, StringMap &attributes)
 {
     delete m_machine;
     m_machine = newMachine;

@@ -21,9 +21,7 @@ osStatusTeardown(int *)
 }
 
 void
-osGetProcessAttributes(int *, int pid,
-                       std::unordered_map<std::string,std::string> &current,
-                       std::unordered_map<std::string,std::string> &next)
+osGetProcessAttributes(int *, int pid, StringMap &current, StringMap &next)
 {
     struct proc_taskallinfo tai;
     struct proc_vnodepathinfo vpi;

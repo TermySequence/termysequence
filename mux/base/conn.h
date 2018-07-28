@@ -50,8 +50,8 @@ private:
     std::unordered_set<TermProxy*> m_removingTerms;
 
 private:
-    void doSetOwner(const Tsq::Uuid &owner, AttributeMap &map);
-    void doSetSender(const Tsq::Uuid &sender, AttributeMap &map);
+    void doSetOwner(const Tsq::Uuid &owner, StringMap &map);
+    void doSetSender(const Tsq::Uuid &sender, StringMap &map);
 
     void wireDisconnect(const char *body, uint32_t length);
     void wireServerAnnounce(const char *body, uint32_t length);

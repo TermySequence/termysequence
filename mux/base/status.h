@@ -20,8 +20,8 @@ private:
     uint32_t termiosFlags[3];
     char termiosChars[20];
 
-    AttributeMap m_all;
-    AttributeMap m_changed;
+    StringMap m_all;
+    StringMap m_changed;
 
     const Translator *m_translator;
     std::string m_outcomeStr;
@@ -34,7 +34,7 @@ public:
     TermStatusTracker(const Translator *translator);
     ~TermStatusTracker();
 
-    inline AttributeMap& changedMap() { return m_changed; }
+    inline StringMap& changedMap() { return m_changed; }
     inline unsigned outcome() const { return m_outcome; }
     inline int exitcode() const { return m_exitcode; }
     inline const char* outcomeStr() const { return m_outcomeStr.c_str(); }

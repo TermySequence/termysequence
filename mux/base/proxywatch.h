@@ -37,7 +37,7 @@ class TermProxyWatch final: public ConnProxyWatch
 public:
     // locked
     ProxyEventState state;
-    AttributeMap files;
+    StringMap files;
 
 protected:
     void pushAnnounce();
@@ -46,5 +46,5 @@ public:
     TermProxyWatch(TermProxy *proxy, TermReader *reader);
 
     // locked
-    void pushFileUpdates(const AttributeMap &map);
+    void pushFileUpdates(const StringMap &map);
 };

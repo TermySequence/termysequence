@@ -485,7 +485,7 @@ TermFilemon::handleNotifyFd()
 void
 TermFilemon::handleDirFd()
 {
-    AttributeMap map;
+    StringMap map;
     FileInfo info(m_dirFd);
     std::string msg;
     int rc;

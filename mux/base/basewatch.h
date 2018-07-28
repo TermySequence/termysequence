@@ -56,7 +56,7 @@ public:
     bool active = false;
     bool closing = false;
     bool started = false;
-    AttributeMap attributes;
+    StringMap attributes;
     unsigned closeReason = 0;
 
 public:
@@ -75,7 +75,7 @@ public:
 
     // locked
     void pushAttributeChange(const std::string &key, const std::string &spec);
-    void pushAttributeChanges(const AttributeMap &map);
+    void pushAttributeChanges(const StringMap &map);
     inline void activate();
 
 public:

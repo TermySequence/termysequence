@@ -94,7 +94,7 @@ TermProxyWatch::pushAnnounce()
 }
 
 void
-TermProxyWatch::pushFileUpdates(const AttributeMap &map)
+TermProxyWatch::pushFileUpdates(const StringMap &map)
 {
     if (map.count(g_mtstr)) {
         files = map;

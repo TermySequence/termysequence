@@ -199,7 +199,7 @@ TermListener::forwardToTerm(const Tsq::Uuid &id, std::string &buf, Tsq::Uuid &ho
 }
 
 static inline void
-copyOwnerAttributes(const Tsq::Uuid &id, const AttributeMap &src, AttributeMap &dst)
+copyOwnerAttributes(const Tsq::Uuid &id, const StringMap &src, StringMap &dst)
 {
     for (const auto &i: src)
         if (i.first.front() != '_') {
@@ -211,7 +211,7 @@ copyOwnerAttributes(const Tsq::Uuid &id, const AttributeMap &src, AttributeMap &
 }
 
 void
-TermListener::getOwnerAttributes(const Tsq::Uuid &id, AttributeMap &dst) const
+TermListener::getOwnerAttributes(const Tsq::Uuid &id, StringMap &dst) const
 {
     Lock lock(this);
 
@@ -224,7 +224,7 @@ TermListener::getOwnerAttributes(const Tsq::Uuid &id, AttributeMap &dst) const
 }
 
 void
-TermListener::getSenderAttributes(const Tsq::Uuid &id, AttributeMap &dst) const
+TermListener::getSenderAttributes(const Tsq::Uuid &id, StringMap &dst) const
 {
     Lock lock(this);
 
@@ -713,7 +713,7 @@ TermListener::handleClearOwnership(Tsq::Uuid *id)
 void
 TermListener::handleChangeOwnership(OwnershipChange *params)
 {
-    AttributeMap saved = params->attributes;
+    StringMap saved = params->attributes;
 
     for (auto term: m_terms)
         if (term->isTerm() && term->changeOwner(params))

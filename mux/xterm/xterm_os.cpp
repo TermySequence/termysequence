@@ -888,7 +888,7 @@ XTermEmulator::osc1337File(string &str)
         return;
 
     string params = str.substr(5, idx - 5);
-    AttributeMap attributes;
+    StringMap attributes;
     contentid_t id;
     bool isinline = false;
     long w = 0, h = 0;

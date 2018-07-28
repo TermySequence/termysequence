@@ -85,7 +85,7 @@ BaseWatch::pushAttributeChange(const std::string &key, const std::string &spec)
 }
 
 void
-BaseWatch::pushAttributeChanges(const AttributeMap &map)
+BaseWatch::pushAttributeChanges(const StringMap &map)
 {
     Lock wlock(this);
 

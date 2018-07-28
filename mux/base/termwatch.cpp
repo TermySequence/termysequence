@@ -102,7 +102,7 @@ TermWatch::pushFileUpdate(const std::string &name, const std::string &msg)
 }
 
 void
-TermWatch::pushFileUpdates(const AttributeMap &map)
+TermWatch::pushFileUpdates(const StringMap &map)
 {
     Lock wlock(this);
 

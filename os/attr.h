@@ -4,21 +4,19 @@
 
 #pragma once
 
+#include "lib/stringmap.h"
 #include "lib/uuid.h"
 
-#include <unordered_map>
 #include <vector>
 
 extern bool
-osLoadFile(const char *path, std::unordered_map<std::string,std::string> &map);
+osLoadFile(const char *path, StringMap &map);
 
 extern void
-osAttributes(std::unordered_map<std::string,std::string> &map,
-             std::vector<int> &pids, bool isServer);
+osAttributes(StringMap &map, std::vector<int> &pids, bool isServer);
 
 extern bool
-osAttributesAsync(std::unordered_map<std::string,std::string> &map,
-                  int *fdret, int *pidret, int *state);
+osAttributesAsync(StringMap &map, int *fdret, int *pidret, int *state);
 
 extern void
 osIdentity(Tsq::Uuid &result, std::vector<int> &pids);

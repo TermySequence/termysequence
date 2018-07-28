@@ -5,6 +5,7 @@
 #pragma once
 
 #include "app/attrbase.h"
+#include "lib/stringmap.h"
 #include "lib/types.h"
 #include "lib/uuid.h"
 
@@ -65,7 +66,7 @@ private:
     QSet<TermInstance*> m_inputFollowers;
 
     QSocketNotifier *m_notifier;
-    std::unordered_map<std::string,std::string> m_attributes;
+    StringMap m_attributes;
     QString m_idStr;
 
     bool m_commandMode;

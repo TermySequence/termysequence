@@ -24,7 +24,7 @@ private:
 
     int m_pid;
     int m_disposition;
-    AttributeMap m_params;
+    StringMap m_params;
 
 private:
     bool begin();

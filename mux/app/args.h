@@ -116,7 +116,7 @@ public:
     int printConnectError(int errtype, int errnum, int errsave);
 };
 
-class Translator final: public AttributeMap
+class Translator final: public StringMap
 {
 public:
     std::string path;

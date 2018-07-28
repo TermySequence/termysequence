@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include <unordered_map>
-
-typedef std::unordered_map<std::string,std::string> AttributeMap;
+#include "lib/stringmap.h"
 
 extern const std::string g_mtstr;
 

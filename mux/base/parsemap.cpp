@@ -7,7 +7,7 @@
 #include "os/attr.h"
 
 void
-parseStringMap(Tsq::ProtocolUnmarshaler &unm, AttributeMap &map)
+parseStringMap(Tsq::ProtocolUnmarshaler &unm, StringMap &map)
 {
     while (unm.remainingLength()) {
         std::string key = unm.parseString();
@@ -20,16 +20,16 @@ parseStringMap(Tsq::ProtocolUnmarshaler &unm, AttributeMap &map)
 }
 
 void
-parseUtf8Map(Tsq::ProtocolUnmarshaler &unm, AttributeMap &map)
+parseUtf8Map(Tsq::ProtocolUnmarshaler &unm, StringMap &map)
 {
     unm.validateAsUtf8();
     parseStringMap(unm, map);
 }
 
-AttributeMap
+StringMap
 parseTermMap(Tsq::ProtocolUnmarshaler &unm)
 {
-    AttributeMap result;
+    StringMap result;
 
     unm.validateAsUtf8();
 

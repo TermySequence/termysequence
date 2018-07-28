@@ -117,7 +117,7 @@ osRestrictedTermAttribute(const std::string &key, bool isOwner)
 }
 
 static void
-timedReadMulti(int fd, std::unordered_map<std::string,std::string> &map)
+timedReadMulti(int fd, StringMap &map)
 {
     // Read until EOF, buffer size exceeded, or time limit exceeded
     int64_t timelimit = osMonotime() + ATTRIBUTE_SCRIPT_TIMEOUT;
@@ -217,7 +217,7 @@ timedRead(int fd, std::string &result)
 }
 
 bool
-osLoadFile(const char *path, std::unordered_map<std::string,std::string> &map)
+osLoadFile(const char *path, StringMap &map)
 {
     int fd;
 
@@ -279,8 +279,7 @@ loadScriptMultiFd(const std::string &path, std::vector<int> &pids)
 }
 
 static void
-loadScriptMulti(const std::string &path, std::unordered_map<std::string,std::string> &map,
-                std::vector<int> &pids)
+loadScriptMulti(const std::string &path, StringMap &map, std::vector<int> &pids)
 {
     int fd = loadScriptMultiFd(path, pids);
     if (fd != -1) {
@@ -305,7 +304,7 @@ loadMonitorMultiFd(std::vector<int> &pids)
 }
 
 static void
-loadMonitorMulti(std::unordered_map<std::string,std::string> &map, std::vector<int> &pids)
+loadMonitorMulti(StringMap &map, std::vector<int> &pids)
 {
     int fd = loadMonitorMultiFd(pids);
     if (fd != -1) {
@@ -315,7 +314,7 @@ loadMonitorMulti(std::unordered_map<std::string,std::string> &map, std::vector<i
 }
 
 static void
-fallbackUser(std::unordered_map<std::string,std::string> &map)
+fallbackUser(StringMap &map)
 {
     uid_t uid = getuid();
     const struct passwd *ent;
@@ -375,7 +374,7 @@ osIdentity(Tsq::Uuid &result, std::vector<int> &pids)
 }
 
 static void
-osFallbackAttributes(std::unordered_map<std::string,std::string> &map, bool isServer)
+osFallbackAttributes(StringMap &map, bool isServer)
 {
     /*
      * Remove attributes that scripts aren't allowed to set
@@ -413,8 +412,7 @@ osFallbackAttributes(std::unordered_map<std::string,std::string> &map, bool isSe
 }
 
 void
-osAttributes(std::unordered_map<std::string,std::string> &map,
-             std::vector<int> &pids, bool isServer)
+osAttributes(StringMap &map, std::vector<int> &pids, bool isServer)
 {
     std::string path;
     const char *appname = isServer ? SERVER_NAME : APP_NAME;
@@ -445,8 +443,7 @@ osAttributes(std::unordered_map<std::string,std::string> &map,
 }
 
 extern bool
-osAttributesAsync(std::unordered_map<std::string,std::string> &map,
-                  int *fdret, int *pidret, int *state)
+osAttributesAsync(StringMap &map, int *fdret, int *pidret, int *state)
 {
     std::string path;
     std::vector<int> pids(1, 0);

@@ -40,7 +40,7 @@
 
 void
 TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
-                    AttributeMap &attributes, EmulatorParams *params)
+                    StringMap &attributes, EmulatorParams *params)
 {
     m_id = id;
     m_owner = owner;
@@ -64,7 +64,7 @@ TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
 }
 
 TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                           Size size, AttributeMap &attributes) :
+                           Size size, StringMap &attributes) :
     ConnInstance("term", true)
 {
     EmulatorParams params;
@@ -74,7 +74,7 @@ TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
 }
 
 TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                           Size size, AttributeMap &attributes,
+                           Size size, StringMap &attributes,
                            const TermInstance *copyfrom) :
     ConnInstance("term", true)
 {
@@ -100,7 +100,7 @@ TermInstance::~TermInstance()
  */
 TermInstance *
 TermInstance::commandDuplicate(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                               Size size, AttributeMap &attributes)
+                               Size size, StringMap &attributes)
 {
     StateLock slock(this, false);
 
@@ -194,7 +194,7 @@ TermInstance::reportFileUpdate(const std::string &name, const std::string &msg)
 }
 
 void
-TermInstance::reportFileUpdates(const AttributeMap &map)
+TermInstance::reportFileUpdates(const StringMap &map)
 {
     Lock lock(this);
 
@@ -208,7 +208,7 @@ TermInstance::reportFileUpdates(const AttributeMap &map)
  * This thread
  */
 void
-TermInstance::handleStatusAttributes(AttributeMap &map)
+TermInstance::handleStatusAttributes(StringMap &map)
 {
     {
         StateLock slock(this, true);
@@ -821,7 +821,7 @@ TermInstance::configuredInitParams(EmulatorParams *params) const
     std::string lang, unicoding = TSQ_UNICODE_DEFAULT;
     char *endptr;
 
-    AttributeMap::const_iterator j = m_attributes.end(), i;
+    StringMap::const_iterator j = m_attributes.end(), i;
 
     if ((i = m_attributes.find(Tsq::attr_PROFILE_FLAGS)) != j) {
         params->flags |= strtoull(i->second.c_str(), &endptr, 10);
@@ -863,7 +863,7 @@ TermInstance::configuredStartParams(PtyParams *p) const
     {
         StateLock slock(this, false);
 
-        AttributeMap::const_iterator j = m_attributes.end(), i;
+        StringMap::const_iterator j = m_attributes.end(), i;
 
         if ((i = m_attributes.find(Tsq::attr_PREF_COMMAND)) != j) {
             p->command = i->second;

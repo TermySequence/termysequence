@@ -26,7 +26,7 @@ protected:
 
     std::unordered_set<BaseWatch*> m_watches;
 
-    AttributeMap m_attributes;
+    StringMap m_attributes;
     unsigned m_nHops;
 
     void wireAttribute(const char *body, uint32_t length);

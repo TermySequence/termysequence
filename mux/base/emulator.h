@@ -74,7 +74,7 @@ public:
     bool sizeChanged = false;
     bool cursorChanged = false;
     uint32_t bellCount = 0;
-    AttributeMap changedAttributes;
+    StringMap changedAttributes;
 
 protected:
     TermEmulator(TermInstance *parent, const TermEmulator *copyfrom);

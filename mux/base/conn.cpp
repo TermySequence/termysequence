@@ -55,11 +55,11 @@ ConnInstance::addWatch(BaseWatch *watch)
 }
 
 void
-ConnInstance::doSetOwner(const Tsq::Uuid &owner, AttributeMap &map)
+ConnInstance::doSetOwner(const Tsq::Uuid &owner, StringMap &map)
 {
     // Lock assumed to be held
     m_sender = m_owner = owner;
-    AttributeMap changes;
+    StringMap changes;
 
     {
         StateLock slock(this, true);
@@ -109,11 +109,11 @@ ConnInstance::doSetOwner(const Tsq::Uuid &owner, AttributeMap &map)
 }
 
 void
-ConnInstance::doSetSender(const Tsq::Uuid &sender, AttributeMap &map)
+ConnInstance::doSetSender(const Tsq::Uuid &sender, StringMap &map)
 {
     // Lock assumed to be held
     m_sender = sender;
-    AttributeMap changes;
+    StringMap changes;
 
     {
         StateLock slock(this, true);
@@ -167,7 +167,7 @@ ConnInstance::testOwner(const Tsq::Uuid &owner)
         Lock lock(this);
 
         if (!m_owner) {
-            AttributeMap map;
+            StringMap map;
             g_listener->getOwnerAttributes(owner, map);
             doSetOwner(owner, map);
             return true;
@@ -185,13 +185,13 @@ ConnInstance::testSender(const Tsq::Uuid &owner)
         Lock lock(this);
 
         if (!m_owner) {
-            AttributeMap map;
+            StringMap map;
             g_listener->getOwnerAttributes(owner, map);
             doSetOwner(owner, map);
         } else if (m_owner != owner && !testAttribute(Tsq::attr_PREF_INPUT)) {
             return false;
         } else if (m_sender != owner) {
-            AttributeMap map;
+            StringMap map;
             g_listener->getSenderAttributes(owner, map);
             doSetSender(owner, map);
         }
@@ -207,7 +207,7 @@ ConnInstance::setOwner(const Tsq::Uuid &owner)
         Lock lock(this);
 
         if (m_owner != owner) {
-            AttributeMap map;
+            StringMap map;
             g_listener->getOwnerAttributes(owner, map);
             doSetOwner(owner, map);
         }

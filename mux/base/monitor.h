@@ -15,7 +15,7 @@ private:
     bool m_restarting = false;
 
     std::string m_accum;
-    AttributeMap m_map;
+    StringMap m_map;
 
 private:
     void startMonitor();

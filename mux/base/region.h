@@ -27,7 +27,7 @@ public:
     column_t startCol;
     column_t endCol;
 
-    AttributeMap attributes;
+    StringMap attributes;
 
 public:
     Region(Tsq::RegionType type);

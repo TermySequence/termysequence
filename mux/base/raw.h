@@ -18,7 +18,7 @@ private:
 
     bool setRemoteId(const Tsq::Uuid &remoteId);
     void writeResponse(const char *buf, size_t len);
-    bool setMachine(Tsq::ProtocolMachine *newMachine, AttributeMap &attributes);
+    bool setMachine(Tsq::ProtocolMachine *newMachine, StringMap &attributes);
 
     void threadMain();
     bool handleFd();

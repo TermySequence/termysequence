@@ -56,9 +56,7 @@ osStatusTeardown(int *data)
 }
 
 void
-osGetProcessAttributes(int *data, int pid,
-                       std::unordered_map<std::string,std::string> &current,
-                       std::unordered_map<std::string,std::string> &next)
+osGetProcessAttributes(int *data, int pid, StringMap &current, StringMap &next)
 {
     char path[64], buf[256];
     int pathoff;

@@ -53,8 +53,8 @@ struct ProxyAccumulatedState: TermEventBase
     std::map<index_t,std::string> proxyRows[2];
     std::map<bufreg_t,std::string> proxyRegions;
 
-    AttributeMap changedFiles;
-    AttributeMap files;
+    StringMap changedFiles;
+    StringMap files;
     bool filesChanged;
 
     Size size;
@@ -112,8 +112,8 @@ struct TermEventTransfer: TermEventFlags
     std::vector<std::pair<index_t,CellRow>> outRows[2];
     std::vector<Region> outRegions;
 
-    AttributeMap attributes;
-    AttributeMap files;
+    StringMap attributes;
+    StringMap files;
 
     std::vector<std::pair<uint32_t,std::string>> proxyData;
 

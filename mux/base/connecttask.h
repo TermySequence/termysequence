@@ -11,7 +11,7 @@
 class RunConnect final: public TaskBase, public ConnectorBase
 {
 private:
-    AttributeMap m_params;
+    StringMap m_params;
 
 private:
     bool begin();

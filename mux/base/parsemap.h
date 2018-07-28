@@ -8,10 +8,10 @@
 #include "lib/wire.h"
 
 extern void
-parseStringMap(Tsq::ProtocolUnmarshaler &unm, AttributeMap &map);
+parseStringMap(Tsq::ProtocolUnmarshaler &unm, StringMap &map);
 
 extern void
-parseUtf8Map(Tsq::ProtocolUnmarshaler &unm, AttributeMap &map);
+parseUtf8Map(Tsq::ProtocolUnmarshaler &unm, StringMap &map);
 
-extern AttributeMap
+extern StringMap
 parseTermMap(Tsq::ProtocolUnmarshaler &unm);

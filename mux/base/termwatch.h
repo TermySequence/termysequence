@@ -20,7 +20,7 @@ protected:
 public:
     // locked
     TermEventState state;
-    AttributeMap files;
+    StringMap files;
 
 public:
     TermWatch(TermInstance *parent, TermReader *reader);
@@ -32,7 +32,7 @@ public:
     void pushUserRegion(bufreg_t region);
     void pushDirectoryUpdate(const std::string &msg);
     void pushFileUpdate(const std::string &name, const std::string &msg);
-    void pushFileUpdates(const AttributeMap &map);
+    void pushFileUpdates(const StringMap &map);
 
     void pullEverything();
 };

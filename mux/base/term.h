@@ -58,7 +58,7 @@ private:
     void handleScrollLock(bool hard, bool enabled);
 
     void launch();
-    void handleStatusAttributes(AttributeMap &map);
+    void handleStatusAttributes(StringMap &map);
     void handleProcessExited(int disposition);
     void halt();
 
@@ -73,14 +73,14 @@ private:
 
 private:
     void setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
-               AttributeMap &attributes, EmulatorParams *params);
+               StringMap &attributes, EmulatorParams *params);
     TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                 Size size, AttributeMap &attributes,
+                 Size size, StringMap &attributes,
                  const TermInstance *copyfrom);
 
 public:
     TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                 Size size, AttributeMap &attributes);
+                 Size size, StringMap &attributes);
     ~TermInstance();
 
     inline TermEmulator* emulator() { return m_emulator; }
@@ -89,7 +89,7 @@ public:
     inline const int32_t* modTimePtr() const { return &m_modTime; }
 
     TermInstance* commandDuplicate(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                                   Size size, AttributeMap &attributes);
+                                   Size size, StringMap &attributes);
     void commandGetRows(uint8_t bufid, index_t start, index_t end,
                         std::vector<CellRow> &rows,
                         std::vector<Region> &regions);
@@ -100,7 +100,7 @@ public:
     bool reportHardScrollLock(bool enabled, bool query);
     void reportDirectoryUpdate(const std::string &msg);
     void reportFileUpdate(const std::string &name, const std::string &msg);
-    void reportFileUpdates(const AttributeMap &map);
+    void reportFileUpdates(const StringMap &map);
 
     // called by emulator while locked
     void resizeFd(Size size);

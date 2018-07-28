@@ -104,7 +104,7 @@ AttributeBase::commandSetAttribute(const std::string &key, const std::string &va
 }
 
 void
-AttributeBase::commandSetAttributes(AttributeMap &map)
+AttributeBase::commandSetAttributes(StringMap &map)
 {
     {
         StateLock slock(this, true);

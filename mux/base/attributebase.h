@@ -19,7 +19,7 @@ protected:
     mutable pthread_rwlock_t m_rwlock;
 
     std::unordered_set<BaseWatch*> m_watches;
-    AttributeMap m_attributes;
+    StringMap m_attributes;
 
     Tsq::Uuid m_id;
 
@@ -34,7 +34,7 @@ public:
     std::string commandGetAttributes() const;
     std::string commandGetAttribute(const std::string &key) const;
     void commandSetAttribute(const std::string &key, const std::string &value);
-    void commandSetAttributes(AttributeMap &map);
+    void commandSetAttributes(StringMap &map);
     void commandRemoveAttribute(const std::string &key);
     bool testAttribute(const std::string &key) const;
 

@@ -32,7 +32,7 @@ ClientMachine::~ClientMachine()
 bool
 ClientMachine::finish()
 {
-    AttributeMap map;
+    StringMap map;
     Tsq::ProtocolUnmarshaler unm(m_attributes.data(), m_length);
 
     parseUtf8Map(unm, map);

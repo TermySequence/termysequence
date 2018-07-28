@@ -187,7 +187,7 @@ TermReader::commandServerCreateTerm(const char *body, uint32_t length)
     size.setWidth(unm.parseNumber());
     size.setHeight(unm.parseNumber());
 
-    AttributeMap attributes = parseTermMap(unm);
+    StringMap attributes = parseTermMap(unm);
     g_listener->getOwnerAttributes(clientId, attributes);
 
     TermInstance *term = new TermInstance(termId, clientId, size, attributes);
@@ -712,7 +712,7 @@ TermReader::commandTermDuplicate(ConnWatch *watch, const char *body, uint32_t le
         size.setWidth(unm.parseNumber());
         size.setHeight(unm.parseNumber());
 
-        AttributeMap attributes = parseTermMap(unm);
+        StringMap attributes = parseTermMap(unm);
         g_listener->getOwnerAttributes(clientId, attributes);
 
         auto *term = static_cast<TermWatch*>(watch)->term()->commandDuplicate(
@@ -779,7 +779,7 @@ TermReader::commandRegionCreate(ConnWatch *watch, const char *body, uint32_t len
         }
 
         // Set some additional attributes
-        AttributeMap attributes;
+        StringMap attributes;
         g_listener->getOwnerAttributes(clientId, attributes);
         region->attributes[Tsq::attr_REGION_USER] = attributes[Tsq::attr_OWNER_USER];
         region->attributes[Tsq::attr_REGION_HOST] = attributes[Tsq::attr_OWNER_HOST];

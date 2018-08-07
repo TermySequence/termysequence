@@ -58,6 +58,7 @@ protected:
 
     static volatile sig_atomic_t s_deathSignal;
     static int s_reloadFd[2];
+    int m_pid = 0;
     int m_exitStatus = 0;
     int m_fd = -1;
     int m_timeout = -1;

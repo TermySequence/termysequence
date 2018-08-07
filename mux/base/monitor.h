@@ -10,7 +10,6 @@
 class TermMonitor final: public ThreadBase
 {
 private:
-    int m_pid = 0;
     int m_state = 0;
     bool m_restarting = false;
 

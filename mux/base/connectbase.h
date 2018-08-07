@@ -22,7 +22,6 @@ protected:
 
 protected:
     int m_sd = -1;
-    int m_pid;
     int m_state = ReadingRemoteHandshake;
     int m_protocolType;
     unsigned m_readCount = 0;

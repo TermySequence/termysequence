@@ -19,11 +19,10 @@ private:
 
     bool m_running = false;
     bool m_exited = false;
+    int m_disposition;
 
     std::queue<std::string*> m_outdata;
 
-    int m_pid;
-    int m_disposition;
     StringMap m_params;
 
 private:

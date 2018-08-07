@@ -25,7 +25,6 @@ class TermInstance final: public ConnInstance
 private:
     TermEmulator *m_emulator;
     TermStatusTracker *m_status;
-    int m_pid = 0;
     bool m_haveOutcome = true, m_haveClosed = true;
 
     int32_t m_modTime;

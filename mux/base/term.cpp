@@ -264,6 +264,7 @@ TermInstance::launch()
         const char *msg = e.what();
         LOGWRN("Term %p: failed to start process: %s\n", this, msg);
         handleTermEvent(const_cast<char*>(msg), strlen(msg), false);
+        m_pid = 0;
     }
 
     if (m_pid) {

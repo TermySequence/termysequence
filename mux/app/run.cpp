@@ -39,28 +39,10 @@ loadLibgit2()
 }
 
 static void
-scrubEnvironment(bool scrubSession)
+scrubEnvironment()
 {
     // Scrub other emulators
     unsetenv("VTE_VERSION");
-
-    // Scrub session
-    if (scrubSession) {
-        unsetenv("BASH_SESSION");
-        unsetenv("DESKTOP_SESSION");
-        unsetenv("DISPLAY");
-        unsetenv("GDMSESSION");
-        unsetenv("SESSION_MANAGER");
-        unsetenv("TERM_SESSION_ID");
-        unsetenv("WAYLAND_DISPLAY");
-        unsetenv("XAUTHORITY");
-        unsetenv("XDG_CURRENT_DESKTOP");
-        unsetenv("XDG_SEAT");
-        unsetenv("XDG_SESSION_DESKTOP");
-        unsetenv("XDG_SESSION_ID");
-        unsetenv("XDG_SESSION_TYPE");
-        unsetenv("XDG_VTNR");
-    }
 }
 
 [[noreturn]] static void
@@ -70,7 +52,7 @@ runStandalone()
     unsigned flavor = Tsq::FlavorStandalone;
     osCreateRuntimeDir(g_args->rundir(), s_udspath);
     loadLibgit2();
-    scrubEnvironment(false);
+    scrubEnvironment();
 
     try {
         g_listener = new TermListener(STDIN_FILENO, STDOUT_FILENO, flavor);
@@ -156,7 +138,7 @@ runServer()
     int rc = 0;
 
     chdir("/");
-    scrubEnvironment(true);
+    scrubEnvironment();
 
     if (g_args->fork()) {
         int sd[2];

@@ -14,7 +14,7 @@
 #define TR_DESC1 TL("server", \
     "A multiplexing terminal emulator server with many features", "desc1")
 #define TR_DESC2 TL("server", \
-    "Establish a connection between emulator server instances", "desc2")
+    "Establish a connection between terminal emulator servers", "desc2")
 #define TR_DESC3 TL("server", \
     "Query and set terminal attributes", "desc3")
 #define TR_PARSE1 TL("server", "%1 option requires an argument", "parse1")

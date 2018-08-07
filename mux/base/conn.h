@@ -13,6 +13,7 @@
 class TermOutput;
 class ServerProxy;
 class TermProxy;
+struct OwnershipInfo;
 struct OwnershipChange;
 
 enum DisconnectFlags {
@@ -50,7 +51,7 @@ private:
     std::unordered_set<TermProxy*> m_removingTerms;
 
 private:
-    void doSetOwner(const Tsq::Uuid &owner, StringMap &map);
+    void doSetOwner(const Tsq::Uuid &owner, OwnershipInfo *oi);
     void doSetSender(const Tsq::Uuid &sender, StringMap &map);
 
     void wireDisconnect(const char *body, uint32_t length);

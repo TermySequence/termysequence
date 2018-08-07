@@ -20,10 +20,14 @@ class ServerProxy;
 class TermProxy;
 class TaskBase;
 
-struct OwnershipChange {
+struct OwnershipInfo {
+    StringMap attributes;
+    SharedStringMap environ;
+};
+
+struct OwnershipChange: public OwnershipInfo {
     Tsq::Uuid oldId;
     Tsq::Uuid newId;
-    StringMap attributes;
 
     inline OwnershipChange(const Tsq::Uuid &nId) :
         newId(nId) {}
@@ -65,11 +69,13 @@ private:
     std::unordered_map<Tsq::Uuid,TaskBase*> m_taskMap;
     std::unordered_set<std::string> m_taskTargets;
 
+    StringMap m_environ;
+
 private:
     BaseWatch* addConnWatch(ConnInstance *conn, TermReader *reader);
     BaseWatch* addServerWatch(ServerProxy *proxy, TermReader *reader);
     BaseWatch* addProxyWatch(TermProxy *proxy, TermReader *reader);
-    void addReader(int rfd, int wfd);
+    void addReader(int rfd, int wfd, StringMap environ);
 
     void threadMain();
     bool handleMultiFd(pollfd &pfd);
@@ -123,6 +129,7 @@ public:
     void resumeTasks(const Tsq::Uuid &hopId);
 
     void getOwnerAttributes(const Tsq::Uuid &id, StringMap &map) const;
+    void getOwnerAttributes(const Tsq::Uuid &id, OwnershipInfo &oi) const;
     void getSenderAttributes(const Tsq::Uuid &id, StringMap &map) const;
     bool getClientAttribute(const Tsq::Uuid &id, std::string &inout) const;
 };

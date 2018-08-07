@@ -21,6 +21,7 @@
 #include "os/conn.h"
 #include "os/time.h"
 #include "os/attr.h"
+#include "os/status.h"
 #include "os/eventfd.h"
 #include "os/logging.h"
 #include "lib/protocol.h"
@@ -40,13 +41,16 @@ TermListener::TermListener(int initialrd, int initialwd, unsigned flavor) :
     m_standalone(flavor == Tsq::FlavorStandalone)
 {
     std::vector<int> pids;
+    m_pid = getpid();
+
     int64_t before = osWalltime();
+    m_environ = osGetProcessEnvironment(m_pid);
     osIdentity(m_id, pids);
     osAttributes(m_attributes, pids, true);
     int64_t after = osWalltime();
 
     m_attributes[Tsq::attr_MACHINE_ID] = m_id.str();
-    m_attributes[Tsq::attr_PID] = std::to_string(getpid());
+    m_attributes[Tsq::attr_PID] = std::to_string(m_pid);
     m_attributes[Tsq::attr_PRODUCT] = SERVER_NAME " " PROJECT_VERSION;
     m_attributes[Tsq::attr_FLAVOR] = std::to_string(flavor);
     m_attributes[Tsq::attr_STARTED] = std::to_string(after);
@@ -224,6 +228,20 @@ TermListener::getOwnerAttributes(const Tsq::Uuid &id, StringMap &dst) const
 }
 
 void
+TermListener::getOwnerAttributes(const Tsq::Uuid &id, OwnershipInfo &oi) const
+{
+    Lock lock(this);
+
+    auto i = m_clientMap.find(id);
+    if (i != m_clientMap.end()) {
+        copyOwnerAttributes(id, i->second.attributes, oi.attributes);
+        oi.environ = i->second.reader->environ();
+    } else {
+        oi.attributes[Tsq::attr_SENDER_ID] = oi.attributes[Tsq::attr_OWNER_ID] = id.str();
+    }
+}
+
+void
 TermListener::getSenderAttributes(const Tsq::Uuid &id, StringMap &dst) const
 {
     Lock lock(this);
@@ -290,6 +308,7 @@ TermListener::registerClient(const Tsq::Uuid &id, ClientInfo &info)
     if (info.flags & Tsq::TakeOwnership && m_ownerclients++ == 0) {
         OwnershipChange *tmp = new OwnershipChange(id);
         copyOwnerAttributes(id, i->second.attributes, tmp->attributes);
+        tmp->environ = i->second.reader->environ();
         sendWorkAndUnlock(lock, ListenerChangeOwnership, tmp);
     }
 
@@ -319,6 +338,7 @@ TermListener::unregisterClient(const Tsq::Uuid &id, std::string &buf)
                 if (info.flags & Tsq::TakeOwnership) {
                     OwnershipChange *tmp = new OwnershipChange(id, newId);
                     copyOwnerAttributes(newId, info.attributes, tmp->attributes);
+                    tmp->environ = info.reader->environ();
 
                     work = ListenerChangeOwnership;
                     payload = tmp;
@@ -501,9 +521,9 @@ TermListener::addProxyWatch(TermProxy *proxy, TermReader *reader)
 }
 
 void
-TermListener::addReader(int rfd, int wfd)
+TermListener::addReader(int rfd, int wfd, StringMap environ)
 {
-    TermReader *reader = new TermReader(wfd);
+    TermReader *reader = new TermReader(wfd, std::move(environ));
     m_readers.push_back(reader);
     ++m_nReaders;
 
@@ -526,8 +546,9 @@ TermListener::handleMultiFd(pollfd &pfd)
 
         if (connfd >= 0)
             try {
-                osLocalCredsCheck(connfd);
-                addReader(connfd, connfd);
+                int pid = osLocalCredsCheck(connfd);
+                StringMap environ = osGetProcessEnvironment(pid);
+                addReader(connfd, connfd, environ);
             }
             catch (const std::exception &e) {
                 LOGERR("%s\n", e.what());
@@ -790,7 +811,7 @@ TermListener::handleWork(const WorkItem &item)
     case ListenerRemoveTerm:
         return handleRemoveTerm((ConnInstance*)item.value);
     case ListenerAddReader:
-        addReader(item.value, item.value);
+        addReader(item.value, item.value, StringMap());
         break;
     case ListenerConfirmReader:
         handleConfirmReader((TermReader*)item.value);
@@ -860,7 +881,7 @@ TermListener::threadMain()
         if (m_initialrd != -1) {
             osMakeNonblocking(m_initialrd);
             osMakeNonblocking(m_initialwd);
-            addReader(m_initialrd, m_initialwd);
+            addReader(m_initialrd, m_initialwd, m_environ);
         }
         runDescriptorLoopMulti();
     }

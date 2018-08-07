@@ -20,11 +20,12 @@
 
 #include <unistd.h>
 
-TermReader::TermReader(int writeFd) :
+TermReader::TermReader(int writeFd, StringMap &&environ) :
     ThreadBase("reader", ThreadBaseFd),
     m_writer(new TermWriter(this)),
     m_machine(new ServerMachine(this)),
-    m_writeFd(writeFd)
+    m_writeFd(writeFd),
+    m_environ(new StringMap(environ))
 {
 }
 

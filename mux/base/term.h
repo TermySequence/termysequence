@@ -72,14 +72,14 @@ private:
 
 private:
     void setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
-               StringMap &attributes, EmulatorParams *params);
+               OwnershipInfo *oi, EmulatorParams *params);
     TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                 Size size, StringMap &attributes,
+                 Size size, OwnershipInfo *oi,
                  const TermInstance *copyfrom);
 
 public:
     TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                 Size size, StringMap &attributes);
+                 Size size, OwnershipInfo *oi);
     ~TermInstance();
 
     inline TermEmulator* emulator() { return m_emulator; }
@@ -88,7 +88,7 @@ public:
     inline const int32_t* modTimePtr() const { return &m_modTime; }
 
     TermInstance* commandDuplicate(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                                   Size size, StringMap &attributes);
+                                   Size size, OwnershipInfo *oi);
     void commandGetRows(uint8_t bufid, index_t start, index_t end,
                         std::vector<CellRow> &rows,
                         std::vector<Region> &regions);

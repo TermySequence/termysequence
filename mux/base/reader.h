@@ -7,6 +7,7 @@
 #include "threadbase.h"
 #include "servermachine.h"
 #include "basewatch.h"
+#include "lib/stringmap.h"
 #include "lib/uuid.h"
 
 #include <set>
@@ -30,15 +31,15 @@ private:
     TermWriter *m_writer;
     Tsq::ProtocolMachine *m_machine;
 
-    Tsq::Uuid m_remoteId;
-
-    std::unordered_set<Tsq::Uuid> m_knownClients, m_ignoredClients;
-
     int m_writeFd;
     int m_savedFd = -1;
     int m_savedWriteFd = -1;
     bool m_idleOut = false;
     bool m_cleanExit = false;
+
+    Tsq::Uuid m_remoteId;
+    std::unordered_set<Tsq::Uuid> m_knownClients, m_ignoredClients;
+    SharedStringMap m_environ;
 
 private:
     void threadMain();
@@ -103,12 +104,13 @@ private:
     void commandRegionRemove(ConnWatch *watch, const char *body, uint32_t length);
 
 public:
-    TermReader(int writeFd);
+    TermReader(int writeFd, StringMap &&environ);
     ~TermReader();
 
     inline TermWriter* writer() { return m_writer; }
     inline Tsq::ProtocolMachine* machine() { return m_machine; }
     inline const Tsq::Uuid& remoteId() const { return m_remoteId; }
+    inline const auto& environ() const { return m_environ; }
 
     void setWatches(std::set<BaseWatch*,WatchSorter> &watches);
     void addWatch(BaseWatch *watch);

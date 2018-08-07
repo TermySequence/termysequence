@@ -40,12 +40,12 @@
 
 void
 TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
-                    StringMap &attributes, EmulatorParams *params)
+                    OwnershipInfo *oi, EmulatorParams *params)
 {
     m_id = id;
     m_owner = owner;
     m_machine = new Tsq::TermClientProtocol(this);
-    m_attributes = std::move(attributes);
+    m_attributes = std::move(oi->attributes);
 
     m_params = new PtyParams{};
     m_params->daemon = true;
@@ -64,22 +64,22 @@ TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
 }
 
 TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                           Size size, StringMap &attributes) :
+                           Size size, OwnershipInfo *oi) :
     ConnInstance("term", true)
 {
     EmulatorParams params;
-    setup(id, owner, size, attributes, &params);
+    setup(id, owner, size, oi, &params);
 
     m_emulator = new XTermEmulator(this, size, params);
 }
 
 TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                           Size size, StringMap &attributes,
+                           Size size, OwnershipInfo *oi,
                            const TermInstance *copyfrom) :
     ConnInstance("term", true)
 {
     EmulatorParams params;
-    setup(id, owner, size, attributes, &params);
+    setup(id, owner, size, oi, &params);
 
     m_emulator = copyfrom->m_emulator->duplicate(this, size);
 }
@@ -100,15 +100,15 @@ TermInstance::~TermInstance()
  */
 TermInstance *
 TermInstance::commandDuplicate(const Tsq::Uuid &id, const Tsq::Uuid &owner,
-                               Size size, StringMap &attributes)
+                               Size size, OwnershipInfo *oi)
 {
     StateLock slock(this, false);
 
     for (const auto &i: m_attributes)
         if (!osRestrictedTermAttribute(i.first, false))
-            attributes.emplace(i);
+            oi->attributes.emplace(i);
 
-    return new TermInstance(id, owner, size, attributes, this);
+    return new TermInstance(id, owner, size, oi, this);
 }
 
 void

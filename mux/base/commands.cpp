@@ -187,10 +187,11 @@ TermReader::commandServerCreateTerm(const char *body, uint32_t length)
     size.setWidth(unm.parseNumber());
     size.setHeight(unm.parseNumber());
 
-    StringMap attributes = parseTermMap(unm);
-    g_listener->getOwnerAttributes(clientId, attributes);
+    OwnershipInfo oi;
+    oi.attributes = parseTermMap(unm);
+    g_listener->getOwnerAttributes(clientId, oi);
 
-    TermInstance *term = new TermInstance(termId, clientId, size, attributes);
+    TermInstance *term = new TermInstance(termId, clientId, size, &oi);
     g_listener->sendWork(ListenerAddTerm, term);
 }
 
@@ -712,11 +713,12 @@ TermReader::commandTermDuplicate(ConnWatch *watch, const char *body, uint32_t le
         size.setWidth(unm.parseNumber());
         size.setHeight(unm.parseNumber());
 
-        StringMap attributes = parseTermMap(unm);
-        g_listener->getOwnerAttributes(clientId, attributes);
+        OwnershipInfo oi;
+        oi.attributes = parseTermMap(unm);
+        g_listener->getOwnerAttributes(clientId, oi);
 
         auto *term = static_cast<TermWatch*>(watch)->term()->commandDuplicate(
-            termId, clientId, size, attributes);
+            termId, clientId, size, &oi);
         g_listener->sendWork(ListenerAddTerm, term);
     }
 }

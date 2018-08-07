@@ -6,6 +6,9 @@
 
 #include "lib/stringmap.h"
 
+#include <memory>
+typedef std::shared_ptr<const StringMap> SharedStringMap;
+
 extern const std::string g_mtstr;
 
 using namespace std::string_literals;

@@ -55,7 +55,7 @@ ConnInstance::addWatch(BaseWatch *watch)
 }
 
 void
-ConnInstance::doSetOwner(const Tsq::Uuid &owner, StringMap &map)
+ConnInstance::doSetOwner(const Tsq::Uuid &owner, OwnershipInfo *oi)
 {
     // Lock assumed to be held
     m_sender = m_owner = owner;
@@ -78,8 +78,8 @@ ConnInstance::doSetOwner(const Tsq::Uuid &owner, StringMap &map)
             spec.assign(i->first);
             spec.push_back('\0');
 
-            auto j = map.find(i->first);
-            if (j == map.end()) {
+            auto j = oi->attributes.find(i->first);
+            if (j == oi->attributes.end()) {
                 changes[i->first] = std::move(spec);
                 i = m_attributes.erase(i);
             } else {
@@ -87,12 +87,12 @@ ConnInstance::doSetOwner(const Tsq::Uuid &owner, StringMap &map)
                 spec.push_back('\0');
                 changes[i->first] = std::move(spec);
                 i->second = std::move(j->second);
-                map.erase(j);
+                oi->attributes.erase(j);
                 ++i;
             }
         }
 
-        for (auto &&i: map) {
+        for (auto &&i: oi->attributes) {
             std::string spec = i.first;
             spec.push_back('\0');
             spec.append(i.second);
@@ -167,9 +167,9 @@ ConnInstance::testOwner(const Tsq::Uuid &owner)
         Lock lock(this);
 
         if (!m_owner) {
-            StringMap map;
-            g_listener->getOwnerAttributes(owner, map);
-            doSetOwner(owner, map);
+            OwnershipInfo oi;
+            g_listener->getOwnerAttributes(owner, oi);
+            doSetOwner(owner, &oi);
             return true;
         } else {
             return (m_owner == owner);
@@ -185,9 +185,9 @@ ConnInstance::testSender(const Tsq::Uuid &owner)
         Lock lock(this);
 
         if (!m_owner) {
-            StringMap map;
-            g_listener->getOwnerAttributes(owner, map);
-            doSetOwner(owner, map);
+            OwnershipInfo oi;
+            g_listener->getOwnerAttributes(owner, oi);
+            doSetOwner(owner, &oi);
         } else if (m_owner != owner && !testAttribute(Tsq::attr_PREF_INPUT)) {
             return false;
         } else if (m_sender != owner) {
@@ -207,9 +207,9 @@ ConnInstance::setOwner(const Tsq::Uuid &owner)
         Lock lock(this);
 
         if (m_owner != owner) {
-            StringMap map;
-            g_listener->getOwnerAttributes(owner, map);
-            doSetOwner(owner, map);
+            OwnershipInfo oi;
+            g_listener->getOwnerAttributes(owner, oi);
+            doSetOwner(owner, &oi);
         }
     }
 }
@@ -220,7 +220,7 @@ ConnInstance::changeOwner(OwnershipChange *params)
     Lock lock(this);
 
     if (m_owner == params->oldId) {
-        doSetOwner(params->newId, params->attributes);
+        doSetOwner(params->newId, params);
         return true;
     }
 

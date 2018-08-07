@@ -6,13 +6,17 @@
 usage () {
     echo "Usage: @ABBREV_NAME@ctl [options] command [arg]"
     echo
-    echo "Set or clear @FRIENDLY_NAME@ session attributes."
+    echo "Set @FRIENDLY_NAME@ session attributes and environment variables"
     echo
     echo "Options:"
     echo "  --man Launch man page"
     echo "  --version Print version information"
     echo
     echo "Commands:"
+    echo "  check-env"
+    echo "  fix-env"
+    echo "  reset-env"
+    echo
     echo "  set-icon NAME"
     echo "  clear-icon"
     echo "  set-badge FORMAT"
@@ -28,6 +32,86 @@ if [[ $# -eq 0 ]]; then
     exit
 fi
 
+populate_env_vars() {
+    IFS=$'\x1f'
+    declare -ga env_names=($(@QUERY_NAME@ get "env.names"))
+    declare -ga env_cur=($(@QUERY_NAME@ get "env.current"))
+    declare -ga env_goal=($(@QUERY_NAME@ get "env.goal"))
+    declare -gA cur_map
+    declare -gA goal_map
+
+    for spec in "${env_cur[@]}"; do cur_map[${spec%%=*}]="${spec#*=}"; done
+    for spec in "${env_goal[@]}"; do goal_map[${spec%%=*}]="${spec#*=}"; done
+}
+
+check_env() {
+    populate_env_vars
+    retval=0
+
+    for name in "${env_names[@]}"; do
+        color=32
+        if [ ${goal_map[$name]+_} ]; then
+            if [ ! ${cur_map[$name]+_} ]; then color=31; fi
+            if [ ! ${!name+_} ]; then color=31; fi
+            if [ "${cur_map[$name]}" != "${goal_map[$name]}" ]; then color=31; fi
+            if [ "${cur_map[$name]}" != "${!name}" ]; then color=31; fi
+        else
+            if [ ${cur_map[$name]+_} ]; then color=31; fi
+            if [ ${!name+_} ]; then color=31; fi
+        fi
+
+        if [ $color = 31 ]; then retval=1; fi
+        echo -e "\033[${color}m●\033[m $name"
+
+        echo -ne "\tShould be:\t\t"
+        if [ ${goal_map[$name]+_} ]; then
+            echo "'${goal_map[$name]}'"
+        else
+            echo unset
+        fi
+
+        echo -ne "\tIs thought to be:\t"
+        if [ ${cur_map[$name]+_} ]; then
+            echo "'${cur_map[$name]}'"
+        else
+            echo unset
+        fi
+
+        echo -ne "\tIs actually:\t\t"
+        if [ ${!name+_} ]; then
+            echo "'${!name}'"
+        else
+            echo unset
+        fi
+    done
+
+    if [ $retval = 1 ]; then
+        echo 1>&2
+        echo "Use fix-env to print assignments suitable for shell eval" 1>&2
+    fi
+    return $retval
+}
+
+fix_env() {
+    populate_env_vars
+
+    for name in "${env_names[@]}"; do
+        if [ ${goal_map[$name]+_} ]; then
+            if [ ! ${!name+_} -o "${goal_map[$name]}" != "${!name}" ]; then
+                echo "$name='${goal_map[$name]}'; export $name;"
+            fi
+        else
+            if [ ${!name+_} ]; then
+                echo "unset $name;"
+            fi
+        fi
+    done
+
+    if [ "$(@QUERY_NAME@ get env.dirty)" -eq 1 ]; then
+        echo "@ABBREV_NAME@ctl@DEBUG_SUFFIX@ reset-env"
+    fi
+}
+
 case $1 in
     --help)
         usage
@@ -37,6 +121,15 @@ case $1 in
         ;;
     --man)
         exec man @ABBREV_NAME@ctl@DEBUG_SUFFIX@
+        ;;
+    check-env)
+        check_env;
+        ;;
+    fix-env)
+        fix_env;
+        ;;
+    reset-env)
+        echo -ne "\033]1337;TermyResetEnv=\a"
         ;;
     set-icon)
         @QUERY_NAME@ set "session.icon" "$2"

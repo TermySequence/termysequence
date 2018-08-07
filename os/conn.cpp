@@ -15,12 +15,7 @@
 #   define SD_NONBLOCK(fd)
 #   define SD_CLOEXEC(fd)
 #   define SD_ACCEPT(fd, a, b) accept4(fd, a, b, SOCK_CLOEXEC|SOCK_NONBLOCK)
-#   define SD_PEERCRED_FAM SOL_SOCKET
-#   define SD_PEERCRED_OPT SO_PEERCRED
-#   define SD_PEERCRED_UID(ucred) (ucred.uid)
-#   define SD_PEERCRED_PID(ucred) (ucred.pid)
 #   define SD_PIPE(fd) pipe2(fd, O_CLOEXEC|O_NONBLOCK)
-typedef struct ucred sd_ucred;
 #else /* Mac OS X */
 #   define SOCK_NONBLOCK 0
 #   define SOCK_CLOEXEC 0
@@ -28,13 +23,7 @@ typedef struct ucred sd_ucred;
 #   define SD_NONBLOCK(fd) osMakeNonblocking(fd)
 #   define SD_CLOEXEC(fd) osMakeCloexec(fd)
 #   define SD_ACCEPT(fd, a, b) accept(fd, a, b)
-#   include <sys/ucred.h>
-#   define SD_PEERCRED_FAM SOL_LOCAL
-#   define SD_PEERCRED_OPT LOCAL_PEERCRED
-#   define SD_PEERCRED_UID(ucred) (ucred.cr_uid)
-#   define SD_PEERCRED_PID(ucred) (-1)
 #   define SD_PIPE(fd) pipe(fd)
-typedef struct xucred sd_ucred;
 #endif
 
 void
@@ -185,37 +174,6 @@ osLocalSendFd(int fd, const int *payload, int n)
     memcpy(CMSG_DATA(cmsg), payload, n * sizeof(int));
 
     return sendmsg(fd, &msg, 0);
-}
-
-int
-osLocalCredsCheck(int fd)
-{
-    sd_ucred cred = { 0 };
-    socklen_t len = sizeof(sd_ucred);
-    uid_t uid = getuid();
-
-    if (getsockopt(fd, SD_PEERCRED_FAM, SD_PEERCRED_OPT, &cred, &len) < 0)
-        throw Tsq::ErrnoException("getsockopt", errno);
-    if (SD_PEERCRED_UID(cred) != uid)
-        throw Tsq::ErrnoException(EPERM);
-
-    return SD_PEERCRED_PID(cred);
-}
-
-bool
-osLocalCreds(int fd, int &uidret, int &pidret)
-{
-    sd_ucred cred = { 0 };
-    socklen_t len = sizeof(sd_ucred);
-
-    if (getsockopt(fd, SD_PEERCRED_FAM, SD_PEERCRED_OPT, &cred, &len) == 0) {
-        uidret = SD_PEERCRED_UID(cred);
-        pidret = SD_PEERCRED_PID(cred);
-        return true;
-    } else {
-        uidret = pidret = -1;
-        return false;
-    }
 }
 
 int

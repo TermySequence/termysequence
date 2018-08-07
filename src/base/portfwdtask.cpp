@@ -273,7 +273,7 @@ PortFwdTask::handleAccept(int fd)
         if (osLocalCreds(cfd, uid, pid)) {
             cstate->cport = osUserName(uid);
             cstate->cport.push_back(':');
-            cstate->cport.append(pid != -1 ? std::to_string(pid) : "?");
+            cstate->cport.append(std::to_string(pid));
         }
     }
     pushStart(m_nextId);

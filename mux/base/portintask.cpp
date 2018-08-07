@@ -165,7 +165,7 @@ PortIn::acceptfd(pollfd &pfd, PortFwdState *state)
         if (osLocalCreds(cfd, uid, pid)) {
             str = osUserName(uid);
             str.push_back(':');
-            str.append(pid != -1 ? std::to_string(pid) : "?");
+            str.append(std::to_string(pid));
         }
         pushStart(m_nextId, "", str.c_str());
     }

@@ -121,4 +121,9 @@ namespace Tsq {
     extern const std::string attr_COMMAND_PROTOCOL;
     extern const std::string attr_COMMAND_PTY;
     extern const std::string attr_COMMAND_KEEPALIVE;
+
+    extern const std::string attr_ENV_DIRTY;
+    extern const std::string attr_ENV_NAMES;
+    extern const std::string attr_ENV_CURRENT;
+    extern const std::string attr_ENV_GOAL;
 }

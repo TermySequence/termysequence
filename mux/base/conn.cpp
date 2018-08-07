@@ -106,6 +106,9 @@ ConnInstance::doSetOwner(const Tsq::Uuid &owner, OwnershipInfo *oi)
         // two locks held
         watch->pushAttributeChanges(changes);
     }
+
+    stageWork(TermUpdateEnviron, new SharedStringMap(oi->environ));
+    commitWork();
 }
 
 void

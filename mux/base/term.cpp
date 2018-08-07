@@ -54,7 +54,7 @@ TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
     configuredInitParams(params);
     m_filemon = new TermFilemon(params->fileLimit, this);
     m_translator = params->translator;
-    m_status = new TermStatusTracker(m_translator);
+    m_status = new TermStatusTracker(m_translator, std::move(oi->environ));
 
     m_attributes[Tsq::attr_ID] = m_id.str();
     m_attributes[Tsq::attr_STARTED] = std::to_string(osBasetime(&m_baseTime));
@@ -250,7 +250,7 @@ TermInstance::launch()
 
     m_launchTime = now;
     m_timeout = 0;
-    m_status->start(m_params->command, m_params->dir);
+    m_status->start(m_params);
 
     if (!msg.empty())
         handleTermEvent(const_cast<char*>(msg.data()), msg.size(), false);
@@ -397,6 +397,15 @@ TermInstance::handleBufferResize(uint8_t bufid, uint8_t caporder)
 {
     if (m_emulator->bufferResize(bufid, caporder))
         pushChanges();
+}
+
+void
+TermInstance::handleUpdateEnviron(SharedStringMap *environ)
+{
+    if (m_status->setEnviron(*environ))
+        handleStatusAttributes(m_status->changedMap());
+
+    delete environ;
 }
 
 void
@@ -636,6 +645,9 @@ TermInstance::handleWork(const WorkItem &item)
     case TermRemoveRegion:
         handleRemoveRegion(item.value, item.value2);
         break;
+    case TermUpdateEnviron:
+        handleUpdateEnviron((SharedStringMap*)item.value);
+        break;
     case TermReset:
         handleTermReset("", 0, item.value);
         break;
@@ -740,6 +752,13 @@ TermInstance::getAnswerback() const
             return "";
 
     return result;
+}
+
+const StringMap &
+TermInstance::resetEnviron() const
+{
+    m_status->resetEnviron();
+    return m_status->changedMap();
 }
 
 std::string
@@ -881,8 +900,6 @@ TermInstance::configuredStartParams(PtyParams *p) const
             p->env.push_back('\0');
             p->env.append(i->second);
         }
-        p->env.push_back('\0');
-        p->env.append("+" ENV_NAME "=" PROJECT_VERSION);
 
         if ((i = m_attributes.find(Tsq::attr_PREF_STARTDIR)) != j && !i->second.empty()) {
             p->dir = i->second;
@@ -898,13 +915,13 @@ TermInstance::configuredStartParams(PtyParams *p) const
         }
     }
 
-    for (size_t i = 0; i < p->command.size(); ++i)
-        if (p->command[i] == '\x1f')
-            p->command[i] = '\0';
+    for (char &c: p->command)
+        if (c == '\x1f')
+            c = '\0';
 
-    for (size_t i = 0; i < p->env.size(); ++i)
-        if (p->env[i] == '\x1f')
-            p->env[i] = '\0';
+    for (char &c: p->env)
+        if (c == '\x1f')
+            c = '\0';
 
     osRelativeToHome(p->dir);
     return msg;

@@ -184,4 +184,9 @@
 #define TSQ_ATTR_COMMAND_PTY            "pty"
 #define TSQ_ATTR_COMMAND_KEEPALIVE      "keepalive"
 
+#define TSQ_ATTR_ENV_PREFIX             "env."
+#define TSQ_ATTR_ENV_DIRTY              "env.dirty"
+#define TSQ_ATTR_ENV_NAMES              "env.names"
+#define TSQ_ATTR_ENV_CURRENT            "env.current"
+#define TSQ_ATTR_ENV_GOAL               "env.goal"
 #define TSQ_ENV_ANSWERBACK              "*answerback="

@@ -51,6 +51,7 @@ private:
     void handleTermReset(const char *buf, unsigned len, Tsq::ResetFlags arg);
     void handleTermResize(Size size);
     void handleBufferResize(uint8_t bufid, uint8_t caporder);
+    void handleUpdateEnviron(SharedStringMap *environ);
     void handleMouseMove(Point mousePos);
     void handleCreateRegion(Region *region);
     void handleRemoveRegion(regionid_t id, uint8_t bufid);
@@ -107,6 +108,7 @@ public:
     bool removeAttribute(const std::string &key);
     const std::string& getAttribute(const std::string &key, bool *found = nullptr) const;
     const char* getAnswerback() const;
+    const StringMap& resetEnviron() const;
 
     // called by emulator while locked
     std::string termCommand(const Codestring &body);

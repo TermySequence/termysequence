@@ -117,6 +117,7 @@ enum TermWork {
     TermResizeBuffer,
     TermCreateRegion,
     TermRemoveRegion,
+    TermUpdateEnviron,
     TermReset,
     TermMoveMouse,
     TermInputSent,

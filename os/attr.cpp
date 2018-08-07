@@ -69,6 +69,7 @@ static const std::set<std::string> s_restrictedTermAttributes = {
     TSQ_ATTR_PROC_PREFIX,
     TSQ_ATTR_SERVER_PREFIX,
     TSQ_ATTR_CLIPBOARD_PREFIX,
+    TSQ_ATTR_ENV_PREFIX,
 };
 
 static const std::set<std::string> s_ownerTermAttributes = {

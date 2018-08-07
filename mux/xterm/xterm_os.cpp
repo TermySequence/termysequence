@@ -1043,6 +1043,10 @@ XTermEmulator::osc1337(string &str)
             }
         }
     }
+    else if (str.compare(0, 14, "TermyResetEnv=") == 0) {
+        for (const auto &elt: m_parent->resetEnviron())
+            setAttribute(elt.first, elt.second);
+    }
     else if (str.compare(0, 5, "File=") == 0) {
         osc1337File(str);
     }

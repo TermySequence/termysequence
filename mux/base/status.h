@@ -7,6 +7,7 @@
 #include "attributemap.h"
 
 class Translator;
+struct ForkParams;
 
 class TermStatusTracker
 {
@@ -23,15 +24,20 @@ private:
     StringMap m_all;
     StringMap m_changed;
 
+    SharedStringMap m_environ;
+    std::unordered_map<std::string,std::pair<bool,std::string>> m_sessenv;
+
     const Translator *m_translator;
     std::string m_outcomeStr;
 
     void setTermiosInfo();
+    void handleEnvRule(const char *rule, std::string &envbuf);
+
     inline unsigned wireStatus() const { return status | m_outcome << 8; }
 
 public:
     TermStatusTracker();
-    TermStatusTracker(const Translator *translator);
+    TermStatusTracker(const Translator *translator, SharedStringMap &&environ);
     ~TermStatusTracker();
 
     inline StringMap& changedMap() { return m_changed; }
@@ -44,8 +50,10 @@ public:
     void updateOnce(int fd, int primary, const char *title);
     bool update(int fd, int primary);
 
-    void start(const std::string &command, const std::string &dir);
+    void start(ForkParams *params);
     void setOutcome(int pid, int status);
+    bool setEnviron(SharedStringMap &environ);
+    void resetEnviron();
 
     static void sendSignal(int fd, int signal);
 };

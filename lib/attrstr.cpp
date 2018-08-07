@@ -121,3 +121,8 @@ const std::string Tsq::attr_COMMAND_STARTDIR(TSQ_ATTR_COMMAND_STARTDIR);
 const std::string Tsq::attr_COMMAND_PROTOCOL(TSQ_ATTR_COMMAND_PROTOCOL);
 const std::string Tsq::attr_COMMAND_PTY(TSQ_ATTR_COMMAND_PTY);
 const std::string Tsq::attr_COMMAND_KEEPALIVE(TSQ_ATTR_COMMAND_KEEPALIVE);
+
+const std::string Tsq::attr_ENV_DIRTY(TSQ_ATTR_ENV_DIRTY);
+const std::string Tsq::attr_ENV_NAMES(TSQ_ATTR_ENV_NAMES);
+const std::string Tsq::attr_ENV_CURRENT(TSQ_ATTR_ENV_CURRENT);
+const std::string Tsq::attr_ENV_GOAL(TSQ_ATTR_ENV_GOAL);

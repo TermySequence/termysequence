@@ -6,6 +6,7 @@
 #include "status.h"
 #include "app/args.h"
 #include "os/status.h"
+#include "os/process.h"
 #include "os/pty.h"
 #include "os/wait.h"
 #include "os/signal.h"
@@ -22,16 +23,18 @@
 #define TR_OUTCOME2 TL("server", "Process %1 killed by signal %2", "outcome2")
 #define TR_OUTCOME3 TL("server", "Process %1 exited with status %2", "outcome3")
 
-TermStatusTracker::TermStatusTracker(const Translator *translator) :
+TermStatusTracker::TermStatusTracker(const Translator *translator,
+                                     SharedStringMap &&environ) :
     termiosFlags{},
     termiosChars{},
+    m_environ(environ),
     m_translator(translator)
 {
     osStatusInit(&p_os);
 }
 
 TermStatusTracker::TermStatusTracker() :
-    TermStatusTracker(g_args->defaultTranslator())
+    TermStatusTracker(g_args->defaultTranslator(), nullptr)
 {}
 
 TermStatusTracker::~TermStatusTracker()
@@ -121,29 +124,147 @@ skip:
 }
 
 void
-TermStatusTracker::start(const std::string &command, const std::string &dir)
+TermStatusTracker::handleEnvRule(const char *rule, std::string &envbuf)
+{
+    if (*rule == '@') {
+        auto i = m_environ->find(++rule);
+        if (i != m_environ->end()) {
+            m_sessenv[i->first] = std::make_pair(true, i->second);
+            envbuf += '+';
+            envbuf += i->first;
+            envbuf += '=';
+            envbuf += i->second;
+        } else {
+            m_sessenv[rule].first = false;
+            envbuf += '-';
+            envbuf += rule;
+        }
+        envbuf += '\0';
+    }
+}
+
+void
+TermStatusTracker::start(ForkParams *params)
 {
     status = Tsq::TermIdle;
     pid = 0;
     m_outcome = Tsq::TermRunning;
     m_exitcode = 0;
+    m_outcomeStr.clear();
 
     memset(termiosFlags, 0, sizeof(termiosFlags));
     memset(termiosChars, 0, sizeof(termiosChars));
 
     m_all.clear();
-    m_all.emplace(Tsq::attr_PROC_CWD, dir);
-    m_all.emplace(Tsq::attr_PROC_EXE, command.c_str());
+    m_all.emplace(Tsq::attr_PROC_CWD, params->dir);
+    m_all.emplace(Tsq::attr_PROC_EXE, params->command.c_str());
 
-    std::string tmp(command);
-    for (int i = 0; i < tmp.size(); ++i)
-        if (tmp[i] == '\0')
-            tmp[i] = '\x1f';
+    std::string tmp(params->command);
+    for (char &c: tmp)
+        if (c == '\0')
+            c = '\x1f';
 
     m_all.emplace(Tsq::attr_PROC_ARGV, tmp);
-    m_changed = m_all;
 
-    m_outcomeStr.clear();
+    // Prepare the environment
+    const char *envc = params->env.c_str();
+    tmp.assign(1, '\0');
+    m_sessenv.clear();
+
+    handleEnvRule(envc, tmp);
+    for (size_t i = 0; i < params->env.size(); ++i)
+        if (envc[i] == '\0')
+            handleEnvRule(envc + i + 1, tmp);
+
+    params->env.append(tmp);
+    params->env.append("+" ENV_NAME "=" PROJECT_VERSION);
+
+    // Build list of session environment variable names
+    tmp.clear();
+    for (const auto &elt: m_sessenv) {
+        tmp += elt.first;
+        tmp += '\x1f';
+    }
+    if (!tmp.empty())
+        tmp.pop_back();
+
+    m_all.emplace(Tsq::attr_ENV_NAMES, std::move(tmp));
+
+    // Build list of current environment assignments
+    tmp.clear();
+    for (const auto &elt: m_sessenv) {
+        if (elt.second.first) {
+            tmp += elt.first;
+            tmp += '=';
+            tmp += elt.second.second;
+            tmp += '\x1f';
+        }
+    }
+    if (!tmp.empty())
+        tmp.pop_back();
+
+    m_all.emplace(Tsq::attr_ENV_CURRENT, tmp);
+    m_all.emplace(Tsq::attr_ENV_GOAL, std::move(tmp));
+    m_all.emplace(Tsq::attr_ENV_DIRTY, "0");
+
+    m_changed = m_all;
+}
+
+bool
+TermStatusTracker::setEnviron(SharedStringMap &environ)
+{
+    std::string dirty(1, '0');
+    std::string goal;
+
+    // See if there are any conflicts
+    for (const auto &elt: m_sessenv) {
+        auto i = environ->find(elt.first);
+        bool exists = i != environ->end();
+
+        if (elt.second.first != exists || elt.second.second != i->second) {
+            dirty[0] = '1';
+        }
+        if (exists) {
+            goal += elt.first;
+            goal += '=';
+            goal += i->second;
+            goal += '\x1f';
+        }
+    }
+    if (!goal.empty())
+        goal.pop_back();
+
+    m_environ = std::move(environ);
+    m_changed.clear();
+
+    if (m_all[Tsq::attr_ENV_DIRTY] != dirty) {
+        m_all[Tsq::attr_ENV_DIRTY] = dirty;
+        m_changed.emplace(Tsq::attr_ENV_DIRTY, std::move(dirty));
+    }
+    if (m_all[Tsq::attr_ENV_GOAL] != goal) {
+        m_all[Tsq::attr_ENV_GOAL] = goal;
+        m_changed.emplace(Tsq::attr_ENV_GOAL, std::move(goal));
+    }
+    return !m_changed.empty();
+}
+
+void
+TermStatusTracker::resetEnviron()
+{
+    for (auto &&elt: m_sessenv) {
+        auto i = m_environ->find(elt.first);
+        if ((elt.second.first = i != m_environ->end()))
+            elt.second.second = i->second;
+    }
+
+    std::string dirty(1, '0');
+    m_changed.clear();
+
+    m_all[Tsq::attr_ENV_DIRTY] = dirty;
+    m_changed.emplace(Tsq::attr_ENV_DIRTY, std::move(dirty));
+
+    dirty = m_all[Tsq::attr_ENV_CURRENT] = m_all[Tsq::attr_ENV_GOAL];
+    m_changed.emplace(Tsq::attr_ENV_CURRENT, std::move(dirty));
 }
 
 void

@@ -10,7 +10,7 @@
 #include <vector>
 
 extern bool
-osLoadFile(const char *path, StringMap &map);
+osLoadFile(const char *path, StringMap &map, bool nullsep = false);
 
 extern void
 osAttributes(StringMap &map, std::vector<int> &pids, bool isServer);

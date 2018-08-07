@@ -14,3 +14,6 @@ osStatusTeardown(int *data);
 
 extern void
 osGetProcessAttributes(int *data, int pid, StringMap &current, StringMap &next);
+
+extern StringMap
+osGetProcessEnvironment(int pid);

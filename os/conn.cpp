@@ -187,7 +187,7 @@ osLocalSendFd(int fd, const int *payload, int n)
     return sendmsg(fd, &msg, 0);
 }
 
-void
+int
 osLocalCredsCheck(int fd)
 {
     sd_ucred cred = { 0 };
@@ -198,6 +198,8 @@ osLocalCredsCheck(int fd)
         throw Tsq::ErrnoException("getsockopt", errno);
     if (SD_PEERCRED_UID(cred) != uid)
         throw Tsq::ErrnoException(EPERM);
+
+    return SD_PEERCRED_PID(cred);
 }
 
 bool

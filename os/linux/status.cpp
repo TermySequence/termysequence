@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
 #include "common.h"
+#include "os/attr.h"
 #include "os/status.h"
 #include "lib/attrstr.h"
 
@@ -170,4 +171,15 @@ skip3:
         if (current[Tsq::attr_PROC_ARGV] != str)
             next[Tsq::attr_PROC_ARGV] = str;
     }
+}
+
+StringMap
+osGetProcessEnvironment(int pid)
+{
+    char path[64];
+    StringMap result;
+
+    sprintf(path, "/proc/%d/environ", pid);
+    osLoadFile(path, result, true);
+    return result;
 }

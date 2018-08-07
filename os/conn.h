@@ -28,7 +28,7 @@ osLocalReceiveFd(int fd, int *payload, int n);
 extern int
 osLocalSendFd(int fd, const int *payload, int n);
 
-extern void
+extern int
 osLocalCredsCheck(int fd);
 
 extern bool

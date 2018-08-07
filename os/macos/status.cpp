@@ -99,3 +99,10 @@ osGetProcessAttributes(int *, int pid, StringMap &current, StringMap &next)
         delete [] buf;
     }
 }
+
+StringMap
+osGetProcessEnvironment(int pid)
+{
+    // TODO
+    return StringMap();
+}

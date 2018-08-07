@@ -117,12 +117,14 @@ osRestrictedTermAttribute(const std::string &key, bool isOwner)
 }
 
 static void
-timedReadMulti(int fd, StringMap &map)
+timedReadMulti(int fd, StringMap &map, bool nullsep = false)
 {
     // Read until EOF, buffer size exceeded, or time limit exceeded
     int64_t timelimit = osMonotime() + ATTRIBUTE_SCRIPT_TIMEOUT;
     pollfd pfd = { .fd = fd, .events = POLLIN };
     char buf[ATTRIBUTE_MAX_LENGTH / 2];
+    const char *seps = "\n\r" + (nullsep ? 2 : 0);
+    size_t nseps = nullsep ? 1 : 2;
     std::string accum;
     ssize_t rc;
 
@@ -146,16 +148,16 @@ timedReadMulti(int fd, StringMap &map)
         if (rc != 0)
             accum.append(buf, rc);
         else if (!accum.empty())
-            accum.push_back('\n');
+            accum.push_back(*seps);
         else
             break;
 
         while (1) {
-            size_t idx = accum.find('\0');
-            if (idx != std::string::npos)
+            size_t idx;
+            if (!nullsep && (idx = accum.find('\0')) != std::string::npos)
                 accum.erase(idx);
 
-            idx = accum.find_first_of("\n\r", 0, 2);
+            idx = accum.find_first_of(seps, 0, nseps);
             if (idx == std::string::npos)
                 break;
 
@@ -163,7 +165,7 @@ timedReadMulti(int fd, StringMap &map)
             if (edx != std::string::npos && edx && edx < idx)
                 map[accum.substr(0, edx)] = accum.substr(edx + 1, idx - edx - 1);
 
-            idx = accum.find_first_not_of("\n\r", idx, 2);
+            idx = accum.find_first_not_of(seps, idx, nseps);
             if (idx == std::string::npos)
                 accum.clear();
             else
@@ -217,7 +219,7 @@ timedRead(int fd, std::string &result)
 }
 
 bool
-osLoadFile(const char *path, StringMap &map)
+osLoadFile(const char *path, StringMap &map, bool nullsep)
 {
     int fd;
 
@@ -227,7 +229,7 @@ osLoadFile(const char *path, StringMap &map)
         return false;
     }
 
-    timedReadMulti(fd, map);
+    timedReadMulti(fd, map, nullsep);
     close(fd);
     return true;
 }

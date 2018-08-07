@@ -37,10 +37,10 @@ private:
 
     QVector<FlagString> m_flagspecs;
     Tsq::TermFlags m_mask = 0, m_flags = 0;
-    QString m_followspec, m_leaderspec, m_throttlespec;
-    QString m_rawTip, m_followTip, m_holdTip;
+    QString m_followspec, m_leaderspec, m_throttlespec, m_envspec;
+    QString m_rawTip, m_followTip, m_holdTip, m_envTip;
 
-    void handleOwnership();
+    void handleAttributes();
     void updateText(int index, const QString &str, const QString &tip);
 
 private slots:

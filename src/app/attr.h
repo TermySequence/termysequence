@@ -175,3 +175,5 @@ extern const QString g_attr_DIR_GIT_DETACHED;
 extern const QString g_attr_DIR_GIT_TRACK;
 extern const QString g_attr_DIR_GIT_AHEAD;
 extern const QString g_attr_DIR_GIT_BEHIND;
+
+extern const QString g_attr_ENV_DIRTY;

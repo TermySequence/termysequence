@@ -13,8 +13,9 @@ class StatusInfo;
 class StatusProfile;
 
 // Priorities for status text
-#define STATUSPRIO_OWNERSHIP   1
-#define STATUSPRIO_CONNECTION  2
+#define STATUSPRIO_ENVIRON     1
+#define STATUSPRIO_OWNERSHIP   2
+#define STATUSPRIO_CONNECTION  3
 
 class MainStatus final: public QWidget
 {

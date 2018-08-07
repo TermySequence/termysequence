@@ -16,6 +16,8 @@
 #define TR_TEXT2 TL("window-text", \
     "Warning: Soft Scroll Lock enabled. Use Scroll Lock to disable")
 #define TR_TEXT3 TL("window-text", "Warning: Hard Scroll Lock enabled. Use Ctrl+Q to disable")
+#define TR_TEXT4 TL("window-text", \
+    "Environment out of date. Run %1 check-env for details")
 #define TR_PROP1 T3("TermPropModel", "Command Mode", "property-name")
 #define TR_PROP2 T3("TermPropModel", "Selection Mode", "property-name")
 #define TR_PROP3 T3("TermPropModel", "Hard Scroll Lock", "property-name")
@@ -37,13 +39,15 @@
 #define TR_PROP19 TL("TermPropModel", "Input Multiplexing Leader", "property-name")
 #define TR_PROP20 TL("TermPropModel", "Input Multiplexing Follower", "property-name")
 #define TR_PROP21 T3("TermPropModel", "Terminal Updates Throttled", "property-name")
+#define TR_PROP22 TL("TermPropModel", "Environment Out of Date", "property-name")
 
 #define STRING_FLAGS    0
 #define STRING_PROC     1
 #define STRING_INPUT    2
 #define STRING_LOCK     3
 #define STRING_THROTTLE 4
-#define N_STRINGS       5
+#define STRING_ENV      5
+#define N_STRINGS       6
 
 struct FlagTip
 {
@@ -82,11 +86,13 @@ StatusFlags::StatusFlags(TermManager *manager, MainStatus *parent) :
     m_strings(N_STRINGS),
     m_followspec(L("<font style='background-color:@minorbg@;color:@minorfg@'>FOLLOW</font>")),
     m_leaderspec(L("<font style='background-color:@minorbg@;color:@minorfg@'>IML</font>")),
-    m_throttlespec(L("<font style='background-color:@majorbg@;color:@majorfg@'>WAIT</font>"))
+    m_throttlespec(L("<font style='background-color:@majorbg@;color:@majorfg@'>WAIT</font>")),
+    m_envspec(L("<font style='background-color:@majorbg@;color:@majorfg@'>ENV</font>"))
 {
     m_rawTip = TR_PROP15 + A(" (ISIG = 0)");
     m_followTip = TR_PROP16;
     m_holdTip = TR_PROP17;
+    m_envTip = TR_PROP22;
 
     connect(manager,
             SIGNAL(termActivated(TermInstance*,TermScrollport*)),
@@ -120,6 +126,8 @@ StatusFlags::doPolish()
     m_leaderspec.replace(A("@minorfg@"), g_global->color(MinorFg).name());
     m_throttlespec.replace(A("@majorbg@"), g_global->color(MajorBg).name());
     m_throttlespec.replace(A("@majorfg@"), g_global->color(MajorFg).name());
+    m_envspec.replace(A("@majorbg@"), g_global->color(MajorBg).name());
+    m_envspec.replace(A("@majorfg@"), g_global->color(MajorFg).name());
 
     handleFlagsChanged(g_listener->flags());
 }
@@ -132,24 +140,37 @@ StatusFlags::handleClicked()
 }
 
 void
-StatusFlags::handleOwnership()
+StatusFlags::handleAttributes()
 {
+    const auto &attr = m_term->attributes();
+    QString str, tip;
+
     if (m_term->ours() || !m_term->isTerm()) {
         m_parent->clearStatus(STATUSPRIO_OWNERSHIP);
     } else {
-        const auto &attr = m_term->attributes();
-        QString u = attr.value(g_attr_OWNER_USER, g_str_unknown);
-        QString h = attr.value(g_attr_OWNER_HOST, g_str_unknown);
+        str = attr.value(g_attr_OWNER_USER, g_str_unknown);
+        tip = attr.value(g_attr_OWNER_HOST, g_str_unknown);
 
-        m_parent->showStatus(TR_TEXT1.arg(u, h), STATUSPRIO_OWNERSHIP);
+        m_parent->showStatus(TR_TEXT1.arg(str, tip), STATUSPRIO_OWNERSHIP);
     }
+
+    if (m_term->attributes().value(g_attr_ENV_DIRTY) != A("1")) {
+        m_parent->clearStatus(STATUSPRIO_ENVIRON);
+    } else {
+        m_parent->showStatus(TR_TEXT4.arg(ABBREV_NAME "ctl"), STATUSPRIO_ENVIRON);
+
+        str = m_envspec;
+        tip = str + A(": ") + m_envTip;
+    }
+
+    updateText(STRING_ENV, str, tip);
 }
 
 void
 StatusFlags::handleAttributeChanged(const QString &key, const QString &value)
 {
-    if (key.startsWith(g_attr_OWNER_PREFIX))
-        handleOwnership();
+    if (key.startsWith(g_attr_OWNER_PREFIX) || key == g_attr_ENV_DIRTY)
+        handleAttributes();
 }
 
 void
@@ -176,7 +197,7 @@ StatusFlags::handleTermActivated(TermInstance *term, TermScrollport *scrollport)
         handleFlagsChanged(m_scrollport->flags());
         handleProcessChanged(g_attr_PROC_TERMIOS);
         handleInputChanged();
-        handleOwnership();
+        handleAttributes();
         handleLockedChanged();
         handleThrottleChanged(m_term->throttled());
     } else {
@@ -216,7 +237,7 @@ StatusFlags::handleFlagsChanged(Tsq::TermFlags flags)
         return;
 
     QStringList strings, tooltips;
-    bool wasLocked = !!(m_flags & (Tsq::SoftScrollLock|Tsq::HardScrollLock));
+    bool wasLocked = m_flags & (Tsq::SoftScrollLock|Tsq::HardScrollLock);
 
     m_flags = flags;
 

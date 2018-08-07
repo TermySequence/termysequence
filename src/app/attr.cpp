@@ -172,3 +172,5 @@ const QString g_attr_DIR_GIT_DETACHED(L(TSQ_ATTR_DIR_GIT_DETACHED));
 const QString g_attr_DIR_GIT_TRACK(L(TSQ_ATTR_DIR_GIT_TRACK));
 const QString g_attr_DIR_GIT_AHEAD(L(TSQ_ATTR_DIR_GIT_AHEAD));
 const QString g_attr_DIR_GIT_BEHIND(L(TSQ_ATTR_DIR_GIT_BEHIND));
+
+const QString g_attr_ENV_DIRTY(L(TSQ_ATTR_ENV_DIRTY));

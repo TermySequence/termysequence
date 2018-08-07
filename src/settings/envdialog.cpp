@@ -20,14 +20,16 @@
 
 #define TR_TAB1 TL("tab-title", "Assign")
 #define TR_TAB2 TL("tab-title", "Remove")
-#define TR_TAB3 TL("tab-title", "Answerback")
+#define TR_TAB3 TL("tab-title", "Session")
+#define TR_TAB4 TL("tab-title", "Answerback")
 #define TR_TEXT1 TL("window-text", "Specify name=value rules, one per line")
 #define TR_TEXT2 TL("window-text", "Specify names to remove, one per line")
-#define TR_TEXT3 TL("window-text", "Specify answerback response string")
+#define TR_TEXT3 TL("window-text", "Specify names to copy from client environment, one per line")
+#define TR_TEXT4 TL("window-text", "Specify answerback response string")
 #define TR_TITLE1 TL("window-title", "Set Environment")
 
 EnvironDialog::EnvironDialog(const SettingDef *def, SettingsBase *settings,
-                             bool answerback, QWidget *parent) :
+                             bool profile, QWidget *parent) :
     QDialog(parent),
     m_def(def),
     m_settings(settings)
@@ -56,14 +58,25 @@ EnvironDialog::EnvironDialog(const SettingDef *def, SettingsBase *settings,
     page->setLayout(layout);
     m_tabs->addTab(page, TR_TAB2);
 
-    if (answerback) {
+    if (profile) {
+        m_session = new QPlainTextEdit;
+        m_session->setLineWrapMode(QPlainTextEdit::NoWrap);
+        m_answerback = new QLineEdit;
+
         layout = new QVBoxLayout;
         layout->addWidget(new QLabel(TR_TEXT3));
-        layout->addWidget(m_answerback = new QLineEdit);
-        layout->addStretch(1);
+        layout->addWidget(m_session);
         page = new QWidget;
         page->setLayout(layout);
         m_tabs->addTab(page, TR_TAB3);
+
+        layout = new QVBoxLayout;
+        layout->addWidget(new QLabel(TR_TEXT4));
+        layout->addWidget(m_answerback);
+        layout->addStretch(1);
+        page = new QWidget;
+        page->setLayout(layout);
+        m_tabs->addTab(page, TR_TAB4);
     }
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(
@@ -113,6 +126,10 @@ EnvironDialog::setContent(const QStringList &rules)
         case '-':
             m_clear->appendPlainText(i.mid(1));
             break;
+        case '@':
+            if (m_session)
+                m_session->appendPlainText(i.mid(1));
+            break;
         case '*':
             if (i.startsWith(A(TSQ_ENV_ANSWERBACK)) && m_answerback)
                 m_answerback->setText(i.mid(sizeof(TSQ_ENV_ANSWERBACK) - 1));
@@ -136,13 +153,18 @@ EnvironDialog::handleAccept()
         i.prepend('+');
 
     content = m_clear->toPlainText();
-    QStringList clears = content.split('\n', QString::SkipEmptyParts);
-    for (auto &i: clears)
+    for (auto i: content.split('\n', QString::SkipEmptyParts))
         rules.append('-' + i);
 
-    QString answerback;
-    if (m_answerback && !(answerback = m_answerback->text()).isEmpty())
-        rules.append(A(TSQ_ENV_ANSWERBACK) + answerback);
+    if (m_session) {
+        content = m_session->toPlainText();
+        for (auto i: content.split('\n', QString::SkipEmptyParts))
+            rules.append('@' + i);
+
+        QString answerback = m_answerback->text();
+        if (!answerback.isEmpty())
+            rules.append(A(TSQ_ENV_ANSWERBACK) + answerback);
+    }
 
     m_settings->setProperty(m_def->property, rules);
     accept();

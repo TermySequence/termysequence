@@ -23,6 +23,7 @@ private:
     SettingsBase *m_settings;
 
     QPlainTextEdit *m_set, *m_clear;
+    QPlainTextEdit *m_session = nullptr;
     QLineEdit *m_answerback = nullptr;
     QTabWidget *m_tabs;
 
@@ -35,7 +36,7 @@ protected:
 
 public:
     EnvironDialog(const SettingDef *def, SettingsBase *settings,
-                  bool answerback, QWidget *parent);
+                  bool profile, QWidget *parent);
 
     void setContent(const QStringList &rules);
 

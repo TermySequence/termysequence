@@ -177,6 +177,8 @@
 /* Increment at which special-drawing line width increases */
 #define U2500_WIDTH_INCREMENT 32
 
+/* Default terminal environment with session variables */
+#define SESSION_ENVIRON TERM_ENVIRON "\x1f@SSH_AUTH_SOCK\x1f@DISPLAY"
 /* Default terminal layout */
 #define TERM_LAYOUT "-4,1,s,0,-2,3"
 /* Default column headers in history tool */

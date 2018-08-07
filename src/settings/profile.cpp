@@ -427,7 +427,7 @@ ProfileSettings::populateDefaults(const QString &defaultFont)
     v.insert(B("scrollbackSize"), TERM_DEF_CAPORDER);
     v.insert(B("command"), L(TERM_COMMAND).split('\x1f'));
     v.insert(B("sameDirectory"), true);
-    v.insert(B("environ"), L(TERM_ENVIRON).split('\x1f'));
+    v.insert(B("environ"), L(SESSION_ENVIRON).split('\x1f'));
     v.insert(B("exitAction"), Tsq::ExitActionStop);
     v.insert(B("autoClose"), Tsq::AutoCloseExit);
     v.insert(B("autoCloseTime"), DEFAULT_AUTOCLOSE_TIME);

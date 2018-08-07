@@ -44,7 +44,7 @@ TermListener::TermListener(int initialrd, int initialwd, unsigned flavor) :
     m_pid = getpid();
 
     int64_t before = osWalltime();
-    m_environ = osGetProcessEnvironment(m_pid);
+    m_environ = osGetLocalEnvironment();
     osIdentity(m_id, pids);
     osAttributes(m_attributes, pids, true);
     int64_t after = osWalltime();

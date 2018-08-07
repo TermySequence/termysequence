@@ -17,3 +17,6 @@ osGetProcessAttributes(int *data, int pid, StringMap &current, StringMap &next);
 
 extern StringMap
 osGetProcessEnvironment(int pid);
+
+extern StringMap
+osGetLocalEnvironment();

@@ -6,6 +6,7 @@
 #include "forkpty.h"
 #include "conn.h"
 #include "dir.h"
+#include "status.h"
 #include "lib/argv.h"
 #include "lib/exception.h"
 
@@ -323,4 +324,18 @@ osForkAttributes(const char *cmdline, int *pidret)
 
     close(sd[1]);
     return sd[0];
+}
+
+StringMap
+osGetLocalEnvironment()
+{
+    StringMap result;
+
+    for (char **envptr = environ; *envptr; ++envptr) {
+        const char *ptr = strchr(*envptr, '=');
+        if (ptr && ptr != *envptr)
+            result.emplace(std::string(*envptr, ptr - *envptr), ptr + 1);
+    }
+
+    return result;
 }

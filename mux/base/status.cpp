@@ -221,7 +221,8 @@ TermStatusTracker::setEnviron(SharedStringMap &environ)
         auto i = environ->find(elt.first);
         bool exists = i != environ->end();
 
-        if (elt.second.first != exists || elt.second.second != i->second) {
+        if (elt.second.first != exists ||
+            (exists && elt.second.second != i->second)) {
             dirty[0] = '1';
         }
         if (exists) {

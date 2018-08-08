@@ -1,18 +1,45 @@
 # -- BEGIN TERMYSEQUENCE CUSTOMIZATIONS --
 # Only run this script from inside a TermySequence terminal
-if [ "$TERMYSEQUENCE" ]; then
+if [ ! "$TERMYSEQUENCE" ]; then return 0; fi
 
-# Set up PROMPT_COMMAND now
+# Set PROMPT_COMMAND now since this script is normally sourced early
 if [ -f "$HOME/.termy_bash_prompt" ]; then
     source "$HOME/.termy_bash_prompt"
-else
+elif [ ! "$PROMPT_COMMAND" ]; then
     PROMPT_COMMAND='printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"'
 fi
-# No futher customizations past this point
 # -- END TERMYSEQUENCE CUSTOMIZATIONS --
+
+
+# The iTerm2 customizations fall under the following license:
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 
 # -- BEGIN ITERM2 CUSTOMIZATIONS --
 if [[ "$ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX""$TERM" != screen && "$ITERM_SHELL_INTEGRATION_INSTALLED" = "" && "$-" == *i* ]]; then
+
+if shopt extdebug | grep on > /dev/null; then
+  echo "iTerm2 Shell Integration not installed."
+  echo ""
+  echo "Your shell has 'extdebug' turned on."
+  echo "This is incompatible with shell integration."
+  echo "Find 'shopt -s extdebug' in bash's rc scripts and remove it."
+  return 0
+fi
+
 ITERM_SHELL_INTEGRATION_INSTALLED=Yes
 # Saved copy of your PS1. This is used to detect if the user changes PS1
 # directly. ITERM_PREV_PS1 will hold the last value that this script set PS1 to
@@ -44,6 +71,9 @@ ITERM_PREV_PS1="$PS1"
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+# Wrap bash-preexec.sh in a function so that, if it exits early due to having
+# been sourced elsewhere, it doesn't exit our entire script.
+_install_bash_preexec () {
 # -- BEGIN BASH-PREEXEC.SH --
 #!/bin/bash
 #
@@ -356,6 +386,9 @@ if [[ -z "$__bp_delay_install" ]]; then
     __bp_install_after_session_init
 fi;
 # -- END BASH-PREEXEC.SH --
+}
+_install_bash_preexec
+unset -f _install_bash_preexec
 
 # -- BEGIN ITERM2 CUSTOMIZATIONS --
 
@@ -423,7 +456,7 @@ function iterm2_prompt_suffix() {
 
 function iterm2_print_version_number() {
   iterm2_begin_osc
-  printf "1337;ShellIntegrationVersion=10;shell=bash"
+  printf "1337;ShellIntegrationVersion=11;shell=bash"
   iterm2_end_osc
 }
 
@@ -549,5 +582,3 @@ iterm2_print_version_number
 fi
 
 # -- END ITERM2 CUSTOMIZATIONS --
-
-fi

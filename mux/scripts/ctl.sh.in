@@ -3,8 +3,10 @@
 #
 # SPDX-License-Identifier: GPL-2.0-only
 
+progname=@ABBREV_NAME@ctl@DEBUG_SUFFIX@
+
 usage () {
-    echo "Usage: @ABBREV_NAME@ctl [options] command [arg]"
+    echo "Usage: $progname [options] command [arg]"
     echo
     echo "Set @FRIENDLY_NAME@ session attributes and environment variables"
     echo
@@ -33,6 +35,12 @@ if [[ $# -eq 0 ]]; then
 fi
 
 populate_env_vars() {
+    # Version check
+    if [ "${BASH_VERSINFO[0]}" -lt 4 -o "${BASH_VERSINFO[1]}" -lt 2 ]; then
+        echo "error: bash 4.2 or greater is required to run this command" 1>&2
+        exit 99
+    fi
+
     IFS=$'\x1f'
     declare -ga env_names=($(@QUERY_NAME@ get "env.names"))
     declare -ga env_cur=($(@QUERY_NAME@ get "env.current"))
@@ -99,18 +107,27 @@ fix_env() {
         if [ ${goal_map[$name]+_} ]; then
             if [ ! ${!name+_} -o "${goal_map[$name]}" != "${!name}" ]; then
                 echo "$name='${goal_map[$name]}'; export $name;"
+                echo "echo $progname: updated $name 1>&2;"
             fi
         else
             if [ ${!name+_} ]; then
                 echo "unset $name;"
+                echo "echo $progname: unset $name 1>&2;"
             fi
         fi
     done
 
-    if [ "$(@QUERY_NAME@ get env.dirty)" -eq 1 ]; then
-        echo "@ABBREV_NAME@ctl@DEBUG_SUFFIX@ reset-env"
+    if [ "$(@QUERY_NAME@ get env.dirty)" == 1 ]; then
+        echo "$progname reset-env"
     fi
 }
+
+if [[ "$1" != --* ]]; then
+    if [ ! "$@ENV_NAME@" ]; then
+        echo "error: @ENV_NAME@ not set. Is this a @FRIENDLY_NAME@ terminal?" 1>& 2
+        exit 99
+    fi
+fi
 
 case $1 in
     --help)
@@ -120,40 +137,40 @@ case $1 in
         echo @PROJECT_VERSION@
         ;;
     --man)
-        exec man @ABBREV_NAME@ctl@DEBUG_SUFFIX@
+        exec man $progname
         ;;
     check-env)
-        check_env;
+        check_env
         ;;
     fix-env)
-        fix_env;
+        fix_env
         ;;
     reset-env)
         echo -ne "\033]1337;TermyResetEnv=\a"
         ;;
     set-icon)
-        @QUERY_NAME@ set "session.icon" "$2"
+        exec @QUERY_NAME@ set "session.icon" "$2"
         ;;
     clear-icon)
-        @QUERY_NAME@ clear "session.icon"
+        exec @QUERY_NAME@ clear "session.icon"
         ;;
     set-badge)
-        @QUERY_NAME@ set "session.badge" "$2"
+        exec @QUERY_NAME@ set "session.badge" "$2"
         ;;
     clear-badge)
-        @QUERY_NAME@ clear "session.badge"
+        exec @QUERY_NAME@ clear "session.badge"
         ;;
     set-layout)
-        @QUERY_NAME@ set "session.layout" "$2"
+        exec @QUERY_NAME@ set "session.layout" "$2"
         ;;
     clear-layout)
-        @QUERY_NAME@ clear "session.layout"
+        exec @QUERY_NAME@ clear "session.layout"
         ;;
     set-fills)
-        @QUERY_NAME@ set "session.fills" "$2"
+        exec @QUERY_NAME@ set "session.fills" "$2"
         ;;
     clear-fills)
-        @QUERY_NAME@ clear "session.fills"
+        exec @QUERY_NAME@ clear "session.fills"
         ;;
     *)
         echo "Unknown command $1" 1>&2

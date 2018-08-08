@@ -7,6 +7,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <mach/mach_time.h>
+#include <assert.h>
 
 static mach_timebase_info_data_t s_timebase_info;
 
@@ -15,6 +16,8 @@ osInitMonotime()
 {
     mach_timebase_info(&s_timebase_info);
     s_timebase_info.denom *= 1000000;
+    assert(s_timebase_info.numer);
+    assert(s_timebase_info.denom);
 }
 
 int64_t

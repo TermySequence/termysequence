@@ -28,6 +28,7 @@ main(int argc, char **argv)
     }
 
     memDebug();
+    osInitMonotime();
 
     ArgParser args;
 
@@ -54,7 +55,6 @@ main(int argc, char **argv)
         osPurgeFileDescriptors(SERVER_NAME);
 
     osInitLogging(SERVER_NAME, LOG_USER);
-    osInitMonotime();
     osSetupServerSignalHandlers();
     osAdjustLimits();
 

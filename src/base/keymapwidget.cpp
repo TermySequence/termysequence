@@ -583,7 +583,7 @@ KeymapWidget::setInvoking(bool invoking)
 // Selection mode layout
 //
 KeymapDirections::KeymapDirections(QVector<QWidget*> &&children) :
-    m_children(children)
+    m_children(std::move(children))
 {
     for (auto i: qAsConst(m_children))
         i->setParent(this);

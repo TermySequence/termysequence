@@ -35,7 +35,8 @@ public:
     QString distdir() const;
 
     inline const auto& sources() const { return m_sources; }
-    inline void setSources(QMap<QString,IconSource> &&sources) { m_sources = sources; }
+    inline void setSources(QMap<QString,IconSource> &&sources)
+    { m_sources = std::move(sources); }
 
     inline auto installdir() const { return m_installdir; }
     inline void setInstallDir(const QString &installdir) { m_installdir = installdir; }

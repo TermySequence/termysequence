@@ -27,7 +27,7 @@ TermStatusTracker::TermStatusTracker(const Translator *translator,
                                      SharedStringMap &&environ) :
     termiosFlags{},
     termiosChars{},
-    m_environ(environ),
+    m_environ(std::move(environ)),
     m_translator(translator)
 {
     osStatusInit(&p_os);

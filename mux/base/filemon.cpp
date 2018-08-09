@@ -368,9 +368,9 @@ TermFilemon::reportFileUpdate(const std::string &name, std::string &&msg)
     {
         StateLock slock(this, true);
         if (i == j)
-            i = m_attributes.emplace(name, msg).first;
+            i = m_attributes.emplace(name, std::move(msg)).first;
         else
-            i->second = msg;
+            i->second = std::move(msg);
     }
 
     m_parent->reportFileUpdate(name, i->second);

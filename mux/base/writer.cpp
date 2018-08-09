@@ -103,7 +103,7 @@ TermWriter::submitResponse(std::string &&buf)
 
     if (!m_stopping) {
         m_bufferedAmount += buf.size();
-        m_responses.push(buf);
+        m_responses.push(std::move(buf));
         if (m_bufferedAmount > BUFFER_WARN_THRESHOLD) {
             m_throttled = true;
             retval = false;

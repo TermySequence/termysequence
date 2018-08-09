@@ -38,7 +38,7 @@ LogWindow::LogWindow()
     connect(g_status, &MainStatus::sendLog, this, &LogWindow::handleLog);
     connect(g_status, &MainStatus::sendProgress, this, &LogWindow::handleProgress);
 
-    MainStatus::Logbuf logbuf = g_status->fetchLog();
+    MainStatus::Logbuf logbuf = std::move(g_status->fetchLog());
     for (auto elt: logbuf)
         appendLog(elt.first, elt.second);
 }

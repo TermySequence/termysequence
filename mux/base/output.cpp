@@ -56,7 +56,7 @@ TermOutput::submitData(std::string &&buf)
 
     if (!m_stopping) {
         m_bufferedAmount += buf.size();
-        m_data.push(buf);
+        m_data.push(std::move(buf));
         if (m_bufferedAmount > BUFFER_WARN_THRESHOLD) {
             m_throttled = true;
             retval = false;
@@ -76,7 +76,7 @@ TermOutput::submitCommand(std::string &&buf)
 
     if (!m_stopping) {
         m_bufferedAmount += buf.size();
-        m_commands.push(buf);
+        m_commands.push(std::move(buf));
         if (m_bufferedAmount > BUFFER_WARN_THRESHOLD) {
             m_throttled = true;
             retval = false;

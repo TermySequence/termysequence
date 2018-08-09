@@ -25,7 +25,7 @@ TermReader::TermReader(int writeFd, StringMap &&environ) :
     m_writer(new TermWriter(this)),
     m_machine(new ServerMachine(this)),
     m_writeFd(writeFd),
-    m_environ(new StringMap(environ))
+    m_environ(new StringMap(std::move(environ)))
 {
 }
 

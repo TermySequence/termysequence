@@ -143,16 +143,17 @@ void
 StatusFlags::handleAttributes()
 {
     const auto &attr = m_term->attributes();
-    QString str, tip;
 
     if (m_term->ours() || !m_term->isTerm()) {
         m_parent->clearStatus(STATUSPRIO_OWNERSHIP);
     } else {
-        str = attr.value(g_attr_OWNER_USER, g_str_unknown);
-        tip = attr.value(g_attr_OWNER_HOST, g_str_unknown);
+        QString u = attr.value(g_attr_OWNER_USER, g_str_unknown);
+        QString h = attr.value(g_attr_OWNER_HOST, g_str_unknown);
 
-        m_parent->showStatus(TR_TEXT1.arg(str, tip), STATUSPRIO_OWNERSHIP);
+        m_parent->showStatus(TR_TEXT1.arg(u, h), STATUSPRIO_OWNERSHIP);
     }
+
+    QString str, tip;
 
     if (m_term->attributes().value(g_attr_ENV_DIRTY) != A("1")) {
         m_parent->clearStatus(STATUSPRIO_ENVIRON);

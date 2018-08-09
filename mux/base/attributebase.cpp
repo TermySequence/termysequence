@@ -25,6 +25,19 @@ AttributeBase::~AttributeBase()
 }
 
 std::string
+AttributeBase::lockedFindAttribute(const std::string &key) const
+{
+    // StateLock assumed to be held
+    std::string spec;
+
+    auto i = m_attributes.find(key);
+    if (i != m_attributes.end())
+        spec = i->second;
+
+    return spec;
+}
+
+std::string
 AttributeBase::lockedGetAttributes() const
 {
     // StateLock assumed to be held

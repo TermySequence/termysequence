@@ -481,7 +481,16 @@ ConnInstance::wireServerAnnounce(const char *body, uint32_t length)
 
         auto *proxy = new ServerProxy(this, body, length);
 
-        if (g_listener->registerServer(serverId, proxy)) {
+        // Look up the current sender, taking lock if necessary
+        std::string senderId;
+        if (m_isTerm) {
+            senderId = lockedFindAttribute(Tsq::attr_SENDER_ID);
+        } else {
+            StateLock slock(this, false);
+            senderId = lockedFindAttribute(Tsq::attr_SENDER_ID);
+        }
+
+        if (g_listener->registerServer(serverId, proxy, senderId)) {
             m_activeServers.emplace(serverId, proxy);
         } else {
             m_ignoredServers.insert(serverId);

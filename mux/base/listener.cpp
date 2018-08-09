@@ -87,7 +87,7 @@ TermListener::checkServer(const Tsq::Uuid &id)
 }
 
 bool
-TermListener::registerServer(const Tsq::Uuid &id, ServerProxy *proxy)
+TermListener::registerServer(const Tsq::Uuid &id, ServerProxy *proxy, Tsq::Uuid sender)
 {
     if (id == m_id)
         return false;
@@ -102,10 +102,14 @@ TermListener::registerServer(const Tsq::Uuid &id, ServerProxy *proxy)
         auto *conn = proxy->parent();
         m_serverConns.emplace(id, conn);
 
-        for (const auto &i: m_clientMap) {
-            std::string copy(i.second.announce);
-            conn->output()->submitCommand(std::move(copy));
-        }
+        // Announce the sender first
+        auto i = m_clientMap.find(sender);
+        if (i != m_clientMap.end())
+            conn->output()->submitCommand(std::string(i->second.announce));
+
+        for (const auto &i: m_clientMap)
+            if (i.first != sender)
+                conn->output()->submitCommand(std::string(i.second.announce));
 
         LOGDBG("Listener: server %s registered (%zd clients announced)\n", id.str().c_str(), m_clientMap.size());
         sendWorkAndUnlock(lock, ListenerAddServer, proxy);

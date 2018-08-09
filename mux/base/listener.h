@@ -107,7 +107,7 @@ public:
     inline unsigned nReaders() const { return m_nReaders; }
 
     bool checkServer(const Tsq::Uuid &id);
-    bool registerServer(const Tsq::Uuid &id, ServerProxy *proxy);
+    bool registerServer(const Tsq::Uuid &id, ServerProxy *proxy, Tsq::Uuid sender);
     void unregisterServer(const Tsq::Uuid &id, ServerProxy *proxy, int reason);
     int forwardToServer(const Tsq::Uuid &id, std::string &buf, Tsq::Uuid &hop);
     void forwardToServers(std::string &buf);

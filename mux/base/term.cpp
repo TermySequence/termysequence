@@ -130,7 +130,7 @@ TermInstance::commandGetRows(uint8_t bufid, index_t start, index_t end,
 bool
 TermInstance::commandGetContent(contentid_t id, Tsq::ProtocolMarshaler *m)
 {
-    StateLock lock(this, false);
+    StateLock slock(this, false);
 
     const std::string *data = m_emulator->getContentPtr(id);
     if (data && data->size() < IMAGE_SIZE_THRESHOLD) {
@@ -144,7 +144,7 @@ TermInstance::commandGetContent(contentid_t id, Tsq::ProtocolMarshaler *m)
 bool
 TermInstance::commandGetRegion(uint8_t bufid, regionid_t id, Region &region)
 {
-    StateLock lock(this, false);
+    StateLock slock(this, false);
     const Region *ptr = m_emulator->buffer(!!bufid)->safeRegion(id);
     if (ptr) {
         region = *ptr;

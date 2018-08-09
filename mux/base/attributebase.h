@@ -30,6 +30,7 @@ public:
     inline const Tsq::Uuid& id() const { return m_id; }
     inline bool noWatches() const { return m_watches.empty(); }
 
+    std::string lockedFindAttribute(const std::string &key) const;
     std::string lockedGetAttributes() const;
     std::string commandGetAttributes() const;
     std::string commandGetAttribute(const std::string &key) const;

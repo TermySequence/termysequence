@@ -65,6 +65,7 @@ static const std::set<std::string> s_restrictedTermAttributes = {
     TSQ_ATTR_EMULATOR,
     TSQ_ATTR_ENCODING,
     TSQ_ATTR_CURSOR,
+    TSQ_ATTR_SENDER_PREFIX,
     TSQ_ATTR_OWNER_PREFIX,
     TSQ_ATTR_PROC_PREFIX,
     TSQ_ATTR_SERVER_PREFIX,

@@ -21,9 +21,9 @@ on the specific client program being used.
 also provides an interface to check the status of and adjust "per-session"
 environment variables whose values depend on the terminal's current owning
 client.
-.I DISPLAY
+.I DISPLAY \"m2renv
 and
-.I SSH_AUTH_SOCK
+.I SSH_AUTH_SOCK \"m2renv
 are examples of environment variables typically managed in this way. Which
 variables are considered per-session is controlled by the client program,
 typically via terminal profile settings.

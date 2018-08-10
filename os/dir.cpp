@@ -52,6 +52,8 @@ osCreateRuntimeDir(const char *pathspec, char *pathret)
 
     // Create or validate the runtime directory
     var = path.c_str();
+    int retries = 3;
+retry:
     if (lstat(var, &info) == 0) {
         // Make sure it is a directory owned by us
         if (!S_ISDIR(info.st_mode) ||
@@ -59,11 +61,13 @@ osCreateRuntimeDir(const char *pathspec, char *pathret)
             (info.st_mode & 0777) != 0700)
             throw Tsq::TsqException(ERR3, var, uid);
     }
-    else {
-        if (errno != ENOENT)
-            throw Tsq::ErrnoException("stat", var, errno);
-        if (mkdir(var, 0700) == -1)
-            throw Tsq::ErrnoException("mkdir", var, errno);
+    else if (errno != ENOENT) {
+        throw Tsq::ErrnoException("stat", var, errno);
+    }
+    else if (mkdir(var, 0700) == -1) {
+        if (errno == EEXIST && retries--)
+            goto retry;
+        throw Tsq::ErrnoException("mkdir", var, errno);
     }
 
     // Save a copy for internal use

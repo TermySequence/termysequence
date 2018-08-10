@@ -26,9 +26,8 @@ Copyright &copy; 2018 TermySequence LLC. Refer to [COPYING.txt](COPYING.txt) for
 
   * qt5 5.9.2+ (core, gui, and svg)
   * sqlite 3.8.0+
-  * v8 6.2.91+
   * zlib 1.2.5+
-  * fuse 3.1+ (optional)
+  * libfuse 3.1+ or 2.9.7+ (optional)
 
 ### Tests and Utilities
 
@@ -42,14 +41,15 @@ See [Building from Source](https://termysequence.io/doc/build.html) in termy-doc
 ## Repository Layout
 
   * __mux__: server source tree
-  * __mux/dist__: server translation files
+  * __mux/i18n__: server translation files
   * __mux/scripts__: programs that ship with server (imgcat, etc)
   * __mon__: monitor source tree
   * __src__: client source tree
-  * __src/dist__: client translation files, images, and other content
+  * __src/dist__: client plugins, images, and other content
+  * __src/i18n__: client translation files
   * __lib__: common protocol library
   * __os__: common os library
   * __doc__: man pages
   * __test__: tests
   * __util__: maintainer tools
-  * __vendor__: third party content
+  * __vendor__: third party code and content

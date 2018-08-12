@@ -114,6 +114,8 @@ EnvironDialog::setContent(const QStringList &rules)
 {
     m_set->clear();
     m_clear->clear();
+    if (m_session)
+        m_session->clear();
 
     for (auto &i: rules) {
         if (i.isEmpty())

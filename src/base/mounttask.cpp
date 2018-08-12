@@ -480,10 +480,7 @@ MountTask::handleFuse()
         rc = fuse_session_receive_buf(m_se, &m_fbuf);
 #else // USE_FUSE2
         struct fuse_chan *ch = m_ch;
-        struct fuse_buf buf = {
-            .size = m_fbuf.size,
-            .mem = m_fbuf.mem,
-        };
+        struct fuse_buf buf = { m_fbuf.size, (fuse_buf_flags)0, m_fbuf.mem };
         rc = fuse_session_receive_buf(m_se, &buf, &ch);
 #endif
         if (rc == -EINTR)

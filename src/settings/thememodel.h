@@ -41,7 +41,7 @@ private slots:
     void reloadThemes();
 
 signals:
-    void rowChanged();
+    void rowChanged(int row);
 
 public:
     ThemeModel(const TermPalette &palette, const TermPalette &saved,
@@ -71,6 +71,9 @@ public:
 class ThemeView final: public QTableView
 {
     Q_OBJECT
+
+private slots:
+    void handleRowChanged(int row);
 
 protected:
     void mousePressEvent(QMouseEvent *event);

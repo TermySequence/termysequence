@@ -110,7 +110,15 @@ ThemeModel::calculateRow()
 
     for (int i = m_edited; i < m_rows; ++i)
         if (m_themes[i]->content() == m_palette) {
-            row = i;
+            row = i - m_edited;
+            if (m_edited) {
+                beginRemoveRows(QModelIndex(), 0, 0);
+                m_edited = false;
+                m_themes.pop_front();
+                --m_rows;
+                endRemoveRows();
+                rc = true;
+            }
             goto next;
         }
 
@@ -137,7 +145,7 @@ next:
     }
 
     m_rowHint = -1;
-    emit rowChanged();
+    emit rowChanged(m_row);
     return rc;
 }
 
@@ -145,7 +153,7 @@ void
 ThemeModel::reloadData()
 {
     if (calculateRow()) {
-        QModelIndex start = createIndex(0, THEME_COLUMN_SAMPLE);
+        QModelIndex start = createIndex(0, 0);
         QModelIndex end = createIndex(m_rows - 1, THEME_N_COLUMNS - 1);
         emit dataChanged(start, end);
     }
@@ -216,7 +224,17 @@ ThemeView::ThemeView(ThemeModel *model)
 
     connect(model, &ThemeModel::modelReset, this, &ThemeView::resizeRowsToContents);
     connect(model, &ThemeModel::rowsInserted, this, &ThemeView::resizeRowsToContents);
+    connect(model, &ThemeModel::rowChanged, this, &ThemeView::handleRowChanged);
     resizeRowsToContents();
+}
+
+void
+ThemeView::handleRowChanged(int row)
+{
+    if (row == -1)
+        row = 0;
+
+    scrollTo(model()->index(row, 0));
 }
 
 void

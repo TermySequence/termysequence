@@ -67,7 +67,7 @@ ThemeTab::ThemeTab(TermPalette &palette, const TermPalette &saved, const QFont &
     setLayout(layout);
 
     connect(m_view, SIGNAL(rowClicked(int)), SLOT(handleRowClicked(int)));
-    connect(m_model, SIGNAL(rowChanged()), SLOT(handleRowChanged()));
+    connect(m_model, SIGNAL(rowChanged(int)), SLOT(handleRowChanged()));
 
     connect(saveButton, SIGNAL(clicked()), SLOT(handleSave()));
     connect(m_renameButton, SIGNAL(clicked()), SLOT(handleRename()));

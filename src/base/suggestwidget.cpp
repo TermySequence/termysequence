@@ -77,6 +77,13 @@ SuggestWidget::recolor()
     m_matchBg = m_term->palette().specialBg(Tsqt::SearchText, m_term->bg());
     m_matchFg = m_term->palette().specialFg(Tsqt::SearchText, m_term->fg());
 
+    for (DisplayCell &cell: m_displayCells) {
+        if (cell.flags & (Tsq::Bg|Tsq::Fg)) {
+            cell.bg = m_matchBg;
+            cell.fg = m_matchFg;
+        }
+    }
+
     setStyleSheet(L("SuggestWidget {background-color:#%1}")
                   .arg(m_term->bg(), 6, 16, Ch0));
 }
@@ -674,17 +681,15 @@ SuggestWidget::paintEvent(QPaintEvent *event)
         state.fg = m_term->fg();
         state.bg = m_term->bg();
 
-        for (const DisplayCell &cell: m_displayCells)
+        for (DisplayCell dc: m_displayCells)
         {
-            DisplayCell dc = cell;
-
             // Flags adjustments for selected
             if (dc.flags & Tsqt::Selected) {
                 dc.flags |= Tsq::Bold;
 
                 if (!(dc.flags & (Tsq::Fg|Tsq::Bg|Tsqt::UnderlineDummy))) {
                     dc.flags |= Tsq::Bg;
-                    dc.bg = Colors::blend1(dc.bg, dc.fg);
+                    dc.bg = Colors::blend1(state.bg, state.fg);
                 }
             }
 

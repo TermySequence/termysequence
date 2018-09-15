@@ -130,14 +130,20 @@ ColorDialog::handleForegroundChange(const QColor &color)
 void
 ColorDialog::handlePaletteEdit()
 {
-    auto *dialog = new PaletteDialog(m_palette, m_term->font(), this);
-    connect(dialog, &PaletteDialog::termcolorsModified, [=]{
+    if (m_dialog) {
+        m_dialog->raise();
+        m_dialog->activateWindow();
+        return;
+    }
+
+    auto *dialog = new PaletteDialog(m_palette, m_term->font(), false, this);
+    connect(dialog, &PaletteDialog::termcolorsModified, this, [=]{
         m_term->setPalette(m_palette = dialog->palette());
         m_bgPreview->setColor(m_palette.bg());
         m_fgPreview->setColor(m_palette.fg());
         m_combo->updateThemes();
     });
-    connect(dialog, &PaletteDialog::dircolorsModified, [=]{
+    connect(dialog, &PaletteDialog::dircolorsModified, this, [=]{
         m_term->setPalette(m_palette = dialog->palette());
         m_combo->updateThemes();
     });

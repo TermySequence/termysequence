@@ -74,14 +74,29 @@ FontDialog::handleFontResult(const QFont &font)
 }
 
 void
+FontDialog::handleDialogDestroyed()
+{
+    m_dialog = nullptr;
+}
+
+void
 FontDialog::handleFontSelect()
 {
+    if (m_dialog) {
+        m_dialog->disconnect(this);
+        m_dialog->hide();
+        m_dialog->deleteLater();
+    }
+
     const QFont savedDialogFont = m_font;
 
     auto *box = fontBox(TR_TITLE2, m_font, true, this);
     connect(box, &QFontDialog::currentFontChanged, this, &FontDialog::handleFontResult);
     connect(box, &QFontDialog::fontSelected, this, &FontDialog::handleFontResult);
-    connect(box, &QDialog::rejected, [=]{ handleFontResult(savedDialogFont); });
+    connect(box, &QDialog::rejected, this, [=]{ handleFontResult(savedDialogFont); });
+
+    m_dialog = box;
+    connect(box, &QObject::destroyed, this, &FontDialog::handleDialogDestroyed);
     box->show();
 }
 

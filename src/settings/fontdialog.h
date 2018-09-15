@@ -30,6 +30,7 @@ private slots:
     void handleAccept();
     void handleRejected();
     void handleReset();
+    void handleDialogDestroyed();
 
 public:
     FontDialog(TermInstance *term, TermManager *manager, QWidget *parent);

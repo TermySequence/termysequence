@@ -54,6 +54,20 @@ AdjustDialog::AdjustDialog(TermInstance *term, TermManager *manager,
 }
 
 void
+AdjustDialog::bringUp()
+{
+    show();
+    raise();
+
+    if (m_dialog) {
+        m_dialog->raise();
+        m_dialog->activateWindow();
+    } else {
+        activateWindow();
+    }
+}
+
+void
 AdjustDialog::handleRejected()
 {
     // Note: this may be overridden

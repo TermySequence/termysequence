@@ -20,7 +20,6 @@ private:
     ThemeCombo *m_combo;
     ColorPreview *m_bgPreview;
     ColorPreview *m_fgPreview;
-    PaletteDialog *m_dialog;
 
     TermPalette m_palette, m_savedPalette;
 

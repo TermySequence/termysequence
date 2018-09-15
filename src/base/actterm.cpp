@@ -150,10 +150,9 @@ void
 TermManager::actionAdjustTerminalScrollback(QString terminalId)
 {
     TermInstance *result = lookupTerm(terminalId);
-    if (result) {
-        TermBuffers *buffers = result->buffers();
+    if (result && !raiseAdjustDialog(result, PowerDialog::staticMetaObject)) {
         auto *dialog = new PowerDialog(result, this, m_parent);
-        dialog->setValue(buffers->caporder());
+        dialog->setValue(result->buffers()->caporder());
         dialog->show();
     }
 }

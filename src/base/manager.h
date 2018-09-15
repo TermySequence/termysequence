@@ -58,6 +58,8 @@ private:
     regionid_t lastToolRegion();
 
     void raiseTerminalsWidget(bool peek);
+    bool raiseAdjustDialog(TermInstance *term, const QMetaObject &metaObj);
+
     void performFileDrop(TermInstance *term, ServerInstance *server,
                          const QMimeData *data, int action);
 

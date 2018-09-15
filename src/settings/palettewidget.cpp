@@ -55,11 +55,11 @@ PaletteWidget::handleClicked()
     if (!font.fromString(getOther("font").toString()))
         font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
 
-    auto *dialog = new PaletteDialog(*m_scratch, font, this);
-    connect(dialog, &PaletteDialog::termcolorsModified, [=]{
+    auto *dialog = new PaletteDialog(*m_scratch, font, true, this);
+    connect(dialog, &PaletteDialog::termcolorsModified, this, [=]{
         setProperty(dialog->palette().tStr());
     });
-    connect(dialog, &PaletteDialog::dircolorsModified, [=]{
+    connect(dialog, &PaletteDialog::dircolorsModified, this, [=]{
         setOther("dircolors", dialog->palette().dStr());
     });
     connect(dialog, &QDialog::rejected, [=]{

@@ -44,7 +44,8 @@ signals:
     void dircolorsModified();
 
 public:
-    PaletteDialog(const TermPalette &palette, const QFont &font, QWidget *parent);
+    PaletteDialog(const TermPalette &palette, const QFont &font,
+                  bool modal, QWidget *parent);
 
     inline const TermPalette& saved() const { return m_saved; }
     inline const TermPalette& palette() const { return m_palette; }

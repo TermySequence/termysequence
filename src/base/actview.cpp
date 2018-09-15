@@ -280,11 +280,30 @@ TermManager::actionToggleTerminalLayout(QString itemStr, QString terminalId)
     }
 }
 
+bool
+TermManager::raiseAdjustDialog(TermInstance *term, const QMetaObject &metaObj)
+{
+    const char *className = metaObj.className();
+
+    for (QObject *child: m_parent->children()) {
+        if (child->inherits(className)) {
+            AdjustDialog *dialog = static_cast<AdjustDialog*>(child);
+            if (dialog->term() == term) {
+                dialog->bringUp();
+            } else {
+                dialog->deleteLater();
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
 void
 TermManager::actionAdjustTerminalLayout(QString terminalId)
 {
     TermInstance *result = lookupTerm(terminalId);
-    if (result) {
+    if (result && !raiseAdjustDialog(result, LayoutAdjust::staticMetaObject)) {
         auto *dialog = new LayoutAdjust(result, this, m_parent);
         dialog->show();
     }
@@ -294,7 +313,7 @@ void
 TermManager::actionAdjustTerminalFont(QString terminalId)
 {
     TermInstance *result = lookupTerm(terminalId);
-    if (result) {
+    if (result && !raiseAdjustDialog(result, FontDialog::staticMetaObject)) {
         auto *dialog = new FontDialog(result, this, m_parent);
         dialog->show();
     }
@@ -304,7 +323,7 @@ void
 TermManager::actionAdjustTerminalColors(QString terminalId)
 {
     TermInstance *result = lookupTerm(terminalId);
-    if (result) {
+    if (result && !raiseAdjustDialog(result, ColorDialog::staticMetaObject)) {
         auto *dialog = new ColorDialog(result, this, m_parent);
         dialog->show();
     }

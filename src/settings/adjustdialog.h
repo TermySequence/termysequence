@@ -25,6 +25,8 @@ protected:
 
     TermInstance *m_term;
     TermManager *m_manager;
+    QDialog *m_dialog = nullptr;
+
     QString m_profileName;
     QString m_profileAction;
 
@@ -37,4 +39,8 @@ private slots:
 public:
     AdjustDialog(TermInstance *term, TermManager *manager,
                  const char *helpPage, QWidget *parent);
+
+    inline TermInstance* term() { return m_term; }
+
+    void bringUp();
 };

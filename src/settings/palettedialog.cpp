@@ -21,14 +21,15 @@
 #define TR_TAB4 TL("tab-title", "Dircolors")
 #define TR_TITLE1 TL("window-title", "Edit Theme")
 
-PaletteDialog::PaletteDialog(const TermPalette &palette, const QFont &font, QWidget *parent) :
+PaletteDialog::PaletteDialog(const TermPalette &palette, const QFont &font,
+                             bool modal, QWidget *parent) :
     QDialog(parent),
     m_palette(palette),
     m_saved(palette)
 {
     setWindowTitle(TR_TITLE1);
     setAttribute(Qt::WA_DeleteOnClose, true);
-    setWindowModality(Qt::WindowModal);
+    setWindowModality(modal ? Qt::WindowModal : Qt::NonModal);
     setSizeGripEnabled(true);
 
     m_preTab = new ThemeTab(m_palette, m_saved, font);

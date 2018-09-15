@@ -4,6 +4,10 @@
 
 // Parses "ls" output, creating semantic regions for files.
 
+// To enable this plugin, remove the ".disabled" extension from the file.
+// NOTE: If your version of ls supports the --hyperlink option, use that
+// rather than enabling this plugin.
+
 // Command aliases
 // To enable this parser for aliases such as 'll', enter the aliases here
 // Use short_aliases for commands that output in the standard format

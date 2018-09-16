@@ -12,7 +12,8 @@
 #define TR_NAME1 TL("settings-name", "Custom Color Theme")
 
 ThemeCombo::ThemeCombo(const TermPalette *palette) :
-    m_palette(palette)
+    m_palette(palette),
+    m_customText(L("<%1>").arg(TR_NAME1))
 {
     connect(g_settings, &TermSettings::themesChanged, this, &ThemeCombo::updateThemes);
     updateThemes();
@@ -39,7 +40,7 @@ ThemeCombo::updateThemes()
     }
 
     if ((m_haveCustom = (themeIdx == -1))) {
-        insertItem(0, L("<%1>").arg(TR_NAME1));
+        insertItem(0, m_customText);
         setItemData(0, QColor(m_palette->fg()), Qt::ForegroundRole);
         setItemData(0, QColor(m_palette->bg()), Qt::BackgroundRole);
         insertSeparator(1);
@@ -68,4 +69,15 @@ ThemeCombo::handleIndexChanged(int index)
                                  SLOT(handleIndexChanged(int)));
         }
     }
+}
+
+QSize
+ThemeCombo::sizeHint() const
+{
+    int width = fontMetrics().width(m_customText) * 3 / 2;
+
+    QSize size = QComboBox::sizeHint();
+    if (size.width() < width)
+        size.setWidth(width);
+    return size;
 }

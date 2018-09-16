@@ -16,6 +16,8 @@ class ThemeCombo final: public QComboBox
 private:
     const TermPalette *m_palette;
     QMetaObject::Connection m_mocIndex;
+
+    QString m_customText;
     bool m_haveCustom;
 
 private slots:
@@ -28,4 +30,6 @@ public:
     ThemeCombo(const TermPalette *palette);
 
     void updateThemes();
+
+    QSize sizeHint() const;
 };

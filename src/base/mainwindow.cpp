@@ -32,7 +32,6 @@
 #include "settings/orderlayout.h"
 #include "setup/systemdsetup.h"
 
-#include <QSignalMapper>
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QApplication>
@@ -62,8 +61,6 @@ MainWindow::MainWindow(TermManager *manager) :
     m_manager->setParent(this);
 
     a_statusTipForwarder = new QAction(this);
-    m_slotMapper = new QSignalMapper(this);
-    connect(m_slotMapper, SIGNAL(mapped(const QString&)), SLOT(menuAction(const QString&)));
     createMenus();
 
     OrderLayoutReader order;

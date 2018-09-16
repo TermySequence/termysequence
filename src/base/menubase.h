@@ -6,9 +6,6 @@
 
 #include <QMenu>
 
-QT_BEGIN_NAMESPACE
-class QSignalMapper;
-QT_END_NAMESPACE
 class TermManager;
 class TermInstance;
 class ServerInstance;
@@ -95,7 +92,6 @@ class DynamicMenu final: public QMenu
 
 private:
     MainWindow *m_window;
-    QSignalMapper *m_slotMapper;
     const char *m_id;
 
     TermManager *m_manager;
@@ -111,6 +107,7 @@ private:
 private slots:
     void handleTermActivated(TermInstance *term);
     void handleServerActivated(ServerInstance *server);
+    void handleAction();
     void handleConfirmation();
 
     void preshowAlerts();

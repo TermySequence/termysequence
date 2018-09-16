@@ -29,8 +29,6 @@
 #include "settings/servinfo.h"
 #include "settings/termlayout.h"
 
-#include <QSignalMapper>
-
 #define OBJPROP_SLOT            "dynSlot"
 #define OBJPROP_PROFILE_NAME    "dynProfileName"
 #define OBJPROP_CONFIRM         "dynConfirmMsg"
@@ -45,7 +43,6 @@ inline void
 DynamicMenu::setup(const char *id, MainWindow *window)
 {
     m_window = window;
-    m_slotMapper = window->m_slotMapper;
     m_id = id;
     m_manager = window->manager();
 
@@ -118,15 +115,20 @@ void
 DynamicMenu::setConfirmation(QAction *a, const QString &message)
 {
     a->setProperty(OBJPROP_CONFIRM, message);
-    // go through us instead of slotmapper
-    disconnect(a, SIGNAL(triggered()), m_slotMapper, SLOT(map()));
+    disconnect(a, SIGNAL(triggered()), this, SLOT(handleAction()));
     connect(a, SIGNAL(triggered()), SLOT(handleConfirmation()));
+}
+
+void
+DynamicMenu::handleAction()
+{
+    m_window->menuAction(sender()->property(OBJPROP_SLOT).toString());
 }
 
 void
 DynamicMenu::handleConfirmation()
 {
-    auto *a = static_cast<QAction*>(sender());
+    auto *a = sender();
     const QString slot = a->property(OBJPROP_SLOT).toString();
     const QString msg = a->property(OBJPROP_CONFIRM).toString();
 
@@ -256,7 +258,7 @@ DynamicMenu::enable(QAction *a, uint64_t flag)
 QAction *
 DynamicMenu::addAction()
 {
-    return QMenu::addAction(g_mtstr, m_slotMapper, SLOT(map()));
+    return QMenu::addAction(g_mtstr, this, SLOT(handleAction()));
 }
 
 QAction *
@@ -266,11 +268,10 @@ DynamicMenu::addAction(const char *text, const char *tooltip,
 {
     QAction *a = QMenu::addAction(ThumbIcon::fromTheme(icon),
                                   QCoreApplication::translate(m_id, text),
-                                  m_slotMapper, SLOT(map()));
+                                  this, SLOT(handleAction()));
 
     a->setToolTip(QCoreApplication::translate("action", tooltip));
     a->setProperty(OBJPROP_SLOT, slot);
-    m_slotMapper->setMapping(a, slot);
     enable(a, flag);
     return a;
 }
@@ -280,11 +281,10 @@ DynamicMenu::addAction(const QString &text, const QString &tooltip,
                        const std::string &icon, const QString &slot)
 {
     QAction *a = QMenu::addAction(ThumbIcon::fromTheme(icon), text,
-                                  m_slotMapper, SLOT(map()));
+                                  this, SLOT(handleAction()));
 
     a->setToolTip(tooltip);
     a->setProperty(OBJPROP_SLOT, slot);
-    m_slotMapper->setMapping(a, slot);
     return a;
 }
 
@@ -293,11 +293,10 @@ DynamicMenu::addAction(const QString &text, const QString &tooltip,
                        const QIcon &icon, const QString &slot,
                        uint64_t flag)
 {
-    QAction *a = QMenu::addAction(icon, text, m_slotMapper, SLOT(map()));
+    QAction *a = QMenu::addAction(icon, text, this, SLOT(handleAction()));
 
     a->setToolTip(tooltip);
     a->setProperty(OBJPROP_SLOT, slot);
-    m_slotMapper->setMapping(a, slot);
     enable(a, flag);
     return a;
 }
@@ -311,7 +310,6 @@ DynamicMenu::adjustAction(QAction *action,
     action->setText(text);
     action->setToolTip(tooltip);
     action->setProperty(OBJPROP_SLOT, slot);
-    m_slotMapper->setMapping(action, slot);
 }
 
 QAction *
@@ -869,7 +867,7 @@ DynamicMenu::updateLaunchMenu()
             break;
 
     for (int n = g_global->menuSize(); k < n; ++k) {
-        auto a = QMenu::addAction(g_mtstr, m_slotMapper, SLOT(map()));
+        auto a = QMenu::addAction(g_mtstr, this, SLOT(handleAction()));
         a->setDynFlag(DynLaunchItem);
     }
 }
@@ -925,7 +923,7 @@ DynamicMenu::updateServerTermMenu()
     int k = actions().size();
 
     for (int n = g_global->menuSize(); k < n; ++k) {
-        QMenu::addAction(g_mtstr, m_slotMapper, SLOT(map()));
+        QMenu::addAction(g_mtstr, this, SLOT(handleAction()));
     }
 }
 

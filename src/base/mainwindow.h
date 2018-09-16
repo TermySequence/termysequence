@@ -14,7 +14,6 @@
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
-class QSignalMapper;
 QT_END_NAMESPACE
 class TermManager;
 class ServerInstance;
@@ -81,7 +80,6 @@ private:
     DockWidget *m_jobs, *m_notes, *m_tasks, *m_files;
     DockWidget *m_lastTool, *m_lastSearchable;
 
-    QSignalMapper *m_slotMapper;
     QAction *a_commandMode;
     QAction *a_dockTerminals;
     QAction *a_dockKeymap;
@@ -106,7 +104,6 @@ private:
     QHash<QObject*,QMenu*> m_popups;
 
 private slots:
-    void menuAction(const QString &slot);
     void handleObjectDestroyed(QObject *term);
     void handleConnectedChanged(bool connected);
     void handlePresMode(bool enabled);
@@ -170,6 +167,7 @@ public:
     QMenu* getManagePopup(ServerInstance *term, QWidget *parent);
 
     void bringUp();
+    void menuAction(const QString &slot);
 
     bool menuBarVisible() const;
     bool statusBarVisible() const;

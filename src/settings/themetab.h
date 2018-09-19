@@ -56,12 +56,14 @@ private:
 
     NewThemeDialog *m_dialog;
 
+    QMetaObject::Connection m_mocSel;
+
     ThemeSettings* doSave();
     ThemeSettings* doRename();
 
 private slots:
-    void handleRowClicked(int row);
-    void handleRowChanged();
+    void handleSelection();
+    void handleThemes();
 
     void handleSave();
     void handleSaveAnswer();
@@ -77,4 +79,5 @@ public:
     ThemeTab(TermPalette &palette, const TermPalette &saved, const QFont &font);
 
     void reload();
+    void takeFocus();
 };

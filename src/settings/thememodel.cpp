@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
 #include "common.h"
+#include "app/attrbase.h"
 #include "thememodel.h"
 #include "themeitem.h"
 #include "settings.h"
@@ -10,21 +11,22 @@
 
 #include <QHeaderView>
 #include <QMouseEvent>
-#include <algorithm>
 
 #define THEME_COLUMN_SAMPLE      0
 #define THEME_COLUMN_NAME        1
 #define THEME_N_COLUMNS          2
+
+#define TR_NAME1 TL("settings-name", "Custom Color Theme")
 
 ThemeModel::ThemeModel(const TermPalette &palette, const TermPalette &saved,
                        const QFont &font, QObject *parent) :
     QAbstractTableModel(parent),
     m_palette(palette),
     m_saved(saved),
+    m_edits(saved),
     m_font(font)
 {
-    connect(g_settings, SIGNAL(themesChanged()), SLOT(reloadThemes()));
-    reloadThemes();
+    // Note: reloadThemes called from ThemeTab
 }
 
 /*
@@ -39,14 +41,14 @@ ThemeModel::columnCount(const QModelIndex &parent) const
 int
 ThemeModel::rowCount(const QModelIndex &parent) const
 {
-    return m_rows;
+    return m_themes.size();
 }
 
 QModelIndex
 ThemeModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (row >= 0 && row < m_themes.size())
-        return createIndex(row, column, (void *)m_themes.at(row));
+        return createIndex(row, column);
     else
         return QModelIndex();
 }
@@ -54,38 +56,77 @@ ThemeModel::index(int row, int column, const QModelIndex &parent) const
 QVariant
 ThemeModel::data(const QModelIndex &index, int role) const
 {
-    const auto *theme = (const ThemeSettings *)index.internalPointer();
-    const auto &content = theme ? theme->content() : m_edits;
+    ThemeType type = m_types[index.row()];
+    const auto *theme = m_themes[index.row()];
 
-    if (theme || (m_edited && index.row() == 0))
-        switch (index.column()) {
-        case THEME_COLUMN_SAMPLE:
-            switch (role) {
-            case Qt::DisplayRole:
-                return theme ?
-                    (theme->builtin() ? tr("Builtin Theme") : tr("Saved Theme")) :
-                    tr("Custom Colors");
-            case Qt::FontRole:
-                return m_font;
-            case Qt::TextAlignmentRole:
-                return Qt::AlignCenter;
-            case Qt::BackgroundRole:
-                return QColor(content.bg());
-            case Qt::ForegroundRole:
-                return QColor(content.fg());
+    if (index.column() == THEME_COLUMN_SAMPLE) {
+        switch (role) {
+        case Qt::DisplayRole:
+            return theme ?
+                (theme->builtin() ? tr("Builtin Theme") : tr("Saved Theme")) :
+                tr("Custom Colors");
+        case Qt::FontRole:
+            return m_font;
+        case Qt::TextAlignmentRole:
+            return Qt::AlignCenter;
+        case Qt::BackgroundRole:
+            switch (type) {
+            case NoTheme:
+                return QColor(m_saved.bg());
+            case Unsaved:
+                return QColor(m_edits.bg());
+            default:
+                return QColor(theme->content().bg());
             }
-            break;
-        case THEME_COLUMN_NAME:
-            switch (role) {
-            case Qt::UserRole:
-                return theme ? theme->name() : tr("Custom Colors");
-            case THEME_ROLE_GROUP:
-                return theme ? theme->group() : tr("Unsaved changes made in this dialog");
-            case THEME_ROLE_ACTIVE:
-                return index.row() == m_row;
+        case Qt::ForegroundRole:
+            switch (type) {
+            case NoTheme:
+                return QColor(m_saved.fg());
+            case Unsaved:
+                return QColor(m_edits.fg());
+            default:
+                return QColor(theme->content().fg());
             }
+        default:
             break;
         }
+    }
+
+    switch (role) {
+    case THEME_ROLE_NAME:
+        switch (type) {
+        case NoTheme:
+            return TR_NAME1;
+        case Unsaved:
+            return tr("Unsaved Color Theme");
+        default:
+            return theme->name();
+        }
+    case THEME_ROLE_GROUP:
+        switch (type) {
+        case NoTheme:
+            return tr("Custom colors not matching any saved theme");
+        case Unsaved:
+            return tr("Unsaved changes made in this dialog");
+        default:
+            return theme->group();
+        }
+    case THEME_ROLE_THEME:
+        return QVariant::fromValue((void*)theme);
+    case THEME_ROLE_PALETTE:
+        switch (type) {
+        case NoTheme:
+            return QVariant::fromValue((void*)&m_saved);
+        case Unsaved:
+            return QVariant::fromValue((void*)&m_edits);
+        default:
+            return QVariant::fromValue((void*)&theme->content());
+        }
+    case THEME_ROLE_REMOVABLE:
+        return theme ? !theme->builtin() : false;
+    default:
+        break;
+    }
 
     return QVariant();
 }
@@ -93,111 +134,103 @@ ThemeModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags
 ThemeModel::flags(const QModelIndex &index) const
 {
-    return Qt::NoItemFlags;
+    return index.column() == THEME_COLUMN_NAME ?
+        Qt::ItemIsSelectable|Qt::ItemIsEnabled :
+        Qt::NoItemFlags;
 }
 
-bool
-ThemeModel::calculateRow()
+inline void
+ThemeModel::startEditing()
 {
-    int row = -1;
-    bool rc = false;
-
-    if (m_rowHint >= m_edited && m_rowHint < m_rows &&
-        m_themes[m_rowHint]->content() == m_palette) {
-        row = m_rowHint;
-        goto next;
-    }
-
-    for (int i = m_edited; i < m_rows; ++i)
-        if (m_themes[i]->content() == m_palette) {
-            row = i - m_edited;
-            if (m_edited) {
-                beginRemoveRows(QModelIndex(), 0, 0);
-                m_edited = false;
-                m_themes.pop_front();
-                --m_rows;
-                endRemoveRows();
-                rc = true;
-            }
-            goto next;
-        }
-
-    if (m_saved != m_palette) {
-        row = 0;
-        if (!m_edited || m_edits != m_palette) {
-            // We have new edits
-            m_edits = m_palette;
-            rc = true;
-            if (!m_edited) {
-                beginInsertRows(QModelIndex(), 0, 0);
-                m_edited = true;
-                m_themes.prepend(nullptr);
-                ++m_rows;
-                endInsertRows();
-            }
+    if (!m_edited || m_edits != m_palette) {
+        // We have new edits
+        m_edits = m_palette;
+        if (!m_edited) {
+            beginInsertRows(QModelIndex(), 0, 0);
+            m_themes.prepend(nullptr);
+            m_types.prepend(Unsaved);
+            m_edited = true;
+            ++m_special;
+            endInsertRows();
         }
     }
-
-next:
-    if (m_row != row) {
-        m_row = row;
-        rc = true;
-    }
-
-    m_rowHint = -1;
-    emit rowChanged(m_row);
-    return rc;
 }
 
-void
+inline void
+ThemeModel::stopEditing()
+{
+    if (m_edited) {
+        beginRemoveRows(QModelIndex(), 0, 0);
+        m_themes.pop_front();
+        m_types.pop_front();
+        m_edited = false;
+        --m_special;
+        endRemoveRows();
+    }
+}
+
+int
 ThemeModel::reloadData()
 {
-    if (calculateRow()) {
-        QModelIndex start = createIndex(0, 0);
-        QModelIndex end = createIndex(m_rows - 1, THEME_N_COLUMNS - 1);
-        emit dataChanged(start, end);
+    for (int i = m_special, n = m_themes.size(); i < n; ++i) {
+        if (m_themes[i]->content() == m_palette) {
+            int row = i - m_edited;
+            stopEditing();
+            return row;
+        }
     }
+
+    if (m_saved == m_palette) {
+        stopEditing();
+    } else {
+        startEditing();
+    }
+
+    return 0;
 }
 
-void
+int
 ThemeModel::reloadThemes()
 {
     beginResetModel();
 
-    for (int i = m_edited; i < m_themes.size(); ++i)
+    for (int i = m_special, n = m_themes.size(); i < n; ++i)
         m_themes[i]->putReference();
 
     m_themes = g_settings->themes();
-    m_rows = m_themes.size();
+    m_types.fill(YesTheme, m_themes.size());
 
-    for (auto i: qAsConst(m_themes))
-        i->takeReference();
+    bool custom = true, edited = m_edited;
+    int row = -1;
 
-    if (m_edited) {
+    for (int i = 0, n = m_themes.size(); i < n; ++i) {
+        auto *theme = m_themes[i];
+        theme->takeReference();
+        if (theme->content() == m_palette)
+            row = i;
+        if (theme->content() == m_saved)
+            custom = false;
+        if (theme->content() == m_edits)
+            edited = false;
+    }
+    if ((m_special = custom)) {
         m_themes.prepend(nullptr);
-        ++m_rows;
+        m_types.prepend(NoTheme);
+    }
+    if ((m_edited = edited && m_edits != m_saved)) {
+        m_themes.prepend(nullptr);
+        m_types.prepend(Unsaved);
+        ++m_special;
+    }
+
+    if (row == -1) {
+        row = (m_palette == m_saved) ? m_edited : 0;
+    } else {
+        row += m_special;
     }
 
     endResetModel();
-    calculateRow();
-}
-
-const TermPalette &
-ThemeModel::palette(int row) const
-{
-    return (row >= m_edited) ? m_themes[row]->content() : m_edits;
-}
-
-ThemeSettings *
-ThemeModel::currentTheme() const
-{
-    return (m_row != -1) ? m_themes[m_row] : nullptr;
-}
-
-bool
-ThemeModel::themeRemovable() const
-{
-    return (m_row >= m_edited) && !m_themes[m_row]->builtin();
+    return row;
 }
 
 //
@@ -224,28 +257,15 @@ ThemeView::ThemeView(ThemeModel *model)
 
     connect(model, &ThemeModel::modelReset, this, &ThemeView::resizeRowsToContents);
     connect(model, &ThemeModel::rowsInserted, this, &ThemeView::resizeRowsToContents);
-    connect(model, &ThemeModel::rowChanged, this, &ThemeView::handleRowChanged);
     resizeRowsToContents();
 }
 
-void
-ThemeView::handleRowChanged(int row)
+ThemeSettings *
+ThemeView::currentTheme() const
 {
-    if (row == -1)
-        row = 0;
+    auto indexes = selectionModel()->selectedIndexes();
 
-    scrollTo(model()->index(row, 0));
-}
-
-void
-ThemeView::mousePressEvent(QMouseEvent *event)
-{
-    QModelIndex index = indexAt(event->pos());
-
-    if (index.isValid()) {
-        emit rowClicked(index.row());
-        event->accept();
-    } else {
-        QTableView::mousePressEvent(event);
-    }
+    return !indexes.isEmpty() ?
+        THEME_THEMEP(indexes.at(0)) :
+        nullptr;
 }

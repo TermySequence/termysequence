@@ -22,7 +22,7 @@ class PaletteDialog final: public QDialog
 
 private:
     TermPalette m_palette;
-    TermPalette m_saved;
+    const TermPalette m_saved;
 
     ThemeTab *m_preTab;
     PaletteTab *m_stdTab;
@@ -38,6 +38,9 @@ private slots:
     void reportDircolorsModified();
 
     void handleReset();
+
+protected:
+    bool event(QEvent *event);
 
 signals:
     void termcolorsModified();

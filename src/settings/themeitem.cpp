@@ -10,6 +10,9 @@
 
 #define LINE_WIDTH 4
 
+//
+// Sample Item
+//
 ThemeSampleItemDelegate::ThemeSampleItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
 {
@@ -39,7 +42,9 @@ ThemeSampleItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
     return size;
 }
 
-
+//
+// Name Item
+//
 ThemeNameItemDelegate::ThemeNameItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
 {
@@ -48,20 +53,13 @@ ThemeNameItemDelegate::ThemeNameItemDelegate(QObject *parent) :
 void
 ThemeNameItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    bool active = index.data(THEME_ROLE_ACTIVE).toBool();
-    QColor color;
+    QStyledItemDelegate::paint(painter, option, index);
 
-    if (active) {
-        QStyleOptionViewItem opt = option;
-        opt.state |= QStyle::State_Selected;
-        QStyledItemDelegate::paint(painter, opt, index);
-        color = option.palette.color(QPalette::Active, QPalette::HighlightedText);
-    } else {
-        QStyledItemDelegate::paint(painter, option, index);
-        color = option.palette.color(QPalette::Active, QPalette::Text);
-    }
+    bool active = option.state & QStyle::State_Selected;
+    auto pc = active ? QPalette::HighlightedText : QPalette::Text;
+    QColor color = option.palette.color(QPalette::Active, pc);
 
-    QString name = index.data(Qt::UserRole).toString();
+    QString name = index.data(THEME_ROLE_NAME).toString();
     QString group = index.data(THEME_ROLE_GROUP).toString();
     int h = option.fontMetrics.height();
 

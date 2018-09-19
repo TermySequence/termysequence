@@ -7,6 +7,9 @@
 #include <QStyledItemDelegate>
 #include <QFont>
 
+//
+// Sample Item
+//
 class ThemeSampleItemDelegate final: public QStyledItemDelegate
 {
 public:
@@ -17,6 +20,9 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
+//
+// Name Item
+//
 class ThemeNameItemDelegate final: public QStyledItemDelegate
 {
 public:

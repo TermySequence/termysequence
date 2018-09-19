@@ -66,42 +66,60 @@ ThemeTab::ThemeTab(TermPalette &palette, const TermPalette &saved, const QFont &
     layout->addWidget(box);
     setLayout(layout);
 
-    connect(m_view, SIGNAL(rowClicked(int)), SLOT(handleRowClicked(int)));
-    connect(m_model, SIGNAL(rowChanged(int)), SLOT(handleRowChanged()));
-
     connect(saveButton, SIGNAL(clicked()), SLOT(handleSave()));
     connect(m_renameButton, SIGNAL(clicked()), SLOT(handleRename()));
     connect(m_deleteButton, SIGNAL(clicked()), SLOT(handleDelete()));
     connect(reloadButton, SIGNAL(clicked()), SLOT(handleReload()));
 
-    handleRowChanged();
+    connect(g_settings, SIGNAL(themesChanged()), SLOT(handleThemes()));
+    handleThemes();
 }
 
 void
 ThemeTab::reload()
 {
-    m_model->reloadData();
+    disconnect(m_mocSel);
+
+    m_view->selectRow(m_model->reloadData());
     m_preview->update();
+
+    m_mocSel = connect(m_view->selectionModel(),
+                       SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+                       SLOT(handleSelection()));
+    handleSelection();
 }
 
 void
-ThemeTab::handleRowClicked(int row)
+ThemeTab::handleThemes()
 {
-    const TermPalette &palette = m_model->palette(row);
-    m_model->setRowHint(row);
+    disconnect(m_mocSel);
 
-    if (m_palette != palette) {
-        m_palette = palette;
-        emit modified();
+    m_view->selectRow(m_model->reloadThemes());
+
+    m_mocSel = connect(m_view->selectionModel(),
+                       SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+                       SLOT(handleSelection()));
+    handleSelection();
+}
+
+void
+ThemeTab::handleSelection()
+{
+    auto indexes = m_view->selectionModel()->selectedIndexes();
+    bool removable = false;
+
+    if (!indexes.isEmpty()) {
+        QModelIndex index = indexes.at(0);
+        const TermPalette *palette = THEME_PALETTEP(index);
+        removable = index.data(THEME_ROLE_REMOVABLE).toBool();
+
+        if (m_palette != *palette) {
+            m_palette = *palette;
+            emit modified();
+            m_preview->update();
+        }
     }
 
-    reload();
-}
-
-void
-ThemeTab::handleRowChanged()
-{
-    bool removable = m_model->themeRemovable();
     m_renameButton->setEnabled(removable);
     m_deleteButton->setEnabled(removable);
 }
@@ -140,9 +158,12 @@ ThemeTab::handleSaveConfirm(int result)
 {
     if (result == QMessageBox::Yes)
         try {
-            auto *theme = m_dialog->from() ? doRename() : doSave();
+            if (m_dialog->from())
+                doRename();
+            else
+                doSave();
+
             m_dialog->deleteLater();
-            m_view->selectRow(m_model->indexOf(theme));
         }
         catch (const StringException &e) {
             errBox(e.message(), m_dialog)->show();
@@ -181,7 +202,7 @@ ThemeTab::handleSaveAnswer()
 void
 ThemeTab::handleSave()
 {
-    const auto *theme = m_model->currentTheme();
+    const auto *theme = m_view->currentTheme();
     m_dialog = new NewThemeDialog(this);
 
     if (theme) {
@@ -197,7 +218,7 @@ ThemeTab::handleSave()
 void
 ThemeTab::handleRename()
 {
-    auto *theme = m_model->currentTheme();
+    auto *theme = m_view->currentTheme();
     if (!theme || theme->builtin())
         return;
 
@@ -213,7 +234,7 @@ ThemeTab::handleRename()
 void
 ThemeTab::handleDelete()
 {
-    auto *theme = m_model->currentTheme();
+    auto *theme = m_view->currentTheme();
     if (!theme)
         return;
 
@@ -241,6 +262,12 @@ ThemeTab::handleReload()
     }
 
     g_settings->rescanThemes();
+}
+
+void
+ThemeTab::takeFocus()
+{
+    m_view->setFocus(Qt::ActiveWindowFocusReason);
 }
 
 //

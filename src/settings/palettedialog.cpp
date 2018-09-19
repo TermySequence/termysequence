@@ -115,3 +115,18 @@ PaletteDialog::bringUp()
 
     show();
 }
+
+bool
+PaletteDialog::event(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::WindowActivate:
+        if (m_tabs->currentIndex() == 0)
+            m_preTab->takeFocus();
+        break;
+    default:
+        break;
+    }
+
+    return QDialog::event(event);
+}

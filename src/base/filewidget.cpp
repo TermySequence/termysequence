@@ -127,11 +127,11 @@ FileWidget::recolor(QRgb bg, QRgb fg)
 }
 
 void
-FileWidget::updateFormat(bool force)
+FileWidget::updateFormat()
 {
-    int fmt = format();
+    int fmt = !m_direrror ? format() : 0;
 
-    if ((force || fmt) && fmt != m_stack->currentIndex()) {
+    if (fmt != m_stack->currentIndex()) {
         switch (fmt) {
         case 1:
             m_longView->selectItem(m_selected);
@@ -173,7 +173,8 @@ FileWidget::updateDirectory(const TermDirectory *dir)
         m_selectedUrl = m_currentUrl;
         m_banner->setPath(dir->name, g_mtstr);
         m_banner->show();
-        updateFormat(true);
+        m_direrror = false;
+        updateFormat();
         return;
     }
 
@@ -181,6 +182,7 @@ FileWidget::updateDirectory(const TermDirectory *dir)
     m_currentUrl.clear();
     m_selectedUrl.clear();
     m_banner->setVisible(false);
+    m_direrror = true;
     m_stack->setCurrentIndex(0);
 }
 
@@ -217,7 +219,7 @@ FileWidget::handleSettingsChanged()
 {
     m_banner->setGitline(m_term->profile()->fileGitline());
     m_format = m_term->profile()->fileStyle();
-    updateFormat(false);
+    updateFormat();
 }
 
 void
@@ -332,14 +334,14 @@ void
 FileWidget::setFormat(int format)
 {
     m_formatOverride = format;
-    updateFormat(false);
+    updateFormat();
 }
 
 void
 FileWidget::toggleFormat()
 {
     m_formatOverride = (format() == FilesLong) ? FilesShort : FilesLong;
-    updateFormat(false);
+    updateFormat();
 }
 
 void

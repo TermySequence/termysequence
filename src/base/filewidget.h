@@ -44,6 +44,7 @@ private:
     const TermFile *m_selectedFile = nullptr;
     int m_selected = -1;
     bool m_selecting = false;
+    bool m_direrror = false;
     TermFile *m_overrideFile;
 
     QStackedWidget *m_stack;
@@ -65,7 +66,7 @@ private:
 
     void selectItem(int index, const TermFile *file);
     void updateDirectory(const TermDirectory *dir);
-    void updateFormat(bool force);
+    void updateFormat();
     void updateSize(const QSize &size);
 
     void addDisplayActions(DynamicMenu *menu);

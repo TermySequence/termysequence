@@ -74,8 +74,8 @@ SuggestWidget::refont(const QFont &font)
 void
 SuggestWidget::recolor()
 {
-    m_matchBg = m_term->palette().specialBg(Tsqt::SearchText, m_term->bg());
-    m_matchFg = m_term->palette().specialFg(Tsqt::SearchText, m_term->fg());
+    m_matchBg = m_term->palette().specialBg(Tsqt::SearchLine, m_term->bg());
+    m_matchFg = m_term->palette().specialFg(Tsqt::SearchLine, m_term->fg());
 
     for (DisplayCell &cell: m_displayCells) {
         if (cell.flags & (Tsq::Bg|Tsq::Fg)) {

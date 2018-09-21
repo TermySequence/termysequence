@@ -1,7 +1,7 @@
 SPDXVersion: SPDX-2.1
 PackageLicenseDeclared: GPL-2.0-only
 PackageName: termysequence
-PackageVersion: 1.1.0
+PackageVersion: 1.1.1
 PackageOriginator: TermySequence LLC
 PackageCopyrightText: Copyright © 2018 TermySequence LLC
 PackageHomePage: https://termysequence.io

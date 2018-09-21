@@ -1,5 +1,10 @@
 # ChangeLog
 
+## [1.1.1] - 2018-09-20
+
+- Add more builtin color themes
+- Bug fixes
+
 ## [1.1.0] - 2018-08-09
 
 - Bundle V8 as a submodule

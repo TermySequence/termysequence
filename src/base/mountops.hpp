@@ -436,7 +436,12 @@ out:
 }
 
 extern "C" void
-mountop_forget(fuse_req_t req, fuse_ino_t ino, uint64_t nlookup)
+mountop_forget(fuse_req_t req, fuse_ino_t ino,
+#if USE_FUSE3
+               uint64_t nlookup)
+#else
+               unsigned long nlookup)
+#endif
 {
     declare_thiz;
     thiz->unrefInode(ino, nlookup);

@@ -18,8 +18,14 @@ fi
 
 set -e
 
+if [ "$commit" = 'HEAD' ]; then
+    version=rc
+    echo Making rc distribution
+else
+    version=$(awk '/^PackageVersion:/ {print $2}' LICENSE.spdx)
+    echo Making versioned distribution
+fi
 package=$(awk '/^PackageName:/ {print $2}' LICENSE.spdx)
-version=$(awk '/^PackageVersion:/ {print $2}' LICENSE.spdx)
 name="${package}-${version}"
 servername="${package}-server-${version}"
 qtname="${package}-qt-${version}"
@@ -80,10 +86,10 @@ git archive --prefix=${name}/vendor/termy-icon-theme/ $subcommit > $subfile
 tar -Af $tarfile $subfile
 popd
 
-# Compress the archive
-echo -n Compressing main archive...
-xz <$tarfile >${name}.tar.xz
-echo done
+# Create the combined archive
+# echo -n Compressing main archive...
+# xz <$tarfile >${name}.tar.xz
+# echo done
 
 # Create the server-only archive
 tar --delete \
@@ -121,8 +127,6 @@ xz <$subfile >${qtname}.tar.xz
 echo done
 
 # Remove temporary files
-rm -r ${tmpdir}
-rm $subfile
-rm $tarfile
+rm -r $tmpdir $subfile $tarfile
 
 echo Success

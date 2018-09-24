@@ -21,6 +21,7 @@ OPTION(NATIVE_DIALOGS "Use native dialog boxes" ON)
 OPTION(INSTALL_SHELL_INTEGRATION "Install shell integration scripts" OFF)
 SET(V8_ARCH "x64" CACHE STRING "Architecture parameter for V8 build")
 SET(V8_ARMFP "" CACHE STRING "ARM floating-point ABI parameter for V8 build")
+SET(V8_JOBS "2" CACHE STRING "Number of V8 build commands to run in parallel")
 
 IF (${CMAKE_BUILD_TYPE} MATCHES "Debug")
   SET(FRIENDLY_NAME "DebugSequence")

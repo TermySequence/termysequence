@@ -4,3 +4,5 @@
 /vendor/v8-linux/         export-ignore
 /vendor/termy-emoji/      export-ignore
 /vendor/termy-icon-theme/ export-ignore
+
+*.svg		binary

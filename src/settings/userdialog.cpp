@@ -66,7 +66,7 @@ void
 UserDialog::populateInfo(int type, const QString &user, ConnectSettings *info)
 {
     QStringList command;
-    bool raw = true;
+    bool raw = true, pty = false;
 
     switch (type) {
     default:
@@ -74,6 +74,7 @@ UserDialog::populateInfo(int type, const QString &user, ConnectSettings *info)
         break;
     case Tsqt::ConnectionUserSu:
         command = QStringList({"su", "su", "-l", "-c", SERVER_NAME, user});
+        pty = SU_NEEDS_PTY;
         break;
     case Tsqt::ConnectionUserMctl:
         command = QStringList({"machinectl", "machinectl", "shell",
@@ -87,7 +88,7 @@ UserDialog::populateInfo(int type, const QString &user, ConnectSettings *info)
 
     info->setCommand(command);
     info->setType(type);
-    info->setPty(false);
+    info->setPty(pty);
     info->setRaw(raw);
 }
 

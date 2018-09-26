@@ -64,6 +64,7 @@
 #cmakedefine01 USE_FUSE2
 #cmakedefine01 MEMDEBUG
 #cmakedefine01 NATIVE_DIALOGS
+#cmakedefine01 SU_NEEDS_PTY
 
 #if USE_SYSTEMD
 #define SYSTEMD_SETUP_NAME "@SYSTEMD_SETUP_NAME@"

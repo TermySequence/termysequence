@@ -107,6 +107,8 @@ ConnectDialog::doSave(const QString &name)
         emit saved(conn);
         accept();
     } catch (const StringException &e) {
+        m_saveName->selectAll();
+        m_focusWidget = m_saveName;
         errBox(e.message(), this)->show();
     }
 }

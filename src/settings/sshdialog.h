@@ -24,7 +24,7 @@ private slots:
     void handleAccept();
 
 public:
-    SshDialog(QWidget *parent);
+    SshDialog(QWidget *parent, unsigned options = 0);
 
     static ConnectSettings* makeConnection(const QString &arg);
 };

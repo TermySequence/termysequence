@@ -25,8 +25,8 @@
     "Note: shell metacharacters, quotes, and escapes are not interpreted")
 #define TR_TITLE1 TL("window-title", "SSH Connection")
 
-SshDialog::SshDialog(QWidget *parent) :
-    ConnectDialog(parent, "connect-ssh")
+SshDialog::SshDialog(QWidget *parent, unsigned options) :
+    ConnectDialog(parent, "connect-ssh", options|ShowServ|OptSave)
 {
     setWindowTitle(TR_TITLE1);
 

@@ -26,8 +26,8 @@
     "Note: shell metacharacters, quotes, and escapes are not interpreted")
 #define TR_TITLE1 TL("window-title", "Custom Connection")
 
-OtherDialog::OtherDialog(QWidget *parent) :
-    ConnectDialog(parent, "connect-other")
+OtherDialog::OtherDialog(QWidget *parent, unsigned options) :
+    ConnectDialog(parent, "connect-other", options|ShowServ|OptSave)
 {
     setWindowTitle(TR_TITLE1);
 

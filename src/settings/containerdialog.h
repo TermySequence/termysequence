@@ -29,7 +29,7 @@ private slots:
     void handleAccept();
 
 public:
-    ContainerDialog(QWidget *parent, int type);
+    ContainerDialog(QWidget *parent, int type, unsigned options = 0);
 
     static ConnectSettings* makeConnection(int type, const QString &arg);
 };

@@ -22,8 +22,7 @@
 #define TR_CHECK1 TL("input-checkbox", "Save connection as") + ':'
 #define TR_FIELD1 TL("input-field", "Launch from") + ':'
 
-ConnectDialog::ConnectDialog(QWidget *parent, const char *helpPage,
-                             bool showServ, bool showSave) :
+ConnectDialog::ConnectDialog(QWidget *parent, const char *helpPage, unsigned options) :
     QDialog(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
@@ -36,7 +35,7 @@ ConnectDialog::ConnectDialog(QWidget *parent, const char *helpPage,
 
     m_mainLayout = new QVBoxLayout;
 
-    if (showServ) {
+    if (options & ShowServ) {
         m_serverCombo = new ServerCombo;
 
         auto *serverLayout = new QHBoxLayout;
@@ -45,14 +44,16 @@ ConnectDialog::ConnectDialog(QWidget *parent, const char *helpPage,
         serverLayout->addWidget(m_serverCombo, 1);
         m_mainLayout->addLayout(serverLayout);
     }
-    if (showSave) {
-        m_save = new QCheckBox;
+    if (options & (OptSave|ReqSave)) {
         m_saveName = new QLineEdit;
 
         auto *saveLayout = new QHBoxLayout;
         saveLayout->setContentsMargins(g_mtmargins);
-        saveLayout->addWidget(m_save);
-        saveLayout->addWidget(new QLabel(TR_CHECK1));
+        if (options & ReqSave) {
+            saveLayout->addWidget(new QLabel(TR_CHECK1));
+        } else {
+            saveLayout->addWidget(m_save = new QCheckBox(TR_CHECK1));
+        }
         saveLayout->addWidget(m_saveName, 1);
         m_mainLayout->addLayout(saveLayout);
     }
@@ -88,7 +89,7 @@ ConnectDialog::createInfo(const QString &defaultName)
     if (m_info)
         m_info->putReference();
 
-    m_info = new ConnectSettings(m_save->isChecked() ?
+    m_info = new ConnectSettings(!m_save || m_save->isChecked() ?
                                  m_saveName->text() :
                                  defaultName);
     m_info->activate();
@@ -113,15 +114,8 @@ ConnectDialog::doSave(const QString &name)
 void
 ConnectDialog::doAccept()
 {
-    if (m_save->isChecked())
+    if (!m_save || m_save->isChecked())
         doSave(m_info->name());
     else
         accept();
-}
-
-void
-ConnectDialog::setNameRequired()
-{
-    m_save->setChecked(true);
-    m_save->setEnabled(false);
 }

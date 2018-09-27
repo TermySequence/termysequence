@@ -26,5 +26,5 @@ private slots:
     void handleAccept();
 
 public:
-    OtherDialog(QWidget *parent);
+    OtherDialog(QWidget *parent, unsigned options = 0);
 };

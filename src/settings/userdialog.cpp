@@ -22,8 +22,8 @@
 #define TR_FIELD2 TL("input-field", "Username") + ':'
 #define TR_TITLE1 TL("window-title", "Local User Connection")
 
-UserDialog::UserDialog(QWidget *parent, int type) :
-    ConnectDialog(parent, "connect-user")
+UserDialog::UserDialog(QWidget *parent, int type, unsigned options) :
+    ConnectDialog(parent, "connect-user", options|ShowServ|OptSave)
 {
     setWindowTitle(TR_TITLE1);
 

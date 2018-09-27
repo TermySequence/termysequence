@@ -58,7 +58,7 @@ private slots:
     void handleReset();
 
 public:
-    BatchDialog(QWidget *parent, ConnectSettings *conn = nullptr);
+    BatchDialog(QWidget *parent, unsigned options, ConnectSettings *conn = nullptr);
 
     QSize sizeHint() const { return QSize(960, 600); }
 };

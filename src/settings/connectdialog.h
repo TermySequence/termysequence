@@ -37,7 +37,7 @@ protected:
 private:
     QDialogButtonBox *m_buttonBox;
     ServerCombo *m_serverCombo;
-    QCheckBox *m_save;
+    QCheckBox *m_save = nullptr;
 
 private slots:
     virtual void handleAccept() = 0;
@@ -49,9 +49,9 @@ signals:
     void saved(ConnectSettings *conn);
 
 public:
-    ConnectDialog(QWidget *parent, const char *helpPage,
-                  bool showServ = true, bool showSave = true);
-    void setNameRequired();
+    enum Options { ShowServ = 1, OptSave = 2, ReqSave = 4 };
+
+    ConnectDialog(QWidget *parent, const char *helpPage, unsigned options);
 
     inline ConnectSettings* conn() { return m_info; }
 };

@@ -27,8 +27,8 @@
 #define TR_TITLE1 TL("window-title", "New Batch Connection")
 #define TR_TITLE2 TL("window-title", "Edit Batch Connection")
 
-BatchDialog::BatchDialog(QWidget *parent, ConnectSettings *conninfo) :
-    ConnectDialog(parent, "connect-batch", false, !conninfo),
+BatchDialog::BatchDialog(QWidget *parent, unsigned options, ConnectSettings *conninfo) :
+    ConnectDialog(parent, "connect-batch", options),
     m_editing(conninfo)
 {
     setWindowTitle(m_editing ? TR_TITLE2 : TR_TITLE1);

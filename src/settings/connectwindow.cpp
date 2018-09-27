@@ -163,29 +163,28 @@ ConnectsWindow::handleNewConn()
 
         switch (type) {
         case Tsqt::ConnectionBatch:
-            dialog = new BatchDialog(this);
+            dialog = new BatchDialog(this, ConnectDialog::ReqSave);
             break;
         case Tsqt::ConnectionSsh:
-            dialog = new SshDialog(this);
+            dialog = new SshDialog(this, ConnectDialog::ReqSave);
             break;
         case Tsqt::ConnectionUserSudo:
         case Tsqt::ConnectionUserSu:
         case Tsqt::ConnectionUserMctl:
         case Tsqt::ConnectionUserPkexec:
-            dialog = new UserDialog(this, type);
+            dialog = new UserDialog(this, type, ConnectDialog::ReqSave);
             break;
         case Tsqt::ConnectionMctl:
         case Tsqt::ConnectionDocker:
         case Tsqt::ConnectionKubectl:
         case Tsqt::ConnectionRkt:
-            dialog = new ContainerDialog(this, type);
+            dialog = new ContainerDialog(this, type, ConnectDialog::ReqSave);
             break;
         default:
-            dialog = new OtherDialog(this);
+            dialog = new OtherDialog(this, ConnectDialog::ReqSave);
             break;
         }
 
-        dialog->setNameRequired();
         connect(dialog, &ConnectDialog::saved, [this](ConnectSettings *conn) {
             m_view->selectConn(conn);
         });
@@ -273,7 +272,7 @@ ConnectsWindow::handleEditConn()
     auto *conn = m_view->selectedConn();
     if (conn) {
         if (conn->isbatch()) {
-            (new BatchDialog(this, conn))->show();
+            (new BatchDialog(this, 0, conn))->show();
         } else {
             g_settings->connWindow(conn)->bringUp();
         }

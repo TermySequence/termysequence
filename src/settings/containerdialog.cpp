@@ -24,8 +24,8 @@
 #define TR_FIELD3 TL("input-field", "Container name") + ':'
 #define TR_TITLE1 TL("window-title", "Container Connection")
 
-ContainerDialog::ContainerDialog(QWidget *parent, int type) :
-    ConnectDialog(parent, "connect-container")
+ContainerDialog::ContainerDialog(QWidget *parent, int type, unsigned options) :
+    ConnectDialog(parent, "connect-container", options|ShowServ|OptSave)
 {
     setWindowTitle(TR_TITLE1);
 

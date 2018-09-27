@@ -32,6 +32,10 @@ See [Building from Source](https://termysequence.io/doc/build.html) in termy-doc
   * sqlite 3.8.0+
   * zlib 1.2.5+
   * libfuse 3.1+ or 2.9.7+ (optional)
+  * libICU 60.2+ (i18n and uc)
+  * ninja (V8 build only)
+  * python 2.7 (V8 build only, interpreter must be named "python")
+  * jinja2 for python2 (V8 build only)
 
 ### Tests and Utilities
 

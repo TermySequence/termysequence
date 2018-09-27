@@ -1,5 +1,10 @@
 # ChangeLog
 
+## [1.1.3] - 2018-09-27
+
+- Update V8 to 6.9
+- Packaging and bug fixes
+
 ## [1.1.1] - 2018-09-20
 
 - Add more builtin color themes

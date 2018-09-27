@@ -23,6 +23,7 @@ private:
 
 private slots:
     void handleTextChanged(const QString &text);
+    void handleServerChanged();
     void handleAccept();
 
 public:

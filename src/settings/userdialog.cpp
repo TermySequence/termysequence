@@ -8,6 +8,7 @@
 #include "userdialog.h"
 #include "connect.h"
 #include "choicewidget.h"
+#include "serverwidget.h"
 #include "base/thumbicon.h"
 
 #include <QLabel>
@@ -53,13 +54,23 @@ UserDialog::UserDialog(QWidget *parent, int type, unsigned options) :
     m_mainLayout->insertWidget(3, m_user);
 
     connect(m_user, SIGNAL(textChanged(const QString&)), SLOT(handleTextChanged(const QString&)));
+    connect(m_serverCombo, SIGNAL(currentIndexChanged(int)), SLOT(handleServerChanged()));
 }
 
 void
 UserDialog::handleTextChanged(const QString &text)
 {
+    QString host = m_serverCombo->currentHost();
     m_okButton->setEnabled(!text.isEmpty());
-    m_saveName->setText(text.isEmpty() ? text : text + A("@localhost"));
+    m_saveName->setText(text.isEmpty() ? text : text + '@' + host);
+}
+
+void
+UserDialog::handleServerChanged()
+{
+    QString text = m_user->text();
+    QString host = m_serverCombo->currentHost();
+    m_saveName->setText(text.isEmpty() ? text : text + '@' + host);
 }
 
 void
@@ -97,7 +108,7 @@ UserDialog::handleAccept()
 {
     if (!m_user->text().isEmpty()) {
         QString user = m_user->text();
-        createInfo(user + A("@localhost"));
+        createInfo(user + '@' + m_serverCombo->currentHost());
         populateInfo(m_combo->currentData().toInt(), user, m_info);
         doAccept();
     }

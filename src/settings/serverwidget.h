@@ -21,6 +21,8 @@ private slots:
 
 public:
     ServerCombo(QWidget *parent = nullptr);
+
+    QString currentHost();
 };
 
 //

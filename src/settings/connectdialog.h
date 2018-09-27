@@ -27,6 +27,7 @@ protected:
     QLineEdit *m_saveName;
     QPushButton *m_okButton;
     QWidget *m_focusWidget = nullptr;
+    ServerCombo *m_serverCombo;
 
     void setSaveName(const QString &text);
 
@@ -36,7 +37,6 @@ protected:
 
 private:
     QDialogButtonBox *m_buttonBox;
-    ServerCombo *m_serverCombo;
     QCheckBox *m_save = nullptr;
 
 private slots:

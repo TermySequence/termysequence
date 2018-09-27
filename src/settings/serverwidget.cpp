@@ -49,6 +49,18 @@ ServerCombo::handleServerUpdated(int index)
     }
 }
 
+QString
+ServerCombo::currentHost()
+{
+    QString idStr = currentData().toString();
+    if (!idStr.isEmpty()) {
+        auto *info = g_settings->server(idStr.toStdString());
+        if (info)
+            return info->host();
+    }
+    return A("localhost");
+}
+
 //
 // Server widget
 //

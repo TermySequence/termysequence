@@ -15,7 +15,6 @@ BUILD_TYPE=${3:-Release}
 #args+=("-DUSE_FUSE2=ON")
 #args+=("-DUSE_SYSTEMD=OFF")
 #args+=("-DUSE_LIBGIT2=OFF")
-#args+=("-DINSTALL_SHELL_INTEGRATION=ON")
 #args+=("-DCMAKE_INSTALL_PREFIX=/usr/local")
 
 # Generator

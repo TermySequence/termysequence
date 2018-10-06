@@ -55,8 +55,8 @@ IF (BUILD_QTGUI)
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/termy-icon-theme)
 ENDIF()
 
-IF (INSTALL_SHELL_INTEGRATION)
-  INSTALL(FILES iTerm2/iterm2_shell_integration.bash
-    DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/profile.d
-    RENAME ${ABBREV_NAME}_shell_integration.sh)
+IF (BUILD_SERVER)
+  FILE(GLOB shell_FILES iTerm2/iterm2_shell_integration.*)
+  INSTALL(FILES ${shell_FILES}
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/${SERVER_NAME})
 ENDIF()

@@ -46,7 +46,6 @@ declare -a qt_remove=("${all_remove[@]}")
 qt_remove+=('OPTION.BUILD_SERVER')
 qt_remove+=('OPTION.BUILD_TESTS')
 qt_remove+=('OPTION.USE_LIBGIT2')
-qt_remove+=('OPTION.INSTALL_SHELL_INTEGRATION')
 
 # Create the combined archive
 git archive --prefix=${name}/ -o $tarfile $commit

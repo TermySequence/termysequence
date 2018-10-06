@@ -188,6 +188,7 @@ extern QString actionString(QString slot);
 #define ACT_SET_FILE_LISTING_FORMAT_SHORT TN("action", "Display files using short (ls) format")
 #define ACT_SET_SERVER_ICON TN("action", "Set server icon to the selected icon")
 #define ACT_SET_TERMINAL_ICON TN("action", "Set terminal icon to the selected icon")
+#define ACT_SETUP_TASKS TN("action", "Show the initial setup tasks window")
 #define ACT_SHOW_MENU_BAR TN("action", "Show the menu bar in this window")
 #define ACT_SHOW_SERVER TN("action", "Show all terminals belonging to the server")
 #define ACT_SHOW_TERMINAL TN("action", "Show the terminal in this window")

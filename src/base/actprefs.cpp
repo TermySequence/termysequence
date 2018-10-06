@@ -33,6 +33,7 @@
 #include "settings/launchwindow.h"
 #include "settings/tipwindow.h"
 #include "settings/aboutwindow.h"
+#include "settings/setupdialog.h"
 
 #define TR_TITLE1 TL("window-title", "Global Settings")
 
@@ -277,6 +278,12 @@ void
 TermManager::actionEventLog()
 {
     g_logwin->bringUp();
+}
+
+void
+TermManager::actionSetupTasks()
+{
+    (new SetupDialog(m_parent))->show();
 }
 
 void

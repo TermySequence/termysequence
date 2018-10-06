@@ -436,6 +436,7 @@ MainWindow::createMenus()
     MS();
     MI(TN("menu-help", "Manage &Plugins"), ACT_MANAGE_PLUGINS, ICON_MANAGE_PLUGINS, L("ManagePlugins"));
     MI(TN("menu-help", "&Event Log"), ACT_EVENT_LOG, ICON_EVENT_LOG, L("EventLog"));
+    MI(TN("menu-help", "&Setup Tasks"), ACT_SETUP_TASKS, ICON_SETUP_TASKS, L("SetupTasks"));
     MS();
     MI(TN("menu-help", "&About Application"), ACT_HELP_ABOUT, ICON_HELP_ABOUT, L("HelpAbout"));
 }

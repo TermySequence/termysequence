@@ -31,7 +31,6 @@
 #include "settings/connect.h"
 #include "settings/splitlayout.h"
 #include "settings/port.h"
-#include "setup/systemdsetup.h"
 #include "os/time.h"
 #include "os/attr.h"
 #include "os/dir.h"
@@ -526,9 +525,6 @@ TermListener::handleInitialReady()
         m_failureMsg = makeFailureMessage(parts);
         m_failureTitle = TR_TITLE1;
         m_failureType = 1;
-    }
-    else if (needSystemdSetup(m_persistent, m_transient)) {
-        m_failureType = 2; // show setup dialog
     }
 
     recheckLocalServer();

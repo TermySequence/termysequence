@@ -526,6 +526,7 @@ public slots:
     void actionPrompt();
     void actionNotifySend(QString summary, QString body);
     void actionEventLog();
+    void actionSetupTasks();
     void actionManpageTerminal(QString manpage);
     void actionTipOfTheDay();
     void actionHelpAbout();

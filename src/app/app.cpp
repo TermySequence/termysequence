@@ -15,6 +15,7 @@
 #include "base/dragicon.h"
 #include "settings/settings.h"
 #include "settings/state.h"
+#include "settings/setupdialog.h"
 
 #include <QApplication>
 #include <QSocketNotifier>
@@ -48,6 +49,22 @@ TermApplication::start(int sigfd)
     m_notifier = new QSocketNotifier(sigfd, QSocketNotifier::Read, this);
     connect(m_notifier, SIGNAL(activated(int)), SLOT(handleSignal()));
 
+    if (g_state->suppressSetup()) {
+        begin();
+    } else {
+        auto *dialog = new SetupDialog;
+        connect(dialog, &QDialog::accepted, this, [this]{
+            g_state->setSuppressSetup(true);
+            begin();
+        });
+        connect(dialog, SIGNAL(rejected()), m_app, SLOT(quit()));
+        dialog->show();
+    }
+}
+
+void
+TermApplication::begin()
+{
     g_listener = new TermListener;
     m_mocReady = connect(g_listener, SIGNAL(ready()), SLOT(handleReady()));
 
@@ -56,24 +73,28 @@ TermApplication::start(int sigfd)
 }
 
 void
-TermApplication::timerEvent(QTimerEvent *)
+TermApplication::timerEvent(QTimerEvent *event)
 {
-    m_box = new QMessageBox(QMessageBox::NoIcon, FRIENDLY_NAME, TR_TEXT1,
-                            QMessageBox::Cancel);
+    if (event->timerId() == m_timerId) {
+        m_box = new QMessageBox(QMessageBox::NoIcon, FRIENDLY_NAME, TR_TEXT1,
+                                QMessageBox::Cancel);
 
-    connect(m_box, SIGNAL(finished(int)), SLOT(handleCancel()));
-    m_box->show();
+        connect(m_box, SIGNAL(finished(int)), SLOT(handleCancel()));
+        m_box->show();
 
-    killTimer(m_timerId);
-    m_timerId = 0;
+        killTimer(m_timerId);
+        m_timerId = 0;
+    }
 }
 
 void
 TermApplication::handleSignal()
 {
     m_notifier->setEnabled(false);
-    g_listener->disconnect(this);
-    g_listener->quit();
+    if (g_listener) {
+        g_listener->disconnect(this);
+        g_listener->quit();
+    }
     m_app->exit(EXITCODE_SIGNAL);
 }
 

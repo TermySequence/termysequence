@@ -165,6 +165,7 @@ using namespace std::string_literals;
 #define ICON_SEND_SIGNAL                        "send-signal"s                      // oxygen/actions/edit-bomb
 #define ICON_SET_ALERT                          "set-alert"s                        // oxygen/apps/preferences-desktop-notification-bell
 #define ICON_SET_NO_ICON                        "set-no-icon"s
+#define ICON_SETUP_TASKS                        "setup-tasks"s                      // adwaita/categories/preferences-system
 #define ICON_SHOW_MENU_BAR                      "show-menu-bar"s                    // oxygen/actions/show-menu
 #define ICON_SHOW_SERVER                        "show-server"s                      // oxygen/actions/layer-visible-on
 #define ICON_SHOW_TERMINAL                      "show-terminal"s                    // oxygen/actions/layer-visible-on

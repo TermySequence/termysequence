@@ -27,8 +27,10 @@ private:
     QSocketNotifier *m_notifier;
     QMessageBox *m_box = nullptr;
 
-    int m_timerId;
+    int m_timerId = 0;
     QMetaObject::Connection m_mocReady;
+
+    void begin();
 
 private slots:
     void handleSignal();

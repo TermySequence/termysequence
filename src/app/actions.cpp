@@ -154,6 +154,7 @@ static const QHash<QString,const char*> s_actionHash = {
     { A("SetTerminalIcon"), ACT_SET_TERMINAL_ICON },
     { A("SetTerminalIcon|"), ACT_SET_TERMINAL_ICON_DEFAULT },
     { A("SetTerminalIcon|none"), ACT_SET_TERMINAL_ICON_EMPTY },
+    { A("SetupTasks"), ACT_SETUP_TASKS },
     { A("ShowMenuBar"), ACT_SHOW_MENU_BAR },
     { A("ShowServer"), ACT_SHOW_SERVER },
     { A("SplitViewClose"), ACT_SPLIT_VIEW_CLOSE },

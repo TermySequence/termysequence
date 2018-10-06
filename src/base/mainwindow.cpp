@@ -30,7 +30,6 @@
 #include "settings/keymap.h"
 #include "settings/state.h"
 #include "settings/orderlayout.h"
-#include "setup/systemdsetup.h"
 
 #include <QMenuBar>
 #include <QStatusBar>
@@ -339,12 +338,6 @@ MainWindow::bringUp()
         errBox(g_listener->failureTitle(), g_listener->failureMsg(), this)->show();
         g_listener->clearFailure();
         break;
-#if USE_SYSTEMD
-    case 2:
-        showSystemdSetup(m_manager);
-        g_listener->clearFailure();
-        break;
-#endif
     }
 }
 

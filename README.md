@@ -19,11 +19,12 @@ See [Building from Source](https://termysequence.io/doc/build.html) in termy-doc
 ### Common
 
   * cmake 3.9.0+ (build only)
+  * gcc/g++ 7.3+ (build only)
   * libuuid (usually part of the base system)
 
 ### Server
 
-  * systemd 233+ (optional)
+  * systemd 235+ (optional)
   * libgit2 0.26.0+ (optional, dynamically loaded at runtime)
 
 ### Client
@@ -36,6 +37,8 @@ See [Building from Source](https://termysequence.io/doc/build.html) in termy-doc
   * ninja (V8 build only)
   * python 2.7 (V8 build only, interpreter must be named "python")
   * jinja2 for python2 (V8 build only)
+  * libatomic (V8 build only)
+  * libstdc++-static (V8 build only)
 
 ### Tests and Utilities
 

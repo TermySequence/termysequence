@@ -1,5 +1,11 @@
 # ChangeLog
 
+## [1.1.4] - 2018-10-06
+
+- Move shell integration scripts to /usr/share
+- New setup system
+- Packaging and bug fixes
+
 ## [1.1.3] - 2018-09-27
 
 - Update V8 to 6.9

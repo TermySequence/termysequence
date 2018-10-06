@@ -4,45 +4,31 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
 usage () {
-    echo "Usage: @SYSTEMD_SETUP_NAME@ [options]"
+    echo "Usage: @SETUP_NAME@ [options]"
     echo
-    echo "Set up @SERVER_NAME@ as a systemd user service."
+    echo "Perform @SERVER_NAME@ setup actions for a given user."
     echo
     echo "Options:"
-    echo "  --server-pid <pid> PID of currently running server"
-    echo "  --enable-linger Just enable long-running services"
-    echo "  --man Launch man page"
-    echo "  --version Print version information"
-}
-
-failure () {
+    echo "  --systemd  Enable and start systemd user service"
+    echo "  --bash     Enable shell integration for bash"
+    echo "  --zsh      Enable shell integration for zsh"
     echo
-    if [ $1 -eq 0 ]; then
-        echo "Setup stopped."
-    else
-        echo "Setup failed."
-    fi
-    echo "Retry setup at any time by running @SYSTEMD_SETUP_NAME@"
-    echo
-    echo "Press enter to exit..."
-    read
-    exit $1
+    echo "  --man      Launch man page"
+    echo "  --version  Print version information"
 }
 
-enable_linger () {
-    if [ "$XDG_SESSION_ID" ]; then
-        loginctl enable-linger
-        exit $?
-    else
-        echo "Error: XDG_SESSION_ID not set" 1>&2
-        echo "Please run this command from within a desktop, ssh, or machinectl login session managed by systemd-logind" 1>&2
-        echo "Note: @FRIENDLY_NAME@ terminals on the persistent user server won't work, use the transient local server instead" 1>&2
-        exit 1
-    fi
-}
+action_systemd=
+action_bash=
+action_zsh=
+server_pid=
 
-if [ "$1" ]; then
-    case "$1" in
+if [ "$#" -lt 1 ]; then
+    echo "No option specified" 1>&2
+    usage
+    exit 1
+fi
+for i in "$@"; do
+    case "$i" in
         --help)
             usage
             exit 0
@@ -52,129 +38,150 @@ if [ "$1" ]; then
             exit 0
             ;;
         --man)
-            exec man @SYSTEMD_SETUP_NAME@
+            exec man @SETUP_NAME@
             ;;
-        --server-pid)
-            server_pid=$2
+        --systemd)
+            action_systemd=1
             ;;
-        --enable-linger | enable-linger)
-            enable_linger
+        --bash)
+            action_bash=1
+            ;;
+        --zsh)
+            action_zsh=1
             ;;
         *)
-            echo "Unknown argument $1" 1>&2
+            echo "Unknown argument $i" 1>&2
             exit 1
             ;;
     esac
-fi
+done
 
-echo
-echo "This is @SYSTEMD_SETUP_NAME@, version @PROJECT_VERSION@"
-
-#
-##
-### Step 1
-##
-#
-echo
-echo "Step 1: Enable systemd user service"
-echo
-echo "    The following commands will be run:"
-echo "        systemctl --user enable @SERVER_NAME@.socket"
-echo "        systemctl --user start @SERVER_NAME@.socket"
+echo "This is @SETUP_NAME@, version @PROJECT_VERSION@"
 echo
 
-if ! read -p "Proceed to run these commands? (y/n) [y] "; then exit 2; fi
-if [ "${REPLY:-y}" != y -a "${REPLY:-y}" != Y ]; then failure 0; fi
+if [ -t 1 ]; then isatty=1; else isatty=; fi
 
-systemctl --user enable @SERVER_NAME@.socket || failure 1
-systemctl --user start @SERVER_NAME@.socket || failure 1
+print_start() {
+    task_failure=
+    echo "● $1"
+}
 
-echo
-echo "Success."
-
-#
-##
-### Step 2
-##
-#
-echo
-echo "Step 2: Enable long-running services"
-echo
-
-if [ "$XDG_SESSION_ID" ]
-then
-    echo "Note: this may prompt for a password"
-    echo
-    echo "    The following command will be run:"
-    echo "        loginctl enable-linger"
-    echo
-
-    if ! read -p "Proceed to run this command? (y/n) [y] "; then exit 2; fi
-    if [ "${REPLY:-y}" != y -a "${REPLY:-y}" != Y ]; then failure 0; fi
-
-    if loginctl enable-linger; then
-        echo
-        echo "Success."
+print_result() {
+    if [ "$task_failure" = 1 ]; then
+        echo -n "        "
+        if test "$isatty"; then echo -ne "\033[31m"; fi
+        echo -n "✘"
+        if test "$isatty"; then echo -ne "\033[m"; fi
     else
-        echo
-        echo "That didn't work, but we'll proceed anyway."
-        loginfail=1
+        echo -n "        "
+        if test "$isatty"; then echo -ne "\033[32m"; fi
+        echo -n "✔"
+        if test "$isatty"; then echo -ne "\033[m"; fi
     fi
-else
-    echo "    Skipping this step because XDG_SESSION_ID is not set"
-    loginfail=1
-fi
 
-if [ "$loginfail" ]; then
-    echo
-    echo "    Please run the following command at a later time:"
-    echo "        @SYSTEMD_SETUP_NAME@ --enable-linger"
-    echo
-    echo "Press enter to continue..."
-    read || exit 127
-fi
+    case "$task_failure" in
+        1)
+            echo " Failed"
+            ;;
+        2)
+            echo " Not necessary"
+            ;;
+        3)
+            echo " Skipped"
+            ;;
+        *)
+            echo " Success"
+            ;;
+    esac
+}
 
-#
-##
-### Step 3
-##
-#
-echo
-echo "Step 3: Stop existing @SERVER_NAME@"
-echo
-
-pidfile="/tmp/@SERVER_NAME@$UID/pid"
-if [ -z "$server_pid" -a -f $pidfile ]; then
-    server_pid=$(<$pidfile)
-fi
-
-numre='^[0-9]+$'
-if [[ "$server_pid" =~ $numre ]]
-then
-    echo -e "\033[1mImportant\033[m:"
-    echo "    - Terminals on the existing server will be lost."
-    if [ "$@ENV_NAME@" ]; then
-        echo "    - The application may report that a connection has been lost."
-        echo -ne "      \033[1mThis is normal\033[m. "
-        echo "Close and restart the application to proceed."
+enable_linger () {
+    if [ "$XDG_SESSION_ID" ]; then
+        loginctl enable-linger
+    else
+        echo "Error: XDG_SESSION_ID not set" 1>&2
+        echo "Please run this command from within a desktop, ssh, or machinectl login session managed by systemd-logind" 1>&2
+        task_failure=1
     fi
-    echo
-    echo "    The following command will be run:"
-    echo "        kill $server_pid"
-    echo
+}
 
-    if ! read -p "Proceed to run this command? (y/n) [y] "; then exit 2; fi
-    if [ "${REPLY:-y}" != y -a "${REPLY:-y}" != Y ]; then failure 0; fi
+stop_server() {
+    pidfile="/tmp/@SERVER_NAME@$UID/pid"
+    if [ -z "$server_pid" -a -f $pidfile ]; then
+        server_pid=$(<$pidfile)
+    fi
 
-    kill $server_pid || failure 1
+    numre='^[0-9]+$'
+    if [[ "$server_pid" =~ $numre ]]
+    then
+        kill $server_pid || task_failure=1
+    else
+        task_failure=2
+    fi
+}
 
-    echo
-    echo "Success."
-else
-    echo "    No existing instance of @SERVER_NAME@ found"
+check_for_existing() {
+    print_start "Enable shell integration in $1"
+    if grep -q iterm2_shell_integration "$1" 2>/dev/null; then
+        echo "  ! Existing shell integration code detected, skipping" 1>&2
+        task_failure=3
+        return 1
+    fi
+    conf_comment="# Inserted by @SETUP_NAME@ @PROJECT_VERSION@ on $(date)"
+    return 0
+}
+
+if test "$action_systemd"; then
+    print_start "Enable systemd user service"
+    systemctl --user -q enable @SERVER_NAME@.socket || task_failure=1
+    print_result
+
+    print_start "Start systemd user service"
+    systemctl --user -q start @SERVER_NAME@.socket || task_failure=1
+    print_result
+
+    print_start "Enable long-running services (may prompt for password)"
+    enable_linger
+    print_result
+
+    print_start "Stop existing non-systemd server"
+    stop_server
+    print_result
+fi
+
+if test "$action_bash"; then
+    if [ -f "$HOME/.profile" ]; then
+        conffile="$HOME/.profile"
+    else
+        conffile="$HOME/.bash_profile"
+    fi
+
+    if check_for_existing "$conffile"; then
+        cat <<EOF >>"$conffile" || task_failure=1
+
+$conf_comment
+if [ "\$@ENV_NAME@" ]; then
+  source @CMAKE_INSTALL_FULL_DATADIR@/@SERVER_NAME@/iterm2_shell_integration.bash
+fi
+EOF
+    fi
+    print_result
+fi
+
+if test "$action_zsh"; then
+    conffile="$HOME/.zshrc"
+    if check_for_existing "$conffile"; then
+        cat <<EOF >>"$conffile" || task_failure=1
+
+$conf_comment
+if [ "\$@ENV_NAME@" ]; then
+  source @CMAKE_INSTALL_FULL_DATADIR@/@SERVER_NAME@/iterm2_shell_integration.zsh
+fi
+EOF
+    fi
+    print_result
 fi
 
 echo
-echo "Setup finished! Press enter to exit..."
-read
+echo "Setup finished!"
 exit 0

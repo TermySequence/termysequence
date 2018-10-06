@@ -1,66 +1,24 @@
 .\" Copyright © 2018 TermySequence LLC
 .\" SPDX-License-Identifier: CC-BY-SA-4.0
 .\"
-.TH @SETUP_NAME@ 1 "October 2018" "@MAN_TRADENAME@"
+.TH @SYSTEMD_SETUP_NAME@ 1 "March 2018" "@MAN_TRADENAME@"
 .SH NAME
-.B @SETUP_NAME@ \"m2rprog
-\- Perform setup actions for
+.B @SYSTEMD_SETUP_NAME@ \"m2rprog
+\- Enable user systemd services for
 .BR @SERVER_NAME@ (1) \"m2rdoc
 
 .SH SYNOPSIS
-.B @SETUP_NAME@ \"m2rprog
+.B @SYSTEMD_SETUP_NAME@ \"m2rprog
 [\fIoptions\fR]
 
 .SH DESCRIPTION
-For each user that will be running
-.BR @SERVER_NAME@ (1), \"m2rdoc
-use the
-.B @SETUP_NAME@ \"m2rprog
-shell script to perform recommended setup actions before running the server
-for the first time. Use one or more command line options to specify which
-setup tasks to perform.
+.I Note:
+This command is deprecated. Please use
+.BR @SETUP_NAME@ (1) \"m2rdoc
+instead.
 
-.SH OPTIONS
-.IP --systemd
-Enable and start the
-.BR systemd (1). \"m2rman
-systemd user service for
-.BR @SERVER_NAME@ (1). \"m2rdoc
-See
-.B SYSTEMD SETUP \"m2rsect
-below.
-
-.IP --bash
-Enable iTerm2-compatible shell integration for
-.BR bash (1) \"m2rman
-login shells run under
-.BR @SERVER_NAME@ (1). \"m2rdoc
-Commands will be appended to
-the user's
-.I .profile \"m2rfile
-if it exists, otherwise to
-.IR .bash_profile . \"m2rfile
-
-.IP --zsh
-Enable iTerm2-compatible shell integration for
-.BR zsh (1) \"m2rman
-shells run under
-.BR @SERVER_NAME@ (1). \"m2rdoc
-Commands will be appended to
-the user's
-.IR .zshrc . \"m2rfile
-
-.IP --help
-Print basic help
-
-.IP --version
-Print version information
-
-.IP --man
-Attempt to show this man page
-
-.SH SYSTEMD SETUP
-The systemd setup action essentially runs the following
+.B @SYSTEMD_SETUP_NAME@ \"m2rprog
+is an interactive shell script that essentially runs the following
 commands: \"m2rcode
 
    systemctl --user enable @SERVER_NAME@.socket \"m2rpre
@@ -91,6 +49,27 @@ do not always meet this requirement, nor do terminals run under an existing
 persistent user server (transient session servers, however, are OK). When in
 doubt, use ssh or machinectl login to log in as the user and run the script
 from there.
+
+.SH OPTIONS
+.IP --server-pid\ \fIpid\fR
+The pid of the user's existing persistent user server, which will be killed.
+If not provided, the script will read the pid from
+.I /tmp/@SERVER_NAME@$UID/pid \"m2rfile
+if present. Otherwise, no processes will be killed.
+
+.IP --enable-linger
+Just run loginctl enable-linger. The script will check for the
+.I XDG_SESSION_ID \"m2renv
+variable as an indicator of whether a fully formed systemd login session exists.
+
+.IP --help
+Print basic help
+
+.IP --version
+Print version information
+
+.IP --man
+Attempt to show this man page
 
 .SH SEE ALSO
 @SERVER_NAME@(1), \"m2rdocs

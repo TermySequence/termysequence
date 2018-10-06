@@ -148,7 +148,7 @@ When
 is used to manage login sessions, certain administrative commands must be run to
 to allow the persistent user server to survive across user login sessions.
 Refer to
-.BR @SYSTEMD_SETUP_NAME@ (1) \"m2rdoc
+.BR @SETUP_NAME@ (1) \"m2rdoc
 for more information.
 
 .B @APP_NAME@ \"m2rprog

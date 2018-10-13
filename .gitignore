@@ -1,6 +1,8 @@
 /build/
 /notes.txt
-*.tar.*
+/*.tar.*
+/*.sig
+/*.sha256
 
 *~
 .#*

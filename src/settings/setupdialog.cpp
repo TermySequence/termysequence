@@ -122,17 +122,25 @@ SetupDialog::SetupDialog(QWidget *parent) :
     auto *setupGroup = new QGroupBox(TR_TEXT1);
     setupGroup->setLayout(setupLayout);
 
-#if USE_SYSTEMD
     const char *var;
-    bool checked = (var = getenv("XDG_RUNTIME_DIR")) &&
-        osFileExists(pr(QString(var) + A("/systemd")));
+    bool checked;
 
+#if USE_SYSTEMD
+    // systemd checkbox
+    var = getenv("XDG_RUNTIME_DIR");
+    checked = var && osFileExists(pr(QString(var) + A("/systemd")));
     setupLayout->addWidget(m_systemd = new QCheckBox(TR_CHECK1));
     m_systemd->setChecked(checked);
 #endif
+    // bash checkbox
     setupLayout->addWidget(m_bash = new QCheckBox(TR_CHECK2));
     m_bash->setChecked(true);
+
+    // zsh checkbox
+    var = getenv("HOME");
+    checked = var && osFileExists(pr(QString(var) + A("/.zshrc")));
     setupLayout->addWidget(m_zsh = new QCheckBox(TR_CHECK3));
+    m_zsh->setChecked(checked);
 
     auto *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(setupGroup);

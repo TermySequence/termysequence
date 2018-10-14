@@ -16,7 +16,9 @@ function actionHandler(manager, sameGroup) {
     if (!term)
         return;
 
-    let themes = Array.from(manager.listThemes().values());
+    let themeMap = manager.listThemes();
+    let themeNames = Array.from(themeMap.keys()).sort();
+    let themes = themeNames.map(name => themeMap.get(name));
     let theme = term.getTheme();
 
     if (sameGroup && theme) {
@@ -24,8 +26,11 @@ function actionHandler(manager, sameGroup) {
         themes = themes.filter(t => t.getSetting('Theme/Group') == group);
     }
 
-    let idx = (themes.indexOf(theme) + 1) % themes.length;
-    term.palette = themes[idx].getPalette();
+    themes = themes.filter(t => !t.getSetting('Theme/LowPriority'))
+    if (themes.length) {
+        let idx = (themes.indexOf(theme) + 1) % themes.length;
+        term.palette = themes[idx].getPalette();
+    }
 }
 
 if (plugin.majorVersion != 1 || plugin.minorVersion < 2) {
@@ -34,6 +39,6 @@ if (plugin.majorVersion != 1 || plugin.minorVersion < 2) {
 
 plugin.pluginName = 'RotateThemePlugin';
 plugin.pluginDescription = 'Rotate through themes in order';
-plugin.pluginVersion = '1.0';
+plugin.pluginVersion = '1.1';
 
 plugin.registerCustomAction(1, 'RotateTheme', actionHandler)

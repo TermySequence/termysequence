@@ -394,14 +394,14 @@ osFallbackAttributes(StringMap &map, bool isServer)
         map.emplace(Tsq::attr_HOME, homec ? homec : FALLBACK_HOME);
         map.emplace(Tsq::attr_GITDESC, GITDESC);
         map.emplace(Tsq::attr_ICON, FALLBACK_ICON);
+        map.emplace(Tsq::attr_UID, std::to_string(getuid()));
+        map.emplace(Tsq::attr_GID, std::to_string(getgid()));
+        map.emplace(Tsq::attr_NAME, FALLBACK_NAME);
     }
 
     /*
      * Defaults
      */
-    map.emplace(Tsq::attr_UID, std::to_string(getuid()));
-    map.emplace(Tsq::attr_GID, std::to_string(getgid()));
-
     if (!map.count(Tsq::attr_USER) || !map.count(Tsq::attr_USERFULL)) {
         fallbackUser(map);
     }
@@ -411,8 +411,6 @@ osFallbackAttributes(StringMap &map, bool isServer)
         map.emplace(Tsq::attr_HOST, gethostname(buf, sizeof(buf) - 1) == 0 ?
                     buf : FALLBACK_HOST);
     }
-
-    map.emplace(Tsq::attr_NAME, FALLBACK_NAME);
 }
 
 void

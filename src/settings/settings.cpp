@@ -1670,10 +1670,13 @@ TermSettings::rescanPlugins()
             const QString name = i.fileName();
 
             if (!filenames.contains(name)) {
-                auto *plugin = new Plugin(i.absoluteFilePath(), name);
-                m_pluginList.append(plugin);
-                plugin->start();
                 filenames.insert(name);
+                auto *plugin = new Plugin(i.absoluteFilePath(), name);
+                if (plugin->start()) {
+                    m_pluginList.append(plugin);
+                } else {
+                    plugin->deleteLater();
+                }
             }
         }
     }
@@ -1692,8 +1695,11 @@ TermSettings::unloadPlugin(Plugin *plugin)
 void
 TermSettings::reloadPlugin(Plugin *plugin)
 {
-    plugin->reload();
-    emit pluginReloaded(plugin);
+    if (plugin->reload()) {
+        emit pluginReloaded(plugin);
+    } else {
+        unloadPlugin(plugin);
+    }
 }
 
 void

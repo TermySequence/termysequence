@@ -60,8 +60,8 @@ public:
 
     bool loadModule(const QString &path, LocalModule &result, bool isroot);
     LocalModule getModule(LocalModule referrer, const QString &ref);
-    void start();
-    void reload();
+    bool start();
+    bool reload();
 
     static void recover(const QString &pluginName,
                         const char *stepName, const v8::TryCatch &trycatch);

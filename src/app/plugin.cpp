@@ -289,7 +289,7 @@ cbResolve(LocalContext context, LocalString ref, LocalModule referrer)
     return thiz->getModule(referrer, *String::Utf8Value(ref));
 }
 
-void
+bool
 Plugin::start()
 {
     HandleScope scope(i);
@@ -311,7 +311,7 @@ Plugin::start()
     Local<Module> root;
     if (!loadModule(m_path, root, true)) {
         recover(m_name, "compile", trycatch);
-        return;
+        return true;
     }
 
     // Execute
@@ -322,13 +322,13 @@ Plugin::start()
     g_watchdog->leave();
     if (result.IsEmpty()) {
         recover(m_name, "load", trycatch);
-        return;
+        return true;
     }
 
-    m_loaded = true;
+    return m_loaded = !m_features.isEmpty();
 }
 
-void
+bool
 Plugin::reload()
 {
     forDeleteAll(m_features);
@@ -336,7 +336,7 @@ Plugin::reload()
     m_semantics.clear();
     m_modlocs.clear();
     m_modules.clear();
-    start();
+    return start();
 }
 
 void

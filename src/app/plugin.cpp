@@ -21,7 +21,7 @@
 #include <fcntl.h>
 
 #define API_MAJOR_VERSION 1
-#define API_MINOR_VERSION 2
+#define API_MINOR_VERSION 3
 
 using namespace v8;
 

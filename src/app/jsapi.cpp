@@ -606,6 +606,22 @@ managerCopy(const FunctionCallbackInfo<Value> &args)
     manager->reportClipboardCopy(text.size());
 }
 
+static void
+managerGetClientId(Local<String>, const PropertyCallbackInfo<Value> &args)
+{
+    v8ret(v8str(g_listener->idStr()));
+}
+
+static void
+managerGetClientAttribute(const FunctionCallbackInfo<Value> &args)
+{
+    HandleScope scope(i);
+    StringMap::const_iterator k;
+    k = g_listener->attributes().find(*String::Utf8Value(args[0]));
+    if (k != g_listener->attributes().cend())
+        v8ret(v8str(k->second));
+}
+
 //
 // IdBase Api
 //
@@ -1761,6 +1777,8 @@ ActionFeature::initializeApi(PersistentObjectTemplate *apitmpl)
     tmpl->v8method("listPanes", managerListPanes);
     tmpl->v8method("prompt", managerPrompt);
     tmpl->v8method("copy", managerCopy);
+    tmpl->SetAccessor(v8name("clientId"), managerGetClientId);
+    tmpl->v8method("getClientAttribute", managerGetClientAttribute);
     apitmpl[ApiHandle::Manager].Reset(i, tmpl);
 
     // Server
@@ -1785,6 +1803,7 @@ ActionFeature::initializeApi(PersistentObjectTemplate *apitmpl)
     tmpl->SetAccessor(v8name("rows"), termGetBuffer);
     tmpl->v8switchget("height", cbGetProp, QVariant::Int);
     tmpl->v8switchget("width", cbGetProp, QVariant::Int);
+    tmpl->v8switchget("ours", cbGetProp, QVariant::Bool);
     tmpl->v8method("getAttribute", idbaseGetAttribute);
     tmpl->v8method("getActiveManager", idbaseGetActiveManager);
     tmpl->v8method("getProfile", termGetProfile);

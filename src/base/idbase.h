@@ -20,6 +20,7 @@ class IdBase: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString id READ idStr)
+    Q_PROPERTY(bool ours READ ours)
 
 private:
     Tsq::Uuid m_id;

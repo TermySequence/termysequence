@@ -17,6 +17,8 @@
 #define TR_BUTTON1 TL("input-button", "Unload Plugin")
 #define TR_BUTTON2 TL("input-button", "Reload Plugin")
 #define TR_BUTTON3 TL("input-button", "Reload All")
+#define TR_BUTTON4 TL("input-button", "Expand All")
+#define TR_BUTTON5 TL("input-button", "Collapse All")
 #define TR_TITLE1 TL("window-title", "Manage Plugins")
 
 PluginsWindow *g_pluginwin;
@@ -31,12 +33,16 @@ PluginsWindow::PluginsWindow()
 
     m_unloadButton = new IconButton(ICON_REMOVE_ITEM, TR_BUTTON1);
     m_reloadButton = new IconButton(ICON_RELOAD, TR_BUTTON2);
-    m_refreshButton = new IconButton(ICON_RELOAD_ALL, TR_BUTTON3);
+    auto *refreshButton = new IconButton(ICON_RELOAD_ALL, TR_BUTTON3);
+    auto *expandButton = new QPushButton(TR_BUTTON4);
+    auto *collapseButton = new QPushButton(TR_BUTTON5);
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Vertical);
     buttonBox->addButton(m_reloadButton, QDialogButtonBox::ActionRole);
     buttonBox->addButton(m_unloadButton, QDialogButtonBox::ActionRole);
-    buttonBox->addButton(m_refreshButton, QDialogButtonBox::ActionRole);
+    buttonBox->addButton(refreshButton, QDialogButtonBox::ActionRole);
+    buttonBox->addButton(expandButton, QDialogButtonBox::ActionRole);
+    buttonBox->addButton(collapseButton, QDialogButtonBox::ActionRole);
     buttonBox->addHelpButton("manage-plugins");
 
     QHBoxLayout *layout = new QHBoxLayout();
@@ -49,7 +55,7 @@ PluginsWindow::PluginsWindow()
     if (!i) {
         m_unloadButton->setEnabled(false);
         m_reloadButton->setEnabled(false);
-        m_refreshButton->setEnabled(false);
+        refreshButton->setEnabled(false);
         return;
     }
 
@@ -60,7 +66,9 @@ PluginsWindow::PluginsWindow()
 
     connect(m_unloadButton, SIGNAL(clicked()), SLOT(handleUnloadPlugin()));
     connect(m_reloadButton, SIGNAL(clicked()), SLOT(handleReloadPlugin()));
-    connect(m_refreshButton, SIGNAL(clicked()), SLOT(handleReload()));
+    connect(refreshButton, SIGNAL(clicked()), SLOT(handleReload()));
+    connect(expandButton, SIGNAL(clicked()), SLOT(handleExpand()));
+    connect(collapseButton, SIGNAL(clicked()), SLOT(handleCollapse()));
 
     handleSelection();
 }
@@ -86,7 +94,8 @@ PluginsWindow::event(QEvent *event)
 void
 PluginsWindow::bringUp()
 {
-    m_view->expandAll();
+    if (m_expanding)
+        m_view->expandAll();
 
     show();
     raise();
@@ -97,7 +106,9 @@ void
 PluginsWindow::handleReset()
 {
     // this happens after model has received the signal
-    m_view->expandAll();
+    if (m_expanding)
+        m_view->expandAll();
+
     handleSelection();
 }
 
@@ -131,4 +142,18 @@ PluginsWindow::handleReload()
 {
     Plugin::reloading();
     g_settings->rescanPlugins();
+}
+
+void
+PluginsWindow::handleExpand()
+{
+    m_expanding = true;
+    m_view->expandAll();
+}
+
+void
+PluginsWindow::handleCollapse()
+{
+    m_expanding = false;
+    m_view->collapseAll();
 }

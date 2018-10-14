@@ -20,7 +20,8 @@ private:
 
     QPushButton *m_unloadButton;
     QPushButton *m_reloadButton;
-    QPushButton *m_refreshButton;
+
+    bool m_expanding = true;
 
 private slots:
     void handleReset();
@@ -29,6 +30,8 @@ private slots:
     void handleUnloadPlugin();
     void handleReloadPlugin();
     void handleReload();
+    void handleExpand();
+    void handleCollapse();
 
 protected:
     bool event(QEvent *event);

@@ -348,7 +348,7 @@ osIdentity(Tsq::Uuid &result, std::vector<int> &pids)
     if (osConfigPath(SERVER_NAME, "id-script", path) && loadScript(path, str, pids) &&
         result.parse(str.c_str()))
         return;
-    path = "/etc/" SERVER_NAME "/id-script";
+    path = CONFDIR "/" SERVER_NAME "/id-script";
     if (loadScript(path, str, pids) && result.parse(str.c_str()))
         return;
     path = PREFIX "/lib/" SERVER_NAME "/id-script";
@@ -433,7 +433,7 @@ osAttributes(StringMap &map, std::vector<int> &pids, bool isServer)
     path += "/attr-script";
     loadScriptMulti(path, map, pids);
 
-    path = "/etc/";
+    path = CONFDIR "/";
     path += appname;
     path += "/attr-script";
     loadScriptMulti(path, map, pids);
@@ -474,7 +474,7 @@ osAttributesAsync(StringMap &map, int *fdret, int *pidret, int *state)
         // fallthru
     case 2:
         *state = 3;
-        path = "/etc/" SERVER_NAME "/attr-script";
+        path = CONFDIR "/" SERVER_NAME "/attr-script";
         fd = loadScriptMultiFd(path, pids);
         if (fd != -1)
             break;

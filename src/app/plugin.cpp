@@ -430,6 +430,8 @@ Plugin::initialize()
     apitmpl->v8constant("majorVersion", Integer::New(i, API_MAJOR_VERSION));
     apitmpl->v8constant("minorVersion", Integer::New(i, API_MINOR_VERSION));
     apitmpl->v8constant("installPrefix", v8literal(PREFIX));
+    apitmpl->v8constant("installDatadir", v8literal(DATADIR));
+    apitmpl->v8constant("installConfdir", v8literal(CONFDIR));
     apitmpl->SetAccessor(v8name("pluginName"), cbGetProp, cbSetProp);
     apitmpl->SetAccessor(v8name("pluginDescription"), cbGetProp, cbSetProp);
     apitmpl->SetAccessor(v8name("pluginVersion"), cbGetProp, cbSetProp);

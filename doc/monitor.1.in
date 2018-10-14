@@ -77,7 +77,7 @@ Print version information
 .SH FILES
 .I $XDG_CONFIG_HOME/@SERVER_NAME@/attr-script \"m2rfile
 .br
-.I /etc/@SERVER_NAME@/attr-script \"m2rfile
+.I @CMAKE_INSTALL_FULL_SYSCONFDIR@/@SERVER_NAME@/attr-script \"m2rfile
 .br
 .I @CMAKE_INSTALL_PREFIX@/lib/@SERVER_NAME@/attr-script \"m2rfile
 
@@ -93,7 +93,7 @@ These scripts are optional and are not required to be present.
 
 .I $XDG_CONFIG_HOME/@SERVER_NAME@/monitor-script \"m2rfile
 .br
-.I /etc/@SERVER_NAME@/monitor-script \"m2rfile
+.I @CMAKE_INSTALL_FULL_SYSCONFDIR@/@SERVER_NAME@/monitor-script \"m2rfile
 .br
 .I @CMAKE_INSTALL_PREFIX@/lib/@SERVER_NAME@/monitor-script \"m2rfile
 

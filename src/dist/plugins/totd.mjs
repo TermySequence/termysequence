@@ -30,10 +30,10 @@ var strings = [
     "Here are your bindings for scrolling to <a doc='concepts-qt.html#term-annotation'>annotations</a>:<ul><li>ScrollNoteUp: %1<li>ScrollNoteDown: %2</ul>",
     "Here are your scrollback search bindings:<ul><li>Find: %1<li>SearchUp: %2<li>SearchDown: %3<li>SearchReset: %4</ul>",
     "With <a doc='shell-integration.html'>shell integration</a> enabled, scrolling to a previous prompt (%1) or clicking a command in the Marks widget, Minimap widget, or History tool will set the <a doc='concepts-qt.html#term-selected-prompt'>selected prompt</a> in the terminal, which is shown in a prominent color. Certain actions such as CopyJob or SelectOutput can target the job associated with the selected prompt.",
-    "<b>qtermy</b> looks for <a doc='plugins/index.html'>plugins</a> in two locations: <tt>%1/share/qtermy/plugins</tt> and <tt>$HOME/.local/share/qtermy/plugins</tt>. User plugins override system plugins with the same name. <b>qtermy</b> can be run with the <i>--nosysplugins</i> command line argument to disable loading system plugins, or <i>--noplugins</i> to disable loading plugins entirely.",
+    "<b>qtermy</b> looks for <a doc='plugins/index.html'>plugins</a> in two locations: <tt>%1/qtermy/plugins</tt> and <tt>$HOME/.local/share/qtermy/plugins</tt>. User plugins override system plugins with the same name. <b>qtermy</b> can be run with the <i>--nosysplugins</i> command line argument to disable loading system plugins, or <i>--noplugins</i> to disable loading plugins entirely.",
     // 20
-    "<b>qtermy</b> looks for SVG images in two locations: <tt>%1/share/qtermy/images</tt> and <tt>$HOME/.local/share/qtermy/images</tt>. All terminal and server thumbnail icons, semantic region icons, and emoji images are loaded from these folders. More images can be added by dropping them into the appropriate subdirectory and then restarting <b>qtermy</b>.",
-    "Don't like the menu icons? Disable the icon theme in the <a act='EditGlobalSettings'>global settings</a>, create your own icon theme under <tt>%1/share/qtermy/icons</tt>, or replace individual icons in the default theme.",
+    "<b>qtermy</b> looks for SVG images in two locations: <tt>%1/qtermy/images</tt> and <tt>$HOME/.local/share/qtermy/images</tt>. All terminal and server thumbnail icons, semantic region icons, and emoji images are loaded from these folders. More images can be added by dropping them into the appropriate subdirectory and then restarting <b>qtermy</b>.",
+    "Don't like the menu icons? Disable the icon theme in the <a act='EditGlobalSettings'>global settings</a>, create your own icon theme under <tt>%1/qtermy/icons</tt>, or replace individual icons in the default theme.",
 
     // Tips without argument substitutions
     "The mouse actions for each tool can be changed in the <a act='EditGlobalSettings'>global settings</a> and can be bound to keys using the ToolAction action, with the following relationship:<ul><li>Double-click action = ToolAction|0<li>Control-click action = ToolAction|1<li>Shift-click action = ToolAction|2<li>Middle-click action = ToolAction|3</ul>",
@@ -218,7 +218,7 @@ function getNextTip(manager) {
     case 19:
     case 20:
     case 21:
-        return [ str, plugin.htmlEscape(plugin.installPrefix) ];
+        return [ str, plugin.htmlEscape(plugin.installDatadir) ];
     default:
         return str;
     }

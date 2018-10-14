@@ -82,7 +82,7 @@ Disable loading all plugins.
 
 .IP --nosysplugins
 Disable loading plugins from
-.IR @CMAKE_INSTALL_PREFIX@/share/@APP_NAME@/plugins . \"m2rfile
+.IR @CMAKE_INSTALL_FULL_DATADIR@/@APP_NAME@/plugins . \"m2rfile
 
 .IP -t,--rundir\ \fIdir\fR
 Look for the server's local socket under runtime directory
@@ -118,7 +118,7 @@ stores its configuration files.
 
 .I $XDG_DATA_HOME/@APP_NAME@/ \"m2rfile
 .br
-.I @CMAKE_INSTALL_PREFIX@/share/@APP_NAME@/ \"m2rfile
+.I @CMAKE_INSTALL_FULL_DATADIR@/@APP_NAME@/ \"m2rfile
 
 Locations where
 .B @APP_NAME@ \"m2rprog
@@ -126,7 +126,7 @@ looks for icons, images, plugins, and other data files.
 
 .I $XDG_CONFIG_HOME/@APP_NAME@/attr-script \"m2rfile
 .br
-.I /etc/@APP_NAME@/attr-script \"m2rfile
+.I @CMAKE_INSTALL_FULL_SYSCONFDIR@/@APP_NAME@/attr-script \"m2rfile
 .br
 .I @CMAKE_INSTALL_PREFIX@/lib/@APP_NAME@/attr-script \"m2rfile
 

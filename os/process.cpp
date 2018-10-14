@@ -131,7 +131,7 @@ locateMonitor(std::string &path)
         return true;
     }
 
-    if ((stat(pathc = "/etc/" SERVER_NAME "/monitor-script", &info) == 0 &&
+    if ((stat(pathc = CONFDIR "/" SERVER_NAME "/monitor-script", &info) == 0 &&
          S_ISREG(info.st_mode) && info.st_mode & S_IXUSR))
     {
         path = pathc;

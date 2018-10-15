@@ -95,16 +95,6 @@ print_result() {
     esac
 }
 
-enable_linger () {
-    if [ "$XDG_SESSION_ID" ]; then
-        loginctl enable-linger
-    else
-        echo "Error: XDG_SESSION_ID not set" 1>&2
-        echo "Please run this command from within a desktop, ssh, or machinectl login session managed by systemd-logind" 1>&2
-        task_failure=1
-    fi
-}
-
 stop_server() {
     pidfile="/tmp/@SERVER_NAME@$UID/pid"
     if [ -z "$server_pid" -a -f $pidfile ]; then
@@ -133,19 +123,25 @@ check_for_existing() {
 
 if test "$action_systemd"; then
     print_start "Enable systemd user service"
-    systemctl --user -q enable @SERVER_NAME@.socket || task_failure=1
-    print_result
+    if [ "$XDG_SESSION_ID" ]; then
+        systemctl --user -q enable @SERVER_NAME@.socket || task_failure=1
+        print_result
 
-    print_start "Start systemd user service"
-    systemctl --user -q start @SERVER_NAME@.socket || task_failure=1
-    print_result
+        print_start "Start systemd user service"
+        systemctl --user -q start @SERVER_NAME@.socket || task_failure=1
+        print_result
 
-    print_start "Enable long-running services (may prompt for password)"
-    enable_linger
-    print_result
+        print_start "Enable long-running services (may prompt for password)"
+        loginctl enable-linger
+        print_result
 
-    print_start "Stop existing non-systemd server"
-    stop_server
+        print_start "Stop existing non-systemd server"
+        stop_server
+    else
+        echo "Error: XDG_SESSION_ID not set" 1>&2
+        echo "Please run this command within a fully formed login session (console or ssh)" 1>&2
+        task_failure=1
+    fi
     print_result
 fi
 

@@ -12,10 +12,6 @@ ELSE()
   FILE(GLOB osc_SOURCES macos/*.c)
 ENDIF()
 
-IF (MEMDEBUG)
-  LIST(APPEND os_GLOBS memdbg/memdbg.cpp)
-ENDIF()
-
 FILE(GLOB os_SOURCES ${os_GLOBS})
 
 ADD_LIBRARY(os STATIC ${os_SOURCES})

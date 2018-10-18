@@ -35,7 +35,6 @@ subfile=/tmp/submodule.tar
 # CMake option patterns to remove from each archive
 declare -a all_remove
 all_remove+=('OPTION.MAINTAINER_MODE')
-all_remove+=('OPTION.MEMDEBUG')
 declare -a server_remove=("${all_remove[@]}")
 server_remove+=('OPTION.BUILD_QTGUI')
 server_remove+=('OPTION.USE_FUSE')

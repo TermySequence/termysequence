@@ -15,7 +15,6 @@
 #include "os/conn.h"
 #include "os/fd.h"
 #include "os/limits.h"
-#include "os/memdbg.h"
 #include "os/attr.h"
 
 #include <QApplication>
@@ -120,8 +119,6 @@ main(int argc, char **argv)
     bool fdpurge = true, doV8 = true, sysplugins = true;
     QString adir = USE_SYSTEMD ? APP_XDG_DIR : APP_TMP_DIR;
     QString sdir = SERVER_TMP_DIR;
-
-    memDebug();
 
     // Parse arguments
     for (int i = 1; i < argc; ++i) {

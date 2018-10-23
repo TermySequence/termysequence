@@ -15,6 +15,7 @@
 #include "proxywatch.h"
 #include "raw.h"
 #include "zombies.h"
+#include "scoper.h"
 #include "monitor.h"
 #include "taskbase.h"
 #include "exception.h"
@@ -66,6 +67,7 @@ TermListener::TermListener(int initialrd, int initialwd, unsigned flavor) :
     // these are leaked
     g_reaper = new TermReaper(pids);
     g_monitor = new TermMonitor();
+    sd_createScoper();
 
     osInitEvent(s_reloadFd);
 }
@@ -877,6 +879,7 @@ TermListener::threadMain()
 {
     g_reaper->start(-1);
     g_monitor->start(-1);
+    sd_startScoper(-1);
 
     loadfd();
     m_fds.emplace_back(pollfd{ .fd = s_reloadFd[0], .events = POLLIN });
@@ -899,6 +902,7 @@ TermListener::threadMain()
 
     g_reaper->stop(TSQ_STATUS_SERVER_SHUTDOWN);
     g_monitor->stop(TSQ_STATUS_SERVER_SHUTDOWN);
+    sd_stopScoper(TSQ_STATUS_SERVER_SHUTDOWN);
     g_monitor->join();
 
     if (s_deathSignal)

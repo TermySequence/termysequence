@@ -55,6 +55,8 @@ const std::string Tsq::attr_PROC_OUTCOMESTR(TSQ_ATTR_PROC_OUTCOMESTR);
 const std::string Tsq::attr_PROC_EXITCODE(TSQ_ATTR_PROC_EXITCODE);
 const std::string Tsq::attr_PROC_DEV(TSQ_ATTR_PROC_DEV);
 
+const std::string Tsq::attr_SCOPE_NAME(TSQ_ATTR_SCOPE_NAME);
+
 const std::string Tsq::attr_SENDER_PREFIX(TSQ_ATTR_SENDER_PREFIX);
 const std::string Tsq::attr_SENDER_ID(TSQ_ATTR_SENDER_ID);
 

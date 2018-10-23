@@ -11,6 +11,7 @@
 #include "writer.h"
 #include "listener.h"
 #include "zombies.h"
+#include "scoper.h"
 #include "exception.h"
 #include "xterm/xterm.h"
 #include "app/args.h"
@@ -242,6 +243,7 @@ TermInstance::launch()
 {
     int64_t now = osMonotime();
     char devpath[PATH_MAX];
+    sd_declareScope;
 
     std::string msg = configuredStartParams(m_params);
     m_params->width = (unsigned short)m_emulator->size().width();
@@ -256,26 +258,27 @@ TermInstance::launch()
         handleTermEvent(const_cast<char*>(msg.data()), msg.size(), false);
 
     try {
+        sd_prepareScope();
         setfd(osForkTerminal(*m_params, &m_pid, devpath));
-        m_haveOutcome = false;
-        m_haveClosed = false;
+        m_haveOutcome = m_haveClosed = false;
     }
     catch (const std::exception &e) {
         const char *msg = e.what();
         LOGWRN("Term %p: failed to start process: %s\n", this, msg);
         handleTermEvent(const_cast<char*>(msg), strlen(msg), false);
+        sd_cleanupScope(1);
         m_pid = 0;
+        goto out;
     }
 
-    if (m_pid) {
-        g_reaper->registerProcess(this, m_pid);
+    g_reaper->registerProcess(this, m_pid);
+    sd_createScope(this, m_pid);
+    m_status->changedMap().emplace(Tsq::attr_PROC_DEV, devpath);
 
-        m_status->changedMap().emplace(Tsq::attr_PROC_DEV, devpath);
-
-        if (!m_output->started())
-            m_output->start(-1);
-    }
-
+    if (!m_output->started())
+        m_output->start(-1);
+out:
+    sd_cleanupScope(0);
     handleStatusAttributes(m_status->changedMap());
 }
 
@@ -689,6 +692,7 @@ TermInstance::threadMain()
     }
 
     m_filemon->stop(0);
+    sd_unregisterTerm(this);
     m_filemon->join();
 
     if (m_pid) {

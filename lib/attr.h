@@ -86,6 +86,9 @@
 #define TSQ_ATTR_PROC_EXITCODE          "proc.rc"
 #define TSQ_ATTR_PROC_DEV               "proc.dev"
 
+#define TSQ_ATTR_SCOPE_PREFIX           "scope."
+#define TSQ_ATTR_SCOPE_NAME             "scope.name"
+
 #define TSQ_ATTR_SENDER_PREFIX          "sender."
 #define TSQ_ATTR_SENDER_ID              "sender.id"
 

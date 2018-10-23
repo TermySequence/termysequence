@@ -241,6 +241,7 @@ int
 osForkTerminal(const PtyParams &p, int *pidret, char *pathret)
 {
     int fd;
+    char c;
 
     // Build process arguments
     Tsq::ExecArgs args(p.command, p.env);
@@ -256,12 +257,16 @@ osForkTerminal(const PtyParams &p, int *pidret, char *pathret)
         osDup2(fd, STDERR_FILENO);
         close(fd);
 
-        if (p.sleepTime)
+        if (p.sleepTime) {
             sleep(p.sleepTime);
-
+        }
         if (chdir(dirc) != 0) {
             printError("chdir", dirc);
             chdir("/");
+        }
+        if (p.waitForFd) {
+            while (read(p.waitFd, &c, 1) == -1 && errno == EINTR);
+            // cloexec
         }
 
         environ = (char **)args.env;
@@ -270,7 +275,7 @@ osForkTerminal(const PtyParams &p, int *pidret, char *pathret)
         printError("exec", args.vec[0]);
         if (p.exitDelay)
             for (fd = 60; fd > 0; --fd) {
-                char c = '\r';
+                c = '\r';
                 printChar(c);
                 c = '0' + fd / 10;
                 printChar(c);

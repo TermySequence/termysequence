@@ -55,6 +55,8 @@ namespace Tsq {
     extern const std::string attr_PROC_EXITCODE;
     extern const std::string attr_PROC_DEV;
 
+    extern const std::string attr_SCOPE_NAME;
+
     extern const std::string attr_SENDER_PREFIX;
     extern const std::string attr_SENDER_ID;
 

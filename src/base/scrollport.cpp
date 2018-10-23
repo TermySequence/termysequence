@@ -65,8 +65,11 @@ TermScrollport::pushRowAttributes()
 {
     if (m_primary && m_term->ours()) {
         AttributeMap map;
-        QString row = m_locked ? QString::number(m_lockedRow) : g_mtstr;
-        QString job = QString::number(m_activeJobId);
+        QString row, job;
+        if (m_locked)
+            row = QString::number(m_lockedRow);
+        if (m_activeJobId != INVALID_REGION_ID)
+            job = QString::number(m_activeJobId);
 
         if (m_term->attributes().value(g_attr_PREF_ROW) != row)
             map[g_attr_PREF_ROW] = row;

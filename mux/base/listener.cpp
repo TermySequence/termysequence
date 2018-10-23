@@ -572,15 +572,22 @@ TermListener::handleMultiFd(pollfd &pfd)
 void
 TermListener::handleAddTerm(ConnInstance *conn)
 {
-    m_terms.push_back(conn);
-    ++m_nTerms;
-    handleConfirmTerm(conn);
-    conn->start(-1);
+    auto pair = m_knownTerms.insert(conn->id());
+    if (pair.second) {
+        m_terms.push_back(conn);
+        ++m_nTerms;
+        handleConfirmTerm(conn);
+        conn->start(-1);
+    } else {
+        LOGDBG("Listener: ignoring duplicate terminal %s\n", conn->id().str().c_str());
+        delete conn;
+    }
 }
 
 void
 TermListener::handleAddConn(RawInstance *conn)
 {
+    m_knownTerms.insert(conn->id());
     m_terms.push_back(conn);
     ++m_nTerms;
 
@@ -594,6 +601,7 @@ TermListener::handleRemoveTerm(ConnInstance *conn)
 
     --m_nTerms;
     removeOne(m_terms, conn);
+    m_knownTerms.erase(conn->id());
     conn->join();
 
     if (conn->noWatches()) {

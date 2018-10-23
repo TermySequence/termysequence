@@ -7,7 +7,7 @@
 #include "attributebase.h"
 
 #include <list>
-#include <unordered_set>
+#include <set>
 #include <unordered_map>
 #include <atomic>
 
@@ -52,9 +52,9 @@ private:
     unsigned m_ownerclients = 0;
     bool m_standalone;
 
+    std::set<Tsq::Uuid> m_knownTerms;
     std::list<ConnInstance*> m_terms;
     std::list<TermReader*> m_readers;
-
     std::atomic_uint m_nTerms{0};
     std::atomic_uint m_nReaders{0};
 
@@ -67,7 +67,7 @@ private:
     std::list<Tsq::Uuid> m_clientOrder;
 
     std::unordered_map<Tsq::Uuid,TaskBase*> m_taskMap;
-    std::unordered_set<std::string> m_taskTargets;
+    std::set<std::string> m_taskTargets;
 
     StringMap m_environ;
 

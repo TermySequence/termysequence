@@ -9,12 +9,14 @@
 #include "status.h"
 #include "lib/argv.h"
 #include "lib/exception.h"
+#include "config.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cstdarg>
 #include <unistd.h>
 #include <fcntl.h>
+#include <poll.h>
 
 int
 osFork()
@@ -41,6 +43,16 @@ osDaemonize()
     osDup2(fd, STDOUT_FILENO);
     osDup2(fd, STDERR_FILENO);
     close(fd);
+}
+
+static void
+waitForReadable(int fd)
+{
+    pollfd pfd = { .fd = fd, .events = POLLIN };
+
+    while (poll(&pfd, 1, ATTRIBUTE_SCRIPT_TIMEOUT) < 0)
+        if (errno != EINTR && errno != EAGAIN)
+            break;
 }
 
 static void
@@ -241,7 +253,6 @@ int
 osForkTerminal(const PtyParams &p, int *pidret, char *pathret)
 {
     int fd;
-    char c;
 
     // Build process arguments
     Tsq::ExecArgs args(p.command, p.env);
@@ -265,7 +276,8 @@ osForkTerminal(const PtyParams &p, int *pidret, char *pathret)
             chdir("/");
         }
         if (p.waitForFd) {
-            while (read(p.waitFd, &c, 1) == -1 && errno == EINTR);
+            close(p.waitFd[1]);
+            waitForReadable(p.waitFd[0]);
             // cloexec
         }
 
@@ -275,7 +287,7 @@ osForkTerminal(const PtyParams &p, int *pidret, char *pathret)
         printError("exec", args.vec[0]);
         if (p.exitDelay)
             for (fd = 60; fd > 0; --fd) {
-                c = '\r';
+                char c = '\r';
                 printChar(c);
                 c = '0' + fd / 10;
                 printChar(c);

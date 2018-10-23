@@ -79,20 +79,16 @@ extern TermScoper *g_scoper;
 //
 // TermInstance macros
 //
-#define sd_declareScope \
-    int scopefd[2] = { -1, -1 }
-
 #define sd_prepareScope() \
-    if (osPipe(scopefd) != 0) \
+    if (osPipe(m_params->waitFd) != 0) \
         throw Tsq::ErrnoException(errno); \
-    m_params->waitFd = scopefd[0]; \
     m_params->waitForFd = true
 
 #define sd_createScope(term, pid) \
-    g_scoper->createScope(term, scopefd[1], pid)
+    g_scoper->createScope(term, m_params->waitFd[1], pid)
 
 #define sd_cleanupScope(i) \
-    close(scopefd[i])
+    close(m_params->waitFd[i])
 
 #define sd_unregisterTerm(term) \
     g_scoper->unregisterTerm(term)

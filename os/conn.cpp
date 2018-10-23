@@ -197,10 +197,7 @@ osAccept(int listensd, struct sockaddr *buf, socklen_t *buflen)
 void
 osWaitForWritable(int fd)
 {
-    pollfd pfd;
-    pfd.fd = fd;
-    pfd.events = POLLOUT;
-
+    pollfd pfd = { .fd = fd, .events = POLLOUT };
     poll(&pfd, 1, 1000);
 }
 

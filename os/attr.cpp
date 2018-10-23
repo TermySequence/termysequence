@@ -123,6 +123,7 @@ timedReadMulti(int fd, StringMap &map, bool nullsep = false)
 {
     // Read until EOF, buffer size exceeded, or time limit exceeded
     int64_t timelimit = osMonotime() + ATTRIBUTE_SCRIPT_TIMEOUT;
+    int timeout = ATTRIBUTE_SCRIPT_TIMEOUT;
     pollfd pfd = { .fd = fd, .events = POLLIN };
     char buf[ATTRIBUTE_MAX_LENGTH / 2];
     const char *seps = "\n\r" + (nullsep ? 2 : 0);
@@ -131,10 +132,6 @@ timedReadMulti(int fd, StringMap &map, bool nullsep = false)
     ssize_t rc;
 
     do {
-        int64_t timeout = timelimit - osMonotime();
-        if (timeout <= 0)
-            break;
-
         rc = poll(&pfd, 1, timeout);
         if (rc == 0 || (rc < 0 && errno != EAGAIN))
             break;
@@ -173,8 +170,9 @@ timedReadMulti(int fd, StringMap &map, bool nullsep = false)
             else
                 accum.erase(0, idx);
         }
+        timeout = timelimit - osMonotime();
     }
-    while (rc != 0 && accum.size() < sizeof(buf));
+    while (rc && timeout > 0 && accum.size() < sizeof(buf));
 }
 
 static bool
@@ -182,16 +180,13 @@ timedRead(int fd, std::string &result)
 {
     // Read until EOF, buffer size exceeded, or time limit exceeded
     int64_t timelimit = osMonotime() + ATTRIBUTE_SCRIPT_TIMEOUT;
+    int timeout = ATTRIBUTE_SCRIPT_TIMEOUT;
     pollfd pfd = { .fd = fd, .events = POLLIN };
     char buf[128], *ptr;
     ssize_t rem = sizeof(buf);
     ptr = buf;
 
-    while (rem > 0) {
-        int64_t timeout = timelimit - osMonotime();
-        if (timeout <= 0)
-            break;
-
+    do {
         ssize_t rc = poll(&pfd, 1, timeout);
         if (rc == 0 || (rc < 0 && errno != EAGAIN))
             break;
@@ -215,7 +210,9 @@ timedRead(int fd, std::string &result)
 
         ptr += rc;
         rem -= rc;
+        timeout = timelimit - osMonotime();
     }
+    while (rem > 0 && timeout > 0);
 
     return false;
 }

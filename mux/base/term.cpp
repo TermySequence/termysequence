@@ -243,7 +243,6 @@ TermInstance::launch()
 {
     int64_t now = osMonotime();
     char devpath[PATH_MAX];
-    sd_declareScope;
 
     std::string msg = configuredStartParams(m_params);
     m_params->width = (unsigned short)m_emulator->size().width();

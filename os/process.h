@@ -22,7 +22,7 @@ struct PtyParams: public ForkParams {
     unsigned short width;
     unsigned short height;
     int sleepTime;
-    int waitFd;
+    int waitFd[2];
     bool exitDelay;
     bool waitForFd;
 };

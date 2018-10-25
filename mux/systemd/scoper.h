@@ -6,7 +6,7 @@
 
 #if USE_SYSTEMD
 
-#include "threadbase.h"
+#include "base/threadbase.h"
 #include "lib/uuid.h"
 #include "os/conn.h"
 
@@ -99,7 +99,6 @@ extern TermScoper *g_scoper;
 #define sd_startScoper(fd)
 #define sd_stopScoper(reason)
 
-#define sd_declareScope
 #define sd_prepareScope()
 #define sd_createScope(term, pid)
 #define sd_cleanupScope(i)

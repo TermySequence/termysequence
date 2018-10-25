@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
 #include "common.h"
+#include "scoper.h"
 #include "base/exception.h"
-#include "base/scoper.h"
 #include "base/term.h"
 #include "os/logging.h"
 #include "lib/attrstr.h"

@@ -12,7 +12,6 @@ TermProcess::TermProcess() :
     status(Tsq::TermIdle),
     outcome(Tsq::TermRunning),
     commandName(g_str_unknown),
-    commandPath(g_str_unknown),
     commandArgv(g_str_unknown)
 {
 }
@@ -49,9 +48,6 @@ TermProcess::setAttribute(const QString &key, const QString &value)
     else if (key == g_attr_PROC_COMM) {
         commandName = value;
     }
-    else if (key == g_attr_PROC_EXE) {
-        commandPath = value;
-    }
     else if (key == g_attr_PROC_ARGV) {
         commandArgv = value.split('\x1f');
     }
@@ -87,9 +83,6 @@ TermProcess::clearAttribute(const QString &key)
     }
     else if (key == g_attr_PROC_COMM) {
         commandName.clear();
-    }
-    else if (key == g_attr_PROC_EXE) {
-        commandPath.clear();
     }
     else if (key == g_attr_PROC_ARGV) {
         commandArgv.clear();

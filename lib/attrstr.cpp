@@ -47,7 +47,6 @@ const std::string Tsq::attr_PROC_GID(TSQ_ATTR_PROC_GID);
 const std::string Tsq::attr_PROC_PID(TSQ_ATTR_PROC_PID);
 const std::string Tsq::attr_PROC_CWD(TSQ_ATTR_PROC_CWD);
 const std::string Tsq::attr_PROC_COMM(TSQ_ATTR_PROC_COMM);
-const std::string Tsq::attr_PROC_EXE(TSQ_ATTR_PROC_EXE);
 const std::string Tsq::attr_PROC_ARGV(TSQ_ATTR_PROC_ARGV);
 const std::string Tsq::attr_PROC_STATUS(TSQ_ATTR_PROC_STATUS);
 const std::string Tsq::attr_PROC_OUTCOME(TSQ_ATTR_PROC_OUTCOME);

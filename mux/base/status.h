@@ -12,7 +12,7 @@ struct ForkParams;
 class TermStatusTracker
 {
 private:
-    int *p_os;
+    void *p_os;
 
     unsigned status;
     int pid;

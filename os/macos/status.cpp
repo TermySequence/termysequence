@@ -11,17 +11,17 @@
 #include <libproc.h>
 
 void
-osStatusInit(int **)
+osStatusInit(void **)
 {
 }
 
 void
-osStatusTeardown(int *)
+osStatusTeardown(void *)
 {
 }
 
 void
-osGetProcessAttributes(int *, int pid, StringMap &current, StringMap &next)
+osGetProcessAttributes(void *, int pid, StringMap &current, StringMap &next)
 {
     struct proc_taskallinfo tai;
     struct proc_vnodepathinfo vpi;
@@ -31,11 +31,11 @@ osGetProcessAttributes(int *, int pid, StringMap &current, StringMap &next)
     if (rc >= sizeof(tai)) {
         std::string str = std::to_string(tai.pbsd.pbi_uid);
         if (current[Tsq::attr_PROC_UID] != str)
-            next[Tsq::attr_PROC_UID] = str;
+            next[Tsq::attr_PROC_UID] = std::move(str);
 
         str = std::to_string(tai.pbsd.pbi_gid);
         if (current[Tsq::attr_PROC_GID] != str)
-            next[Tsq::attr_PROC_GID] = str;
+            next[Tsq::attr_PROC_GID] = std::move(str);
     }
 
     rc = proc_pidinfo(pid, PROC_PIDVNODEPATHINFO, 0, &vpi, sizeof(vpi));
@@ -43,14 +43,14 @@ osGetProcessAttributes(int *, int pid, StringMap &current, StringMap &next)
         const char *ptr = vpi.pvi_cdir.vip_path;
         std::string str(ptr, strnlen(ptr, MAXPATHLEN));
         if (current[Tsq::attr_PROC_CWD] != str)
-            next[Tsq::attr_PROC_CWD] = str;
+            next[Tsq::attr_PROC_CWD] = std::move(str);
     }
 
     rc = proc_name(pid, path, sizeof(path));
     if (rc > 0) {
         std::string str(path, strnlen(path, sizeof(path)));
         if (current[Tsq::attr_PROC_COMM] != str)
-            next[Tsq::attr_PROC_COMM] = str;
+            next[Tsq::attr_PROC_COMM] = std::move(str);
     }
 
     int mib[] = { CTL_KERN, KERN_PROCARGS2, pid };
@@ -67,22 +67,19 @@ osGetProcessAttributes(int *, int pid, StringMap &current, StringMap &next)
             ptr = buf + sizeof(int);
             size -= sizeof(int);
 
-            std::string str(ptr, strnlen(ptr, size));
-            if (current[Tsq::attr_PROC_EXE] != str)
-                next[Tsq::attr_PROC_EXE] = str;
-
-            ptr += str.size();
-            size -= str.size();
-            str.clear();
+            size_t skip = strnlen(ptr, size);
+            ptr += skip;
+            size -= skip;
+            std::string str;
 
             while (size > 0 && argc > 0) {
                 if (*ptr) {
-                    std::string arg(ptr, strnlen(ptr, size));
-                    str.append(arg);
+                    skip = strnlen(ptr, size);
+                    str.append(ptr, skip);
                     str.push_back('\x1f');
 
-                    ptr += arg.size();
-                    size -= arg.size();
+                    ptr += skip;
+                    size -= skip;
                     --argc;
                 } else {
                     ++ptr;
@@ -93,7 +90,7 @@ osGetProcessAttributes(int *, int pid, StringMap &current, StringMap &next)
             if (!str.empty())
                 str.pop_back();
             if (current[Tsq::attr_PROC_ARGV] != str)
-                next[Tsq::attr_PROC_ARGV] = str;
+                next[Tsq::attr_PROC_ARGV] = std::move(str);
         }
 
         delete [] buf;

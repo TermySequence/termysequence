@@ -155,16 +155,20 @@ TermStatusTracker::start(ForkParams *params)
     memset(termiosFlags, 0, sizeof(termiosFlags));
     memset(termiosChars, 0, sizeof(termiosChars));
 
+    // Set attributes
     m_all.clear();
     m_all.emplace(Tsq::attr_PROC_CWD, params->dir);
-    m_all.emplace(Tsq::attr_PROC_EXE, params->command.c_str());
 
     std::string tmp(params->command);
     for (char &c: tmp)
         if (c == '\0')
             c = '\x1f';
 
-    m_all.emplace(Tsq::attr_PROC_ARGV, tmp);
+    m_all.emplace(Tsq::attr_PROC_ARGV, std::move(tmp));
+
+    const char *comm = params->command.c_str();
+    const char *ptr = strrchr(comm, '/');
+    m_all.emplace(Tsq::attr_PROC_COMM, ptr ? ptr + 1 : comm);
 
     // Prepare the environment
     const char *envc = params->env.c_str();

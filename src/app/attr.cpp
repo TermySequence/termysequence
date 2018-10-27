@@ -97,7 +97,6 @@ const QString g_attr_PROC_TERMIOS(L(TSQ_ATTR_PROC_TERMIOS));
 const QString g_attr_PROC_PID(L(TSQ_ATTR_PROC_PID));
 const QString g_attr_PROC_CWD(L(TSQ_ATTR_PROC_CWD));
 const QString g_attr_PROC_COMM(L(TSQ_ATTR_PROC_COMM));
-const QString g_attr_PROC_EXE(L(TSQ_ATTR_PROC_EXE));
 const QString g_attr_PROC_ARGV(L(TSQ_ATTR_PROC_ARGV));
 const QString g_attr_PROC_STATUS(L(TSQ_ATTR_PROC_STATUS));
 const QString g_attr_PROC_OUTCOME(L(TSQ_ATTR_PROC_OUTCOME));

@@ -78,7 +78,6 @@
 #define TSQ_ATTR_PROC_PID               "proc.pid"
 #define TSQ_ATTR_PROC_CWD               "proc.cwd"
 #define TSQ_ATTR_PROC_COMM              "proc.comm"
-#define TSQ_ATTR_PROC_EXE               "proc.exe"
 #define TSQ_ATTR_PROC_ARGV              "proc.argv"
 #define TSQ_ATTR_PROC_STATUS            "proc.status"
 #define TSQ_ATTR_PROC_OUTCOME           "proc.outcome"

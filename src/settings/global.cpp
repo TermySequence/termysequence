@@ -192,7 +192,7 @@ const FormatDef g_termFormat[] = {
     { TN("settings-enum", "User name"), TSQ_ATTR_SERVER_USER },
     { TN("settings-enum", "Server name"), TSQ_ATTR_SERVER_NAME },
     { TN("settings-enum", "Host name"), TSQ_ATTR_SERVER_HOST },
-    { TN("settings-enum", "Command name"), TSQ_ATTR_PROC_EXE },
+    { TN("settings-enum", "Command name"), TSQ_ATTR_PROC_COMM },
     { TN("settings-enum", "Command PID"), TSQ_ATTR_PROC_PID },
     { TN("settings-enum", "Newline"), "\\n" },
     { TN("settings-enum", "Literal backslash"), "\\\\" },

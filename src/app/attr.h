@@ -100,7 +100,6 @@ extern const QString g_attr_PROC_TERMIOS;
 extern const QString g_attr_PROC_PID;
 extern const QString g_attr_PROC_CWD;
 extern const QString g_attr_PROC_COMM;
-extern const QString g_attr_PROC_EXE;
 extern const QString g_attr_PROC_ARGV;
 extern const QString g_attr_PROC_STATUS;
 extern const QString g_attr_PROC_OUTCOME;

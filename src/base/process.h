@@ -21,7 +21,7 @@ struct TermProcess
     // QString group;
     // QString seclabel;
     QString commandName;
-    QString commandPath;
+    // QString commandPath;
     QStringList commandArgv;
     QString workingDir;
     QString outcomeStr;

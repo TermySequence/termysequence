@@ -7,13 +7,13 @@
 #include "lib/stringmap.h"
 
 extern void
-osStatusInit(int **data);
+osStatusInit(void **data);
 
 extern void
-osStatusTeardown(int *data);
+osStatusTeardown(void *data);
 
 extern void
-osGetProcessAttributes(int *data, int pid, StringMap &current, StringMap &next);
+osGetProcessAttributes(void *data, int pid, StringMap &current, StringMap &next);
 
 extern StringMap
 osGetProcessEnvironment(int pid);

@@ -47,7 +47,6 @@ namespace Tsq {
     extern const std::string attr_PROC_PID;
     extern const std::string attr_PROC_CWD;
     extern const std::string attr_PROC_COMM;
-    extern const std::string attr_PROC_EXE;
     extern const std::string attr_PROC_ARGV;
     extern const std::string attr_PROC_STATUS;
     extern const std::string attr_PROC_OUTCOME;

@@ -126,7 +126,7 @@ timedReadMulti(int fd, StringMap &map, bool nullsep = false)
     int timeout = ATTRIBUTE_SCRIPT_TIMEOUT;
     pollfd pfd = { .fd = fd, .events = POLLIN };
     char buf[ATTRIBUTE_MAX_LENGTH / 2];
-    const char *seps = "\n\r" + (nullsep ? 2 : 0);
+    const char *seps = &("\n\r")[nullsep ? 2 : 0];
     size_t nseps = nullsep ? 1 : 2;
     std::string accum;
     ssize_t rc;

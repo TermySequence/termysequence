@@ -26,10 +26,5 @@ extern const QString g_mtstr;
 #define C(x) QChar(x)
 #define Ch0 QChar('0')
 
-using namespace std::string_literals;
-
 // The empty margins
 extern const QMargins g_mtmargins;
-
-// Replacement for qDeleteAll with better type warnings
-#define forDeleteAll(c) for (auto *x: c) delete x

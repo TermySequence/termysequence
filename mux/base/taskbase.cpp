@@ -25,8 +25,7 @@ TaskBase::TaskBase(const char *name, Tsq::ProtocolUnmarshaler *unm, unsigned fla
 
 TaskBase::~TaskBase()
 {
-    for (auto i: m_incomingData)
-        delete i;
+    forDeleteAll(m_incomingData);
 }
 
 /*

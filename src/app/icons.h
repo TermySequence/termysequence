@@ -5,7 +5,6 @@
 #pragma once
 
 #include "base/thumbicon.h"
-using namespace std::string_literals;
 #define QI(x) ThumbIcon::fromTheme(x)
 
 #define ICON_NONE                               ""s

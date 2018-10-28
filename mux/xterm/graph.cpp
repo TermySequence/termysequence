@@ -301,8 +301,6 @@ XTermRootNode::XTermRootNode(): XTermNode(&e_control)
 
 XTermRootNode::~XTermRootNode()
 {
-    for (auto i: m_nodes)
-        delete i;
-    for (auto i: m_edges)
-        delete i;
+    forDeleteAll(m_nodes);
+    forDeleteAll(m_edges);
 }

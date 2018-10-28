@@ -23,7 +23,6 @@
 #include <poll.h>
 
 #include <set>
-using namespace std::string_literals;
 
 #define FALLBACK_USER "unknown"
 #define FALLBACK_HOST "unknown"
@@ -83,7 +82,7 @@ static const std::set<std::string> s_ownerTermAttributes = {
 bool
 osRestrictedMonitorAttribute(const std::string &key)
 {
-    for (int i = 0; i < sizeof(s_restrictedMonitorAttributes)/sizeof(std::string); ++i)
+    for (int i = 0; i < ARRAY_SIZE(s_restrictedMonitorAttributes); ++i)
         if (key == s_restrictedMonitorAttributes[i])
             return true;
 
@@ -380,7 +379,7 @@ osFallbackAttributes(StringMap &map, bool isServer)
     /*
      * Remove attributes that scripts aren't allowed to set
      */
-    for (int i = 0; i < sizeof(s_restrictedMonitorAttributes)/sizeof(std::string); ++i)
+    for (int i = 0; i < ARRAY_SIZE(s_restrictedMonitorAttributes); ++i)
         map.erase(s_restrictedMonitorAttributes[i]);
 
     /*

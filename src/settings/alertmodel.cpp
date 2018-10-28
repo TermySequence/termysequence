@@ -145,7 +145,7 @@ AlertModel::getActionString(const AlertSettings *alert) const
         "actPush", "actSwitch", "actSlot", "actLaunch"
     };
 
-    for (unsigned i = 0; i < sizeof(actList)/sizeof(*actList); ++i)
+    for (unsigned i = 0; i < ARRAY_SIZE(actList); ++i)
         if (alert->property(actList[i]).toBool()) {
             text = alert->actionStr(actList[i]);
             ++count;

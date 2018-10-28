@@ -126,7 +126,7 @@ IconRuleset::resetToDefaults()
 {
     m_rules.clear();
 
-    unsigned n = sizeof(s_defaultIconRules) / sizeof(*s_defaultIconRules);
+    unsigned n = ARRAY_SIZE(s_defaultIconRules);
     for (unsigned i = 0; i < n; ++i)
         m_rules.append(s_defaultIconRules[i]);
 }

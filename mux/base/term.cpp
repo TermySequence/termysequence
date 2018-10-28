@@ -92,8 +92,7 @@ TermInstance::~TermInstance()
     delete m_filemon;
     delete m_params;
 
-    for (auto i: m_incomingRegions)
-        delete i;
+    forDeleteAll(m_incomingRegions);
 }
 
 /*

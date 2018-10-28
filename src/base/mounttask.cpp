@@ -351,7 +351,7 @@ MountTask::handleStart(unsigned flags)
     m_inodes.emplace(irec->ino, irec);
     m_rootmap.emplace(m_outfilestr, irec);
 
-    m_args.argc = sizeof(s_mountargv)/sizeof(*s_mountargv);
+    m_args.argc = ARRAY_SIZE(s_mountargv);
     if (!m_ro)
         m_args.argc -= 2;
     m_args.argv = (char **)s_mountargv;

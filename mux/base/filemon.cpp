@@ -34,8 +34,7 @@ TermFilemon::TermFilemon(unsigned limit, TermInstance *parent) :
 
 TermFilemon::~TermFilemon()
 {
-    for (auto i: m_incomingDirectories)
-        delete i;
+    forDeleteAll(m_incomingDirectories);
 }
 
 /*

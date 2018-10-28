@@ -18,9 +18,7 @@ AttributeBase::AttributeBase(const char *name) :
 
 AttributeBase::~AttributeBase()
 {
-    for (auto watch: m_watches)
-        delete watch;
-
+    forDeleteAll(m_watches);
     pthread_rwlock_destroy(&m_rwlock);
 }
 

@@ -108,16 +108,16 @@ getColorSpec(const CellAttributes32 &attr)
 inline void
 Dircolors::setDefaults1()
 {
-    for (unsigned i = 0; i < sizeof(s_dirVars)/sizeof(*s_dirVars); ++i)
+    for (unsigned i = 0; i < ARRAY_SIZE(s_dirVars); ++i)
         m_extensions.insert('\0' + s_dirVars[i].id, s_dirVars[i].attr);
-    for (unsigned i = 0; i < sizeof(s_dirCats)/sizeof(*s_dirCats); ++i)
+    for (unsigned i = 0; i < ARRAY_SIZE(s_dirCats); ++i)
         m_categories[s_dirCats[i].category] = s_dirCats[i].attr;
 }
 
 inline void
 Dircolors::setDefaults2()
 {
-    for (unsigned i = 0; i < sizeof(s_dirExts)/sizeof(*s_dirExts); ++i) {
+    for (unsigned i = 0; i < ARRAY_SIZE(s_dirExts); ++i) {
         QString var = '\0' + s_dirExts[i].spec;
         if (!m_extensions.contains(s_dirExts[i].id))
             m_extensions.insert(s_dirExts[i].id, m_extensions[var]);
@@ -257,19 +257,19 @@ DircolorsDisplay::parseForDisplay(const QString &spec, QVector<Entry> &cats)
         pos = !m_spec.isEmpty();
 
         for (const auto *ptr = s_dirCats;
-             (ptr - s_dirCats) < sizeof(s_dirCats)/sizeof(*s_dirCats); ++ptr)
+             (ptr - s_dirCats) < ARRAY_SIZE(s_dirCats); ++ptr)
         {
             Entry ent = { ptr->id, ptr->spec, -1, -1, ptr->attr, 1, ptr->category };
             icats.append(std::move(ent));
         }
         for (const auto *ptr = s_dirVars;
-             (ptr - s_dirVars) < sizeof(s_dirVars)/sizeof(*s_dirVars); ++ptr)
+             (ptr - s_dirVars) < ARRAY_SIZE(s_dirVars); ++ptr)
         {
             Entry ent = { ptr->id, ptr->spec, -1, -1, ptr->attr, 2 };
             ivars.append(std::move(ent));
         }
         for (const auto *ptr = s_dirExts;
-             (ptr - s_dirExts) < sizeof(s_dirExts)/sizeof(*s_dirExts); ++ptr)
+             (ptr - s_dirExts) < ARRAY_SIZE(s_dirExts); ++ptr)
         {
             QString var = '\0' + ptr->spec;
             Entry ent = { ptr->id, ptr->spec, -1, -1, m_extensions[var] };

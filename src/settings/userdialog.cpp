@@ -40,7 +40,7 @@ UserDialog::UserDialog(QWidget *parent, int type, unsigned options) :
     const auto *ptr = ConnectSettings::g_typeDesc;
     while ((++ptr)->value.toInt() != types[0]);
 
-    for (int i = 0; i < sizeof(types)/sizeof(*types); ++i, ++ptr) {
+    for (int i = 0; i < ARRAY_SIZE(types); ++i, ++ptr) {
         m_combo->addItem(ThumbIcon::fromTheme(ptr->icon),
                          QCoreApplication::translate("settings-enum", ptr->description),
                          ptr->value);

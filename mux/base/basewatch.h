@@ -75,7 +75,7 @@ public:
 
     // locked
     void pushAttributeChange(const std::string &key, const std::string &spec);
-    void pushAttributeChanges(const StringMap &map);
+    void pushAttributeChanges(StringMap &map);
     inline void activate();
 
 public:

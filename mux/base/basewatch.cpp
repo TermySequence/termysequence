@@ -85,13 +85,13 @@ BaseWatch::pushAttributeChange(const std::string &key, const std::string &spec)
 }
 
 void
-BaseWatch::pushAttributeChanges(const StringMap &map)
+BaseWatch::pushAttributeChanges(StringMap &map)
 {
     Lock wlock(this);
 
     if (active) {
-        for (const auto &i: map) {
-            attributes[i.first] = i.second;
+        for (auto &&i: map) {
+            attributes[i.first] = std::move(i.second);
         }
         m_writer->activate(this);
     }

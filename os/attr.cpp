@@ -30,7 +30,7 @@
 #define FALLBACK_ICON "computer"
 #define FALLBACK_HOME "/"
 
-static const std::string s_restrictedMonitorAttributes[] = {
+static const std::string_view s_restrictedMonitorAttributes[] = {
     TSQ_ATTR_ID,
     TSQ_ATTR_MACHINE_ID,
     TSQ_ATTR_STARTED,
@@ -40,7 +40,7 @@ static const std::string s_restrictedMonitorAttributes[] = {
     TSQ_ATTR_GITDESC,
 };
 
-static const std::set<std::string> s_restrictedServerAttributes = {
+static const std::set<std::string_view> s_restrictedServerAttributes = {
     TSQ_ATTR_ID,
     TSQ_ATTR_HOST,
     TSQ_ATTR_ICON,
@@ -56,7 +56,7 @@ static const std::set<std::string> s_restrictedServerAttributes = {
     TSQ_ATTR_GITDESC,
 };
 
-static const std::set<std::string> s_restrictedTermAttributes = {
+static const std::set<std::string_view> s_restrictedTermAttributes = {
     TSQ_ATTR_ID,
     TSQ_ATTR_PEER,
     TSQ_ATTR_COMMAND,
@@ -72,7 +72,7 @@ static const std::set<std::string> s_restrictedTermAttributes = {
     TSQ_ATTR_ENV_PREFIX,
 };
 
-static const std::set<std::string> s_ownerTermAttributes = {
+static const std::set<std::string_view> s_ownerTermAttributes = {
     TSQ_ATTR_PROFILE,
     TSQ_ATTR_PROFILE_PREFIX,
     TSQ_ATTR_PREF_PREFIX,
@@ -95,7 +95,7 @@ osRestrictedServerAttribute(const std::string &key)
     size_t idx = key.find('.');
 
     if (idx != std::string::npos) {
-        std::string tmp(key, 0, idx + 1);
+        auto tmp = std::string_view(key).substr(0, idx + 1);
         return s_restrictedServerAttributes.count(tmp);
     }
 
@@ -108,7 +108,7 @@ osRestrictedTermAttribute(const std::string &key, bool isOwner)
     size_t idx = key.find('.');
 
     if (idx != std::string::npos) {
-        std::string tmp(key, 0, idx + 1);
+        auto tmp = std::string_view(key).substr(0, idx + 1);
         return s_restrictedTermAttributes.count(tmp) ||
             (!isOwner && s_ownerTermAttributes.count(tmp));
     }
@@ -380,7 +380,7 @@ osFallbackAttributes(StringMap &map, bool isServer)
      * Remove attributes that scripts aren't allowed to set
      */
     for (int i = 0; i < ARRAY_SIZE(s_restrictedMonitorAttributes); ++i)
-        map.erase(s_restrictedMonitorAttributes[i]);
+        map.erase(std::string(s_restrictedMonitorAttributes[i]));
 
     /*
      * Server-only defaults

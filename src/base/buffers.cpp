@@ -25,15 +25,12 @@ TermBuffers::TermBuffers(TermInstance *term) :
 
     // Set up separator buffers
     for (int b = 1; b < NBUFFERS; b += 2) {
-        m_buffers[b].m_rows.emplace_back();
-        CellRow &separatorRow = m_buffers[b].m_rows.back();
-
+        CellRow &separatorRow = m_buffers[b].m_rows.emplace_back();
         separatorRow.flags = Tsqt::Downloaded|Tsqt::NoSelect;
         for (int i = 0; i < 128; ++i)
             separatorRow.str.append("\xE2\x94\x81""\xE2\x94\x81", 6);
 
-        separatorRow.cells.emplace_back();
-        Cell &cell = separatorRow.cells.back();
+        Cell &cell = separatorRow.cells.emplace_back();
         cell.flags = Tsqt::PaintU2500;
         cell.endptr = separatorRow.str.size();
         cell.cellwidth = 256;

@@ -253,7 +253,7 @@ TermInstance::launch()
     m_status->start(m_params);
 
     if (!msg.empty())
-        handleTermEvent(const_cast<char*>(msg.data()), msg.size(), false);
+        handleTermEvent(msg.data(), msg.size(), false);
 
     try {
         sd_prepareScope();
@@ -565,7 +565,7 @@ TermInstance::halt()
             std::string str;
             g_args->arg(str, TR_HALTMSG3, acparm.first, runtime);
             str.append("\r\n", 2);
-            handleTermEvent(const_cast<char*>(str.data()), str.size(), false);
+            handleTermEvent(str.data(), str.size(), false);
         }
         else if (m_status->autoClose(acparm.second)) {
             sendWork(TermClose, TSQ_STATUS_NORMAL);

@@ -187,15 +187,14 @@ TermOverlay::setLine(CellRow *row, const QString &text)
 void
 TermOverlay::addBlankLine()
 {
-    m_rows.emplace_back();
-    m_rows.back().flags = Tsqt::Downloaded|Tsqt::NoSelect;
+    CellRow &row = m_rows.emplace_back();
+    row.flags = Tsqt::Downloaded|Tsqt::NoSelect;
 }
 
 CellRow &
 TermOverlay::addLine(const QString &text)
 {
-    m_rows.emplace_back();
-    CellRow &row = m_rows.back();
+    CellRow &row = m_rows.emplace_back();
     row.flags = Tsqt::Downloaded|Tsqt::NoSelect;
     setLine(&row, text);
     return row;

@@ -82,10 +82,7 @@ RawInstance::setMachine(Tsq::ProtocolMachine *newMachine, StringMap &attributes)
         m_newFd = -1;
     }
 
-    for (auto &&i: m_attributes)
-        attributes[i.first] = std::move(i.second);
-
-    m_attributes.swap(attributes);
+    m_attributes.merge(attributes);
 
     auto i = m_attributes.find(Tsq::attr_COMMAND_KEEPALIVE);
     if (i != m_attributes.end())

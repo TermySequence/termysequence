@@ -182,7 +182,7 @@ Programs executed by
 .B @SERVER_NAME@ \"m2rprog
 to determine the UUID of the local machine. The program should print the UUID on
 standard output. By default,
-.I @CMAKE_INSTALL_FULL_SYSCONFDIR@/machine-id \"m2rfile
+.I /etc/machine-id \"m2rfile
 is used; the
 .I id-script
 programs can be used as an override or replacement for that file. One or the
@@ -193,6 +193,8 @@ protocol requires each machine to have a unique identifier.
 .I $XDG_CONFIG_HOME/@SERVER_NAME@/attr-script \"m2rfile
 .br
 .I @CMAKE_INSTALL_FULL_SYSCONFDIR@/@SERVER_NAME@/attr-script \"m2rfile
+.br
+.I @CMAKE_INSTALL_PREFIX@/lib/@SERVER_NAME@/attr-script \"m2rfile
 
 Programs executed by
 .B @SERVER_NAME@ \"m2rprog
@@ -205,6 +207,8 @@ present.
 .I $XDG_CONFIG_HOME/@SERVER_NAME@/monitor-script \"m2rfile
 .br
 .I @CMAKE_INSTALL_FULL_SYSCONFDIR@/@SERVER_NAME@/monitor-script \"m2rfile
+.br
+.I @CMAKE_INSTALL_PREFIX@/lib/@SERVER_NAME@/monitor-script \"m2rfile
 
 Programs executed by
 .B @SERVER_NAME@ \"m2rprog

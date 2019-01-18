@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <uuid/uuid.h>
 
-void
+bool
 osFallbackIdentity(Tsq::Uuid &result)
 {
     struct timespec ts = {
@@ -17,6 +17,9 @@ osFallbackIdentity(Tsq::Uuid &result)
         .tv_nsec = (ATTRIBUTE_SCRIPT_TIMEOUT % 1000) * 1000000
     };
 
-    if (gethostuuid((unsigned char *)result.buf, &ts) != 0)
-        result.generate();
+    if (gethostuuid((unsigned char *)result.buf, &ts) == 0)
+        return true;
+
+    result.generate();
+    return false;
 }

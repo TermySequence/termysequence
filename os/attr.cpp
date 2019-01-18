@@ -336,20 +336,20 @@ fallbackUser(StringMap &map)
     map.emplace(Tsq::attr_USER, userc ? userc : FALLBACK_USER);
 }
 
-void
+bool
 osIdentity(Tsq::Uuid &result, std::vector<int> &pids)
 {
     std::string path, str;
 
     if (osConfigPath(SERVER_NAME, "id-script", path) && loadScript(path, str, pids) &&
         result.parse(str.c_str()))
-        return;
+        return true;
     path = CONFDIR "/" SERVER_NAME "/id-script";
     if (loadScript(path, str, pids) && result.parse(str.c_str()))
-        return;
+        return true;
     path = PREFIX "/lib/" SERVER_NAME "/id-script";
     if (loadScript(path, str, pids) && result.parse(str.c_str()))
-        return;
+        return true;
 
     struct stat info;
     FILE *file;
@@ -368,9 +368,10 @@ osIdentity(Tsq::Uuid &result, std::vector<int> &pids)
     while (ptr != buf && (*ptr == '\n' || *ptr == '\r'))
         *ptr-- = '\0';
 
-    if (!result.parse(buf))
-    fallback:
-        osFallbackIdentity(result);
+    if (result.parse(buf))
+        return true;
+fallback:
+    return osFallbackIdentity(result);
 }
 
 static void

@@ -5,8 +5,9 @@
 #include "common.h"
 #include "os/attr.h"
 
-void
+bool
 osFallbackIdentity(Tsq::Uuid &result)
 {
     result.generate();
+    return false;
 }

@@ -46,7 +46,7 @@ TermListener::TermListener(int initialrd, int initialwd, unsigned flavor) :
 
     int64_t before = osWalltime();
     m_environ = osGetLocalEnvironment();
-    osIdentity(m_id, pids);
+    bool haveId = osIdentity(m_id, pids);
     osAttributes(m_attributes, pids, true);
     int64_t after = osWalltime();
 
@@ -57,12 +57,16 @@ TermListener::TermListener(int initialrd, int initialwd, unsigned flavor) :
     m_attributes[Tsq::attr_STARTED] = std::to_string(after);
 
     if (after - before > ATTRIBUTE_SCRIPT_WARN)
-        LOGWRN("Warning: slow identity or attribute scripts "
+        LOGWRN("Warning: slow id-script or attr-script "
                "delayed startup by %" PRId64 "ms\n", after - before);
 
     int mix = getuid();
     m_id.combine((uint32_t)(m_standalone ? -mix - 1 : mix));
     m_attributes[Tsq::attr_ID] = m_id.str();
+
+    if (!haveId)
+        LOGWRN("Warning: no machine id found, please set one using an id-script");
+    LOGDBG("Listener: I am server %s\n", m_id.str().c_str());
 
     // these are leaked
     g_reaper = new TermReaper(pids);

@@ -18,10 +18,10 @@ osAttributes(StringMap &map, std::vector<int> &pids, bool isServer);
 extern bool
 osAttributesAsync(StringMap &map, int *fdret, int *pidret, int *state);
 
-extern void
+extern bool
 osIdentity(Tsq::Uuid &result, std::vector<int> &pids);
 
-extern void
+extern bool
 osFallbackIdentity(Tsq::Uuid &result);
 
 extern bool

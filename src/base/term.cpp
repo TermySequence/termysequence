@@ -783,14 +783,15 @@ TermInstance::handleRemoteClipboard(QString key, const QString &value)
         QString text;
         bool select;
         auto *manager = g_listener->activeManager();
+        auto *clipboard = QApplication::clipboard();
 
         if (key == A("c")) {
             text = QByteArray::fromBase64(value.toLatin1());
-            QApplication::clipboard()->setText(text);
+            clipboard->setText(text);
             select = false;
-        } else if (key == A("p")) {
+        } else if (key == A("p") && clipboard->supportsSelection()) {
             text = QByteArray::fromBase64(value.toLatin1());
-            QApplication::clipboard()->setText(text, QClipboard::Selection);
+            clipboard->setText(text, QClipboard::Selection);
             select = true;
         } else {
             manager = nullptr;

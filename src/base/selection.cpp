@@ -52,6 +52,7 @@ Selection::reportResult()
 {
     if (checkResult()) {
         hasAnchor = true;
+        clipboardSelect();
         m_buffers->activateSelection();
         emit activated();
     } else {
@@ -59,6 +60,14 @@ Selection::reportResult()
         m_buffers->deactivateSelection();
         emit deactivated();
     }
+}
+
+inline void
+Selection::reportModified()
+{
+    clipboardSelect();
+    m_buffers->reportRegionChanged();
+    emit modified();
 }
 
 void
@@ -284,9 +293,7 @@ Selection::forwardWord(bool upper)
 
     anchorRow = *row;
     rc = true;
-    // Assumed active, no check
-    m_buffers->reportRegionChanged();
-    emit modified();
+    reportModified(); // Assumed active
 out:
     return std::make_pair(*row, rc);
 }
@@ -331,9 +338,7 @@ Selection::backWord(bool upper)
 
     anchorRow = *row;
     rc = true;
-    // Assumed active, no check
-    m_buffers->reportRegionChanged();
-    emit modified();
+    reportModified(); // Assumed active
 out:
     return std::make_pair(*row, rc);
 }
@@ -359,9 +364,7 @@ Selection::forwardChar(bool upper)
         anchorRow = *row;
         anchorCol = ++*col;
         rc = true;
-        // Assumed active, no check
-        m_buffers->reportRegionChanged();
-        emit modified();
+        reportModified(); // Assumed active
     }
 out:
     return std::make_pair(*row, rc);
@@ -388,9 +391,7 @@ Selection::backChar(bool upper)
         anchorRow = *row;
         anchorCol = --*col;
         rc = true;
-        // Assumed active, no check
-        m_buffers->reportRegionChanged();
-        emit modified();
+        reportModified(); // Assumed active
     }
 out:
     return std::make_pair(*row, rc);
@@ -419,9 +420,7 @@ Selection::forwardLine(bool upper)
     anchorRow = ++*row;
     anchorCol = *col = next;
     rc = true;
-    // Assumed active, no check
-    m_buffers->reportRegionChanged();
-    emit modified();
+    reportModified(); // Assumed active
 out:
     return std::make_pair(*row, rc);
 }
@@ -449,9 +448,7 @@ Selection::backLine(bool upper)
     anchorRow = --*row;
     anchorCol = *col = next;
     rc = true;
-    // Assumed active, no check
-    m_buffers->reportRegionChanged();
-    emit modified();
+    reportModified(); // Assumed active
 out:
     return std::make_pair(*row, rc);
 }

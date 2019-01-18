@@ -29,6 +29,7 @@ private:
 
     bool checkResult();
     void reportResult();
+    void reportModified();
 
 signals:
     void activated();

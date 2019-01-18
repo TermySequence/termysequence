@@ -376,16 +376,16 @@ osIdentity(Tsq::Uuid &result, std::vector<int> &pids)
 static void
 osFallbackAttributes(StringMap &map, bool isServer)
 {
-    /*
-     * Remove attributes that scripts aren't allowed to set
-     */
-    for (int i = 0; i < ARRAY_SIZE(s_restrictedMonitorAttributes); ++i)
-        map.erase(std::string(s_restrictedMonitorAttributes[i]));
-
-    /*
-     * Server-only defaults
-     */
     if (isServer) {
+        /*
+         * Remove attributes that scripts aren't allowed to set
+         */
+        for (int i = 0; i < ARRAY_SIZE(s_restrictedMonitorAttributes); ++i)
+            map.erase(std::string(s_restrictedMonitorAttributes[i]));
+
+        /*
+         * Server-only defaults
+         */
         const char *homec = getenv("HOME");
         map.emplace(Tsq::attr_HOME, homec ? homec : FALLBACK_HOME);
         map.emplace(Tsq::attr_GITDESC, GITDESC);

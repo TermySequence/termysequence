@@ -155,7 +155,9 @@ sub client_announce {
         product => 'client.pl 1-RC',
         started => '0',
         user => 'itest',
-        userfull => 'Interactive Tester'
+        userfull => 'Interactive Tester',
+        uid => '1234',
+        gid => '5678',
     );
 
     $c->client_announce(\%attrs);

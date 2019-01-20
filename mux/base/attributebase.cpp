@@ -157,15 +157,15 @@ AttributeBase::commandSetAttributes(StringMap &map)
 void
 AttributeBase::commandRemoveAttribute(const std::string &key)
 {
-    bool existed;
+    StringMap::node_type nh;
 
     {
         StateLock slock(this, true);
-        existed = (m_attributes.erase(key) != 0);
+        nh = m_attributes.extract(key);
     }
 
-    if (existed) {
-        std::string spec = key;
+    if (nh) {
+        auto &spec = nh.key();
         spec.push_back('\0');
 
         Lock lock(this);

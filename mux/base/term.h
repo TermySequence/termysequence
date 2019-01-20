@@ -26,6 +26,7 @@ private:
     TermEmulator *m_emulator;
     TermStatusTracker *m_status;
     bool m_haveOutcome = true, m_haveClosed = true;
+    bool m_haveRestarted = false;
 
     int32_t m_modTime;
     int32_t m_rateStatus = 0;
@@ -58,7 +59,8 @@ private:
     void handleScrollLock(bool hard, bool enabled);
 
     void launch();
-    void handleStatusAttributes(StringMap &map);
+    void handleStatusAttributes();
+    void removeStatusAttributes();
     void handleProcessExited(int disposition);
     void halt();
 

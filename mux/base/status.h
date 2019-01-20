@@ -16,6 +16,7 @@ private:
 
     unsigned status;
     int pid;
+    int m_disposition;
     unsigned m_outcome;
     int m_exitcode;
     uint32_t termiosFlags[3];
@@ -49,6 +50,7 @@ public:
 
     void updateOnce(int fd, int primary, const char *title);
     bool update(int fd, int primary);
+    const char* updateOutcome();
 
     void start(ForkParams *params);
     void setOutcome(int pid, int status);

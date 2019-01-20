@@ -208,8 +208,10 @@ TermInstance::reportFileUpdates(const StringMap &map)
  * This thread
  */
 void
-TermInstance::handleStatusAttributes(StringMap &map)
+TermInstance::handleStatusAttributes()
 {
+    StringMap &map = m_status->changedMap();
+
     {
         StateLock slock(this, true);
 
@@ -226,6 +228,41 @@ TermInstance::handleStatusAttributes(StringMap &map)
             spec.push_back('\0');
 
             i.second = std::move(spec);
+        }
+    }
+
+    Lock lock(this);
+
+    for (auto watch: m_watches) {
+        // two locks held
+        watch->pushAttributeChanges(map);
+    }
+}
+
+void
+TermInstance::removeStatusAttributes()
+{
+    const size_t proclen = sizeof(TSQ_ATTR_PROC_PREFIX) - 1;
+    const size_t scopelen = sizeof(TSQ_ATTR_SCOPE_PREFIX) - 1;
+    StringMap map;
+
+    {
+        StateLock slock(this, true);
+
+        for (auto i = m_attributes.begin(); i != m_attributes.end(); ) {
+            if (i->first.compare(0, proclen, TSQ_ATTR_PROC_PREFIX, proclen) &&
+                i->first.compare(0, scopelen, TSQ_ATTR_SCOPE_PREFIX, scopelen))
+            {
+                ++i;
+                continue;
+            }
+
+            auto nh = m_attributes.extract(i++);
+            auto &spec = nh.mapped();
+            spec = nh.key();
+            spec.push_back('\0');
+
+            map.insert(std::move(nh));
         }
     }
 
@@ -270,14 +307,14 @@ TermInstance::launch()
     }
 
     g_reaper->registerProcess(this, m_pid);
-    sd_createScope(this, m_pid);
+    sd_createScope();
     m_status->changedMap().emplace(Tsq::attr_PROC_DEV, devpath);
 
     if (!m_output->started())
         m_output->start(-1);
 out:
     sd_cleanupScope(0);
-    handleStatusAttributes(m_status->changedMap());
+    handleStatusAttributes();
 }
 
 void
@@ -405,7 +442,7 @@ void
 TermInstance::handleUpdateEnviron(SharedStringMap *environ)
 {
     if (m_status->setEnviron(*environ))
-        handleStatusAttributes(m_status->changedMap());
+        handleStatusAttributes();
 
     delete environ;
 }
@@ -514,7 +551,7 @@ TermInstance::handleIdle()
 {
     // LOGDBG("Term %p: idle at %d\n", this, m_timeout);
     if (m_status->update(m_fd, m_pid))
-        handleStatusAttributes(m_status->changedMap());
+        handleStatusAttributes();
 
     switch (m_timeout) {
     case 0:
@@ -538,7 +575,7 @@ void
 TermInstance::halt()
 {
     char buf[512];
-    const char *msg = m_status->outcomeStr();
+    const char *msg = m_status->updateOutcome();
     const char *prefix = "\xc2\x9d""133;D\x07";
     Tsq::ResetFlags flags = Tsq::ResetEmulator;
 
@@ -549,14 +586,18 @@ TermInstance::halt()
     case Tsq::ExitActionRestart:
         snprintf(buf, sizeof(buf), "%s%s - %s\r\n", prefix, msg, TR_HALTMSG1);
         handleTermReset(buf, strlen(buf), flags);
+        m_haveRestarted = true;
 
         m_output->reset();
+        sd_unregisterTerm();
+        removeStatusAttributes();
         launch();
 
         break;
     default:
         snprintf(buf, sizeof(buf), "%s%s\r\n%s\r\n", prefix, msg, TR_HALTMSG2);
         handleTermEvent(buf, strlen(buf), false);
+        handleStatusAttributes();
 
         auto acparm = configuredAutoClose();
         int64_t runtime = osMonotime() - m_launchTime;
@@ -579,7 +620,6 @@ void
 TermInstance::handleProcessExited(int disposition)
 {
     m_status->setOutcome(m_pid, disposition);
-    handleStatusAttributes(m_status->changedMap());
 
     m_pid = 0;
     m_haveOutcome = true;
@@ -690,7 +730,7 @@ TermInstance::threadMain()
     }
 
     m_filemon->stop(0);
-    sd_unregisterTerm(this);
+    sd_unregisterTerm();
     m_filemon->join();
 
     if (m_pid) {

@@ -90,6 +90,7 @@ BaseWatch::pushAttributeChanges(StringMap &map)
     Lock wlock(this);
 
     if (active) {
+        attributes.merge(map);
         for (auto &&i: map) {
             attributes[i.first] = std::move(i.second);
         }

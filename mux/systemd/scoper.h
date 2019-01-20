@@ -53,7 +53,7 @@ private:
 public:
     TermScoper();
 
-    void createScope(TermInstance *term, int fd, int pid);
+    void createScope(TermInstance *term, int fd, int pid, bool restart);
     void unregisterTerm(TermInstance *term);
 };
 
@@ -84,14 +84,14 @@ extern TermScoper *g_scoper;
         throw Tsq::ErrnoException(errno); \
     m_params->waitForFd = true
 
-#define sd_createScope(term, pid) \
-    g_scoper->createScope(term, m_params->waitFd[1], pid)
+#define sd_createScope() \
+    g_scoper->createScope(this, m_params->waitFd[1], m_pid, m_haveRestarted)
 
 #define sd_cleanupScope(i) \
     close(m_params->waitFd[i])
 
-#define sd_unregisterTerm(term) \
-    g_scoper->unregisterTerm(term)
+#define sd_unregisterTerm() \
+    g_scoper->unregisterTerm(this)
 
 #else // USE_SYSTEMD
 

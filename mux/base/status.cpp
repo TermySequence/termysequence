@@ -290,11 +290,16 @@ TermStatusTracker::setOutcome(int pid, int disposition)
         m_outcome = m_exitcode ? Tsq::TermExitN : Tsq::TermExit0;
         g_args->arg(m_outcomeStr, TR_OUTCOME3, pid, m_exitcode);
     }
+}
 
+const char *
+TermStatusTracker::updateOutcome()
+{
     m_changed.clear();
     m_changed[Tsq::attr_PROC_EXITCODE] = std::to_string(m_exitcode);
     m_changed[Tsq::attr_PROC_OUTCOME] = std::to_string(m_outcome);
     m_changed[Tsq::attr_PROC_OUTCOMESTR] = m_outcomeStr;
+    return m_outcomeStr.c_str();
 }
 
 void

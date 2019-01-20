@@ -33,7 +33,7 @@ TermScoper::closeBus()
  * Other threads
  */
 void
-TermScoper::createScope(TermInstance *term, int fd, int pid)
+TermScoper::createScope(TermInstance *term, int fd, int pid, bool restart)
 {
     Tsq::Uuid scopeId;
     ScopeInfo *info = new ScopeInfo;
@@ -42,11 +42,7 @@ TermScoper::createScope(TermInstance *term, int fd, int pid)
     info->startingPid = pid;
     info->waitFd = fd;
 
-    Lock lock(this);
-
-    auto &prev = m_terms[term];
-    if (prev) {
-        stageWork(ScoperAbandon, prev);
+    if (restart) {
         scopeId.generate();
     } else {
         scopeId = term->id();
@@ -56,7 +52,9 @@ TermScoper::createScope(TermInstance *term, int fd, int pid)
     info->unitName.insert(0, ABBREV_NAME "-", sizeof(ABBREV_NAME));
     info->unitName.append(".scope", 6);
 
-    stageWork(ScoperCreate, prev = info);
+    Lock lock(this);
+
+    stageWork(ScoperCreate, m_terms[term] = info);
     commitWork();
 }
 

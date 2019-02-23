@@ -138,11 +138,23 @@ void
 TermOrder::removeTerm(TermInstance *term)
 {
     int idx = m_terms.indexOf(term);
+    int n = m_terms.size();
     ServerInstance *server = term->server();
-    TermInstance *replacement = idx ? prevTerm(term) : nextTerm(term);
+    TermInstance *replacement;
 
+    // Probe nearby for a replacement
+    for (int i = 1; i < n; ++i) {
+        replacement = m_terms.value(idx - i);
+        if (replacement && !isHidden(replacement) && replacement->stackCount() == 0)
+            goto found;
+        replacement = m_terms.value(idx + i);
+        if (replacement && !isHidden(replacement) && replacement->stackCount() == 0)
+            goto found;
+    }
+    replacement = idx ? prevTerm(term) : nextTerm(term);
     if (replacement == term)
         replacement = nullptr;
+found:
 
     m_termMap.remove(term->id());
 

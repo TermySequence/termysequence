@@ -390,13 +390,15 @@ ServerConnection::wireServerAnnounce(Tsq::ProtocolUnmarshaler &unm)
     while (unm.remainingLength()) {
         uint32_t len;
         const char *str = unm.parseString(&len);
+        const size_t n = sizeof(TSQT_ATTR_PREFIX) - 1;
 
         if (len == 0)
             break;
-
-        QString key = QString::fromUtf8(str, len);
-        str = unm.parseString(&len);
-        server->setAttribute(key, QString::fromUtf8(str, len));
+        if (len < n || strncmp(str, TSQT_ATTR_PREFIX, n)) {
+            QString key = QString::fromUtf8(str, len);
+            str = unm.parseString(&len);
+            server->setAttribute(key, QString::fromUtf8(str, len));
+        }
     }
 
     if (term) {
@@ -430,13 +432,15 @@ ServerConnection::wireTermAnnounce(Tsq::ProtocolUnmarshaler &unm, bool isTerm)
     while (unm.remainingLength()) {
         uint32_t len;
         const char *str = unm.parseString(&len);
+        const size_t n = sizeof(TSQT_ATTR_PREFIX) - 1;
 
         if (len == 0)
             break;
-
-        QString key = QString::fromUtf8(str, len);
-        str = unm.parseString(&len);
-        attributes[key] = QString::fromUtf8(str, len);
+        if (len < n || strncmp(str, TSQT_ATTR_PREFIX, n)) {
+            QString key = QString::fromUtf8(str, len);
+            str = unm.parseString(&len);
+            attributes[key] = QString::fromUtf8(str, len);
+        }
     }
 
     if (term && term->server()->conn() == nullptr) {

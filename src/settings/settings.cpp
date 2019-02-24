@@ -1657,12 +1657,11 @@ TermSettings::rescanPlugins()
 
     QString userPath(m_dataPath + A("/plugins"));
     QString systemPath(L(DATADIR "/" APP_NAME "/plugins"));
-    QString *paths[] = { &userPath, &systemPath };
+    const QString *paths[] = { &userPath, &systemPath };
+    const int upath = qApp->property(OBJPROP_V8_SYSPLUGINS).toBool();
     QSet<QString> filenames;
 
-    int npaths = 1 + qApp->property(OBJPROP_V8_SYSPLUGINS).toBool();
-
-    for (int i = 0; i < npaths; ++i)
+    for (int i = 0; i <= upath; ++i)
     {
         QDir dir(*paths[i], A("*.mjs"), QDir::Name, QDir::Files|QDir::Readable);
 
@@ -1671,7 +1670,7 @@ TermSettings::rescanPlugins()
 
             if (!filenames.contains(name)) {
                 filenames.insert(name);
-                auto *plugin = new Plugin(i.absoluteFilePath(), name);
+                auto *plugin = new Plugin(i, name);
                 if (plugin->start()) {
                     m_pluginList.append(plugin);
                 } else {

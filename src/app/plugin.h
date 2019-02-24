@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QHash>
 #include <QVector>
+#include <QFileInfo>
 
 class Feature;
 class SemanticFeature;
@@ -24,7 +25,7 @@ class Plugin final: public QObject
 private:
     PersistentContext m_context;
 
-    QString m_path;
+    QFileInfo m_path;
     QString m_name, m_description, m_version;
 
     QHash<QString,PersistentModule> m_modules;
@@ -39,7 +40,7 @@ signals:
     void featureUnloaded(Feature *feature);
 
 public:
-    Plugin(const QString &path, const QString &name);
+    Plugin(const QFileInfo &path, const QString &name);
 
     inline auto context() { return LocalContext::New(i, m_context); }
     inline bool loaded() const { return m_loaded; }

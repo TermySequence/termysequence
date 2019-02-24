@@ -13,9 +13,6 @@
 #include "settings/global.h"
 #include "os/time.h"
 
-#include <QFile>
-#include <QFileInfo>
-#include <QDir>
 #include <cerrno>
 #include <unistd.h>
 #include <fcntl.h>
@@ -221,7 +218,7 @@ cbCloseFile(const FunctionCallbackInfo<Value> &args)
 //
 // Plugin
 //
-Plugin::Plugin(const QString &path, const QString &name) :
+Plugin::Plugin(const QFileInfo &path, const QString &name) :
     m_path(path),
     m_name(name)
 {
@@ -309,7 +306,7 @@ Plugin::start()
 
     // Load
     Local<Module> root;
-    if (!loadModule(m_path, root, true)) {
+    if (!loadModule(m_path.absoluteFilePath(), root, true)) {
         recover(m_name, "compile", trycatch);
         return true;
     }

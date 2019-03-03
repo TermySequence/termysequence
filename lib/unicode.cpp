@@ -5,88 +5,122 @@
 #include "common.h"
 #include "unicode.h"
 
-using namespace std;
+#include <map>
+#include <cstdio>
 
 #include "unicode10impl.hpp"
 
 namespace Tsq
 {
-    UnicodingSpec::UnicodingSpec(const std::string &spec)
+    //
+    // UnicodingSpec
+    //
+    void
+    UnicodingSpec::parse()
     {
         revision = 0;
-        emoji = false;
-        wideambig = false;
+        variant = m_spec.data();
 
-        size_t size = spec.size(), end = spec.find('\x1f');
-        if (end == string::npos)
-            end = size;
+        std::map<std::string_view,const char *> pmap;
+        const char *buf = m_spec.data() + strlen(variant) + 1;
+        const char *end = m_spec.data() + m_spec.size();
 
-        variant = spec.substr(0, end);
-
-        while (end != size) {
-            size_t start = end + 1;
-            end = spec.find('\x1f', start);
-            if (end == string::npos)
-                end = size;
-            if (end - start < 3)
-                continue;
-
-            char c = spec[start++];
-
-            switch (c) {
+        while (buf < end) {
+            switch (*buf) {
             case 'v':
-                revision = atoi(spec.substr(start, end).c_str());
+                revision = atoi(buf + 1);
                 break;
             case '+':
             case '-':
-                if (!spec.compare(start, end - start, TSQ_UNICODE_PARAM_EMOJI))
-                    emoji = (c == '+');
-                else if (!spec.compare(start, end - start, TSQ_UNICODE_PARAM_WIDEAMBIG))
-                    wideambig = (c == '+');
+                pmap[buf + 1] = buf;
+                break;
             }
+            buf += strlen(buf) + 1;
+        }
+
+        m_name = variant;
+        m_name.push_back('\x1f');
+        m_name.push_back('v');
+        m_name.append(std::to_string(revision));
+
+        params = new const char*[pmap.size() + 1]{};
+        int i = 0;
+        for (const auto &elt: pmap) {
+            params[i++] = elt.second;
+
+            m_name.push_back('\x1f');
+            m_name.append(elt.second);
         }
     }
 
-    std::string
-    UnicodingSpec::name() const
+    UnicodingSpec::UnicodingSpec(const std::string &spec) :
+        m_spec(spec)
     {
-        std::string result = variant;
-        result.push_back('\x1f');
-        result.push_back('v');
-        result.append(std::to_string(revision));
+        for (char &c: m_spec)
+            if (c == '\x1f')
+                c = '\0';
+        parse();
+    }
 
-        if (emoji) {
-            result.push_back('\x1f');
-            result.push_back('+');
-            result.append(TSQ_UNICODE_PARAM_EMOJI);
-        }
-        if (wideambig) {
-            result.push_back('\x1f');
-            result.push_back('+');
-            result.append(TSQ_UNICODE_PARAM_WIDEAMBIG);
-        }
+    UnicodingSpec::UnicodingSpec(const UnicodingParams &params) :
+        m_spec(params.variant)
+    {
+        m_spec.push_back('\0');
+        m_spec.push_back('v');
+        m_spec.append(std::to_string(params.revision));
 
-        return result;
+        const char **p = params.params;
+        while (*p) {
+            m_spec.push_back('\0');
+            m_spec.append(*p++);
+        }
+        parse();
+    }
+
+    UnicodingSpec::~UnicodingSpec()
+    {
+        delete [] params;
+    }
+
+    //
+    // Unicoding
+    //
+    Unicoding::~Unicoding()
+    {
+        UnicodingImpl::teardown(this);
     }
 
     Unicoding *
     Unicoding::create(const UnicodingSpec &spec)
     {
-        if (spec.emoji)
-            return new Tsq_Unicode10::Emoji(spec.wideambig);
-        else
-            return new Tsq_Unicode10::Text(spec.wideambig);
+        auto *result = new Unicoding();
+        Tsq_Unicode10::create(UNIPLUGIN_VERSION, &spec, result);
+        return result;
     }
 
     Unicoding *
     Unicoding::create()
     {
-        return new Tsq_Unicode10::Emoji;
+        return create(UnicodingSpec(TSQ_UNICODE_DEFAULT));
     }
 
-    string
+    std::string
     Unicoding::nextEmojiName() const
     {
-        return string();
+        std::string result;
+        char buf[16];
+
+        for (unsigned i = 0, n = nextLen; i < n; ++i) {
+            if (i == 1 && nextSeq[i] == EMOJI_SELECTOR)
+                continue;
+
+            size_t rc = snprintf(buf, sizeof(buf), "%x-", nextSeq[i]);
+            result.append(buf, rc);
+        }
+
+        if (!result.empty())
+            result.pop_back();
+
+        return result;
     }
 }

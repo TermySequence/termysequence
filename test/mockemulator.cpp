@@ -9,11 +9,10 @@
 #include "mux/base/codestring.cpp"
 
 // Implementation
-std::string::iterator
+const char *
 TermEventTransfer::getStrIter(size_t ptr)
 {
-    auto i = m_row.m_str.begin() + ptr;
-    return i;
+    return m_row.m_str.data() + ptr;
 }
 
 void
@@ -31,19 +30,19 @@ TermEventTransfer::setRanges(const uint32_t *data, size_t nmemb)
 }
 
 size_t
-TermEventTransfer::splitChar(std::string::iterator i, unsigned pos, Tsq::Unicoding *wl)
+TermEventTransfer::splitChar(const char *i, unsigned pos, Tsq::Unicoding *wl)
 {
     return m_row.splitChar(i, pos, wl);
 }
 
 void
-TermEventTransfer::removeChar(std::string::iterator i, unsigned pos, Tsq::Unicoding *wl)
+TermEventTransfer::removeChar(const char *i, unsigned pos, Tsq::Unicoding *wl)
 {
     m_row.removeChar(i, pos, wl);
 }
 
 void
-TermEventTransfer::mergeChars(std::string::iterator i, unsigned pos, Tsq::Unicoding *wl)
+TermEventTransfer::mergeChars(const char *i, unsigned pos, Tsq::Unicoding *wl)
 {
     m_row.mergeChars(i, pos, wl);
 }

@@ -330,8 +330,8 @@ TermBuffer::xByPtr(index_t idx, size_t ptr) const
 {
     const CellRow &crow = m_rows[idx & m_capmask];
     column_t x = 0;
-    std::string::const_iterator start, next, end;
-    next = start = crow.str.begin(), end = crow.str.end();
+    const char *start, *next, *end;
+    next = start = crow.str.data(), end = start + crow.str.size();
     auto *unicoding = m_term->unicoding();
 
     while (next - start < ptr && next != end) {
@@ -346,8 +346,8 @@ TermBuffer::xByJavascript(index_t idx, size_t jspos) const
 {
     const CellRow &crow = m_rows[idx & m_capmask];
     size_t curpos = 0;
-    std::string::const_iterator start, next, end;
-    next = start = crow.str.begin(), end = crow.str.end();
+    const char *start, *next, *end;
+    next = start = crow.str.data(), end = start + crow.str.size();
 
     while (curpos < jspos && next != end) {
         codepoint_t val = utf8::unchecked::next(next);

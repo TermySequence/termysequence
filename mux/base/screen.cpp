@@ -398,7 +398,8 @@ TermScreen::writeCell(const CellAttributes &a, codepoint_t c, int width)
     } else {
         m_cursor.rx() += width;
         m_cursor.incPos();
-        width = m_lookup->widthAt(m_row->str().begin() + nextptr, m_row->str().end());
+        const char *base = m_row->str().data();
+        width = m_lookup->widthAt(base + nextptr, base + m_row->str().size());
         flags = 0;
     }
 

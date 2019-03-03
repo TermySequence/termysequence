@@ -49,9 +49,9 @@ private:
     void splitRangeAround(size_t loc, unsigned pos);
     void updateRanges(unsigned pos, const CellAttributes &a);
 
-    size_t splitChar(std::string::const_iterator i, unsigned pos, Tsq::Unicoding *lookup);
-    void removeChar(std::string::const_iterator i, unsigned pos, Tsq::Unicoding *lookup);
-    void mergeChars(std::string::const_iterator i, unsigned pos, Tsq::Unicoding *lookup);
+    size_t splitChar(const char *i, unsigned pos, Tsq::Unicoding *lookup);
+    void removeChar(const char *i, unsigned pos, Tsq::Unicoding *lookup);
+    void mergeChars(const char *i, unsigned pos, Tsq::Unicoding *lookup);
 
 public:
     Tsq::LineFlags flags;

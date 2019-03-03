@@ -41,6 +41,8 @@
     for (range = rangevec.data(), loc = 0; loc < rangevec.size(); \
          loc += RANGE_SIZE, range += RANGE_SIZE)
 
+#define P2I(x) std::string::const_iterator(x)
+
 /*
  * Helpers
  */
@@ -192,7 +194,7 @@ betweenRanges:
 }
 
 size_t
-CellRow::splitChar(std::string::const_iterator i, unsigned pos, Tsq::Unicoding *lookup)
+CellRow::splitChar(const char *i, unsigned pos, Tsq::Unicoding *lookup)
 {
     // Remove character flags
     FOR_RANGES(m_ranges)
@@ -217,12 +219,13 @@ CellRow::splitChar(std::string::const_iterator i, unsigned pos, Tsq::Unicoding *
     }
 
     // Find the end of the cluster
-    std::string::const_iterator k = i;
-    lookup->widthNext(k, m_str.end());
+    const char *base = m_str.data();
+    const char *k = i;
+    lookup->widthNext(k, base + m_str.size());
 
     // Perform the replace
-    size_t retval = i - m_str.begin();
-    m_str.replace(i, k, 2, FILL_BYTE);
+    size_t retval = i - base;
+    m_str.replace(P2I(i), P2I(k), 2, FILL_BYTE);
     ++m_clusters;
 
     // Return the position where replacement happened
@@ -230,14 +233,14 @@ CellRow::splitChar(std::string::const_iterator i, unsigned pos, Tsq::Unicoding *
 }
 
 void
-CellRow::removeChar(std::string::const_iterator i, unsigned pos, Tsq::Unicoding *lookup)
+CellRow::removeChar(const char *i, unsigned pos, Tsq::Unicoding *lookup)
 {
     // Find the end of the cluster
-    std::string::const_iterator k = i;
-    lookup->widthNext(k, m_str.end());
+    const char *k = i;
+    lookup->widthNext(k, m_str.data() + m_str.size());
 
     // Perform the removal
-    m_str.erase(i, k);
+    m_str.erase(P2I(i), P2I(k));
     --m_clusters;
     // Caller must update columns
 
@@ -276,10 +279,11 @@ CellRow::removeChar(std::string::const_iterator i, unsigned pos, Tsq::Unicoding 
 }
 
 void
-CellRow::mergeChars(std::string::const_iterator i, unsigned pos, Tsq::Unicoding *lookup)
+CellRow::mergeChars(const char *i, unsigned pos, Tsq::Unicoding *lookup)
 {
     // Find the next cluster
-    std::string::const_iterator k = i, j = m_str.end();
+    const char *k = i;
+    const char *j = m_str.data() + m_str.size();
     lookup->widthNext(k, j);
 
     // Case 1: End of string
@@ -306,7 +310,7 @@ CellRow::mergeChars(std::string::const_iterator i, unsigned pos, Tsq::Unicoding 
             }
         }
 
-        m_str.replace(i, k, 1, FILL_BYTE);
+        m_str.replace(P2I(i), P2I(k), 1, FILL_BYTE);
     }
 }
 
@@ -316,7 +320,8 @@ CellRow::mergeChars(std::string::const_iterator i, unsigned pos, Tsq::Unicoding 
 void
 CellRow::updateCursor(Cursor &cursor, Tsq::Unicoding *lookup) const
 {
-    std::string::const_iterator i = m_str.begin(), j = m_str.end();
+    const char *i = m_str.data();
+    const char *j = i + m_str.size();
 
     cursor.reset();
     int x = cursor.x();
@@ -341,7 +346,7 @@ CellRow::updateCursor(Cursor &cursor, Tsq::Unicoding *lookup) const
     pos += x;
 out:
     cursor.rpos() = pos;
-    cursor.rptr() = i - m_str.begin();
+    cursor.rptr() = i - m_str.data();
 }
 
 void
@@ -416,7 +421,7 @@ CellRow::insert(int x, Tsq::Unicoding *lookup)
 
     if (cursor.flags() & Tsq::OnDoubleRight) {
         // Break up a double-width cluster (unaligned)
-        size_t ptr = splitChar(i, cursor.pos(), lookup);
+        size_t ptr = splitChar(&*i, cursor.pos(), lookup);
         // Move the cursor and iterator to the second space
         i = m_str.begin() + ptr + 1;
         ++cursor.rpos();
@@ -461,7 +466,7 @@ CellRow::remove(int x, Tsq::Unicoding *lookup)
 
     if (cursor.flags() & (Tsq::OnDoubleLeft|Tsq::OnDoubleRight)) {
         // Break up a double-width cluster
-        size_t ptr = splitChar(i, cursor.pos(), lookup);
+        size_t ptr = splitChar(&*i, cursor.pos(), lookup);
         i = m_str.begin() + ptr;
 
         if (cursor.flags() & Tsq::OnDoubleRight) {
@@ -472,7 +477,7 @@ CellRow::remove(int x, Tsq::Unicoding *lookup)
     }
 
     // Perform the removal
-    removeChar(i, cursor.pos(), lookup);
+    removeChar(&*i, cursor.pos(), lookup);
     --m_columns;
 }
 
@@ -481,7 +486,7 @@ CellRow::replace(Cursor &cursor, const CellAttributes &a, codepoint_t c,
                  int width, Tsq::Unicoding *lookup)
 {
     // Get the starting pointer
-    std::string::const_iterator i = m_str.begin() + cursor.ptr();
+    const char *i = m_str.data() + cursor.ptr();
     int oldwidth = 1;
 
     // Merge and split clusters for double-width operations
@@ -491,7 +496,7 @@ CellRow::replace(Cursor &cursor, const CellAttributes &a, codepoint_t c,
         // Move the cursor and iterator to the second space
         ++cursor.rpos();
         ++cursor.rptr();
-        i = m_str.begin() + cursor.ptr();
+        i = m_str.data() + cursor.ptr();
     } else if (cursor.flags() & Tsq::OnDoubleLeft) {
         oldwidth = 2;
     }
@@ -505,17 +510,17 @@ CellRow::replace(Cursor &cursor, const CellAttributes &a, codepoint_t c,
             mergeChars(i, cursor.pos(), lookup);
         }
         // Restore iterator
-        i = m_str.begin() + cursor.ptr();
+        i = m_str.data() + cursor.ptr();
     }
 
     // Locate the ending pointer
-    std::string::const_iterator k = i, j = m_str.end();
-    lookup->widthNext(k, j);
+    const char *k = i;
+    lookup->widthNext(k, m_str.data() + m_str.size());
 
     // Perform the replace
     char buf[8];
     size_t n = utf8::unchecked::append(c, buf) - buf;
-    m_str.replace(i, k, buf, n);
+    m_str.replace(P2I(i), P2I(k), buf, n);
 
     // Adjust ranges
     updateRanges(cursor.pos(), a);
@@ -539,7 +544,7 @@ CellRow::resize(int x, Tsq::Unicoding *lookup)
 
     if (cursor.flags() & Tsq::OnDoubleRight) {
         // Break up a double-width cluster
-        startptr = splitChar(m_str.begin() + startptr, startpos, lookup);
+        startptr = splitChar(m_str.data() + startptr, startpos, lookup);
         // Move the cursor and iterator to the second space
         ++startptr;
         ++startpos;
@@ -582,7 +587,7 @@ CellRow::erase(int startx, int endx, Tsq::Unicoding *lookup)
 
     if (cursor.flags() & Tsq::OnDoubleRight) {
         // Break up a double-width cluster
-        startptr = splitChar(m_str.begin() + startptr, startpos, lookup);
+        startptr = splitChar(m_str.data() + startptr, startpos, lookup);
         // Move the cursor and iterator to the second space
         ++startptr;
         ++startpos;
@@ -597,7 +602,7 @@ CellRow::erase(int startx, int endx, Tsq::Unicoding *lookup)
 
     if (cursor.flags() & Tsq::OnDoubleRight) {
         // Break up a double-width cluster
-        size_t ptr = splitChar(j, endpos, lookup);
+        size_t ptr = splitChar(&*j, endpos, lookup);
         // Move the cursor and iterator to the second space
         j = m_str.begin() + ptr + 1;
         ++endpos;
@@ -683,7 +688,9 @@ CellRow::selectiveErase(int startx, Tsq::Unicoding *lookup)
 std::string
 CellRow::substr(unsigned startPos, unsigned endPos, Tsq::Unicoding *lookup) const
 {
-    std::string::const_iterator i = m_str.begin(), j = m_str.end();
+    const char *base = m_str.data();
+    const char *i = base;
+    const char *j = base + m_str.size();
     unsigned pos = 0;
 
     while (i != j && pos < startPos) {
@@ -691,20 +698,22 @@ CellRow::substr(unsigned startPos, unsigned endPos, Tsq::Unicoding *lookup) cons
         ++pos;
     }
 
-    std::string::const_iterator k = i;
+    const char *k = i;
 
     while (k != j && pos < endPos) {
         lookup->widthNext(k, j);
         ++pos;
     }
 
-    return std::string(i, k);
+    return std::string(P2I(i), P2I(k));
 }
 
 std::string
 CellRow::substr(unsigned startPos, Tsq::Unicoding *lookup) const
 {
-    std::string::const_iterator i = m_str.begin(), j = m_str.end();
+    const char *base = m_str.data();
+    const char *i = base;
+    const char *j = base + m_str.size();
     unsigned pos = 0;
 
     while (i != j && pos < startPos) {
@@ -712,5 +721,5 @@ CellRow::substr(unsigned startPos, Tsq::Unicoding *lookup) const
         ++pos;
     }
 
-    return std::string(i, j);
+    return std::string(P2I(i), P2I(j));
 }

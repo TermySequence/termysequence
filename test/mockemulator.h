@@ -14,12 +14,12 @@ struct TermEventTransfer {
 
     inline const auto& ranges() const { return m_row.m_ranges; }
     inline auto clusters() { return m_row.m_clusters; }
-    std::string::iterator getStrIter(size_t ptr);
+    const char* getStrIter(size_t ptr);
 
     void setStr(const char *str, unsigned clusters, int width);
     void setRanges(const uint32_t *data, size_t nmemb);
 
-    size_t splitChar(std::string::iterator i, unsigned pos, Tsq::Unicoding *wl);
-    void removeChar(std::string::iterator i, unsigned pos, Tsq::Unicoding *wl);
-    void mergeChars(std::string::iterator i, unsigned pos, Tsq::Unicoding *wl);
+    size_t splitChar(const char *i, unsigned pos, Tsq::Unicoding *wl);
+    void removeChar(const char *i, unsigned pos, Tsq::Unicoding *wl);
+    void mergeChars(const char *i, unsigned pos, Tsq::Unicoding *wl);
 };

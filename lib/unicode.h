@@ -4,10 +4,7 @@
 
 #pragma once
 
-#include "types.h"
-#include "flags.h"
-
-#include <vector>
+#include "uniplugin.h"
 
 // Unicode variants
 #define TSQ_UNICODE_VARIANT_100             "Unicode 10.0"
@@ -24,30 +21,30 @@
 
 namespace Tsq
 {
-    struct UnicodingSpec
+    class UnicodingSpec: public UnicodingParams
     {
-        std::string variant;
-        int revision;
-        bool emoji;
-        bool wideambig;
+    private:
+        std::string m_spec;
+        std::string m_name;
 
-        UnicodingSpec() = default;
-        UnicodingSpec(const std::string &name);
-        std::string name() const;
+        void parse();
 
-        bool operator==(const UnicodingSpec &o) const;
-        bool operator!=(const UnicodingSpec &o) const;
+    public:
+        UnicodingSpec(const std::string &spec);
+        UnicodingSpec(const UnicodingParams &params);
+        ~UnicodingSpec();
+
+        inline const auto &name() const { return m_name; }
+
+        inline bool operator==(const UnicodingSpec &o) const
+            { return m_name == o.m_name; }
+        inline bool operator!=(const UnicodingSpec &o) const
+            { return m_name != o.m_name; }
     };
 
-    class Unicoding
+    class Unicoding: private UnicodingImpl
     {
-    protected:
-        std::vector<codepoint_t> m_seq;
-
-        CellFlags m_flags = 0;
-        CellFlags m_nextFlags;
-        std::vector<codepoint_t> m_nextSeq;
-
+    private:
         Unicoding() = default;
 
     public:
@@ -55,42 +52,32 @@ namespace Tsq
         static Unicoding* create();
         static Unicoding* create(const UnicodingSpec &spec);
 
-        virtual UnicodingSpec spec() const = 0;
+        inline UnicodingSpec spec() const { return params; }
 
     public:
-        virtual ~Unicoding() = default;
+        ~Unicoding();
 
-        inline const auto& seq() const { return m_seq; }
+        // Operations
+        inline int widthAt(const char *pos, const char *end) const
+            { return UnicodingImpl::widthAt(this, pos, end); }
+        inline int widthNext(const char *&posret, const char *end)
+            { return UnicodingImpl::widthNext(this, &posret, end); }
+        inline void next(const char *&posret, const char *end)
+            { UnicodingImpl::next(this, &posret, end); }
+        inline int widthCategoryOf(codepoint_t c, CellFlags &flagsor)
+            { return UnicodingImpl::widthCategoryOf(this, c, &flagsor); }
 
-        virtual int widthAt(std::string::const_iterator pos,
-                            std::string::const_iterator end) const = 0;
-        virtual int widthNext(std::string::const_iterator &posret,
-                              std::string::const_iterator end) = 0;
-        virtual int widthCategoryOf(codepoint_t c, CellFlags &flagsor) = 0;
-
+        inline void getSeq(const codepoint_t *&i, const codepoint_t *&j) {
+            i = seq;
+            j = seq + len;
+        }
         inline void restart(codepoint_t c) {
-            m_flags = 0;
-            m_seq.assign(1, c);
+            seq[0] = c;
+            len = 1;
+            flags = 0;
         }
 
-        virtual void next(std::string::const_iterator &posret,
-                          std::string::const_iterator end) = 0;
-
-        inline CellFlags nextFlags() const { return m_nextFlags; }
-        virtual std::string nextEmojiName() const;
+        inline CellFlags nextFlags() const { return UnicodingImpl::nextFlags; }
+        std::string nextEmojiName() const;
     };
-
-    inline bool
-    UnicodingSpec::operator==(const UnicodingSpec &o) const
-    {
-        return variant == o.variant && revision == o.revision &&
-            emoji == o.emoji && wideambig == o.wideambig;
-    }
-
-    inline bool
-    UnicodingSpec::operator!=(const UnicodingSpec &o) const
-    {
-        return variant != o.variant || revision != o.revision ||
-            emoji != o.emoji || wideambig != o.wideambig;
-    }
 }

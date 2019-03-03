@@ -16,7 +16,7 @@ namespace utf8 {
     extern template uint32_t peek_next(const char *ptr, const char *end);
 
     namespace unchecked {
-        extern template uint32_t peek_next(std::string::const_iterator ptr);
-        extern template uint32_t next(std::string::const_iterator &ptr);
+        extern template uint32_t peek_next(const char *ptr);
+        extern template uint32_t next(const char *&ptr);
     }
 }

@@ -120,8 +120,8 @@ posByJavascript(TermBuffers *buffers, size_t row, size_t jspos)
 {
     const CellRow &crow = buffers->safeRow(row);
     size_t curpos = 0;
-    std::string::const_iterator start, next, end;
-    next = start = crow.str.begin(), end = crow.str.end();
+    const char *start, *next, *end;
+    next = start = crow.str.data(), end = start + crow.str.size();
 
     while (curpos < jspos && next != end) {
         curpos += 1 + (utf8::unchecked::next(next) > 0xffff);
@@ -141,8 +141,8 @@ static size_t
 javascriptByPos(TermBuffers *buffers, size_t row, column_t pos)
 {
     const CellRow &crow = buffers->safeRow(row);
-    std::string::const_iterator start, next, end;
-    next = start = crow.str.begin(), end = crow.str.end();
+    const char *start, *next, *end;
+    next = start = crow.str.data(), end = start + crow.str.size();
     auto *unicoding = buffers->term()->unicoding();
 
     for (column_t i = 0; i < pos && next != end; ++i) {
@@ -160,8 +160,8 @@ javascriptByPos(TermBuffers *buffers, size_t row, column_t pos)
 static size_t
 ptrByPos(TermBuffers *buffers, const std::string &str, column_t pos)
 {
-    std::string::const_iterator start, next, end;
-    next = start = str.begin(), end = str.end();
+    const char *start, *next, *end;
+    next = start = str.data(), end = start + str.size();
     auto *unicoding = buffers->term()->unicoding();
 
     for (column_t i = 0; i < pos && next != end; ++i) {

@@ -16,13 +16,13 @@ namespace Tsq
     protected:
         Unicoding *m_coding;
         const std::string &m_str;
-        std::string::const_iterator m_cur, m_next, m_end;
+        const char *m_cur, *m_next, *m_end;
 
     public:
         GraphemeWalk(Unicoding *coding, const std::string &str);
 
-        inline size_t start() const { return m_cur - m_str.begin(); }
-        inline size_t end() const { return m_next - m_str.begin(); }
+        inline size_t start() const { return m_cur - m_str.data(); }
+        inline size_t end() const { return m_next - m_str.data(); }
 
         inline bool finished() const { return m_next == m_end; }
 

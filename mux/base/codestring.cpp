@@ -22,7 +22,7 @@ Codestring::at(unsigned pos) const
 {
     std::string::const_iterator i = m_str.begin();
     utf8::unchecked::advance(i, pos);
-    return utf8::unchecked::peek_next(i);
+    return utf8::unchecked::peek_next(&*i);
 }
 
 int

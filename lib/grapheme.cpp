@@ -14,8 +14,8 @@ namespace Tsq
     GraphemeWalk::GraphemeWalk(Unicoding *coding, const std::string &str) :
         m_coding(coding),
         m_str(str),
-        m_next(str.begin()),
-        m_end(str.end())
+        m_next(str.data()),
+        m_end(m_next + str.size())
     {
     }
 
@@ -57,7 +57,7 @@ namespace Tsq
 
         if (!flagsret) {
             while (m_next != m_end) {
-                std::string::const_iterator save = m_next;
+                const char *save = m_next;
                 width = m_coding->widthNext(m_next, m_end);
                 auto flags = m_coding->nextFlags() | (width == 2 ? DblWidthChar : 0);
                 if (flags) {
@@ -93,7 +93,7 @@ namespace Tsq
 
         if (!(flagsret & Tsq::EmojiChar)) {
             while (m_next != m_end) {
-                std::string::const_iterator save = m_next;
+                const char *save = m_next;
                 width = m_coding->widthNext(m_next, m_end);
                 auto flags = m_coding->nextFlags() | (width == 2 ? DblWidthChar : 0);
                 if (flags != flagsret) {
@@ -128,7 +128,7 @@ namespace Tsq
 
         if (!flagsret) {
             while (m_next != m_end) {
-                std::string::const_iterator save = m_next;
+                const char *save = m_next;
                 m_coding->widthNext(m_next, m_end);
                 if (m_coding->nextFlags()) {
                     m_next = save;

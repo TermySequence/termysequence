@@ -427,8 +427,8 @@ XTermEmulator::printable(const Codepoint c)
         else
             m_screen->cursorMoveX(true, -1, true);
 
-        const auto& seq = m_unicoding->seq();
-        auto i = seq.begin(), j = seq.end();
+        const Codepoint *i, *j;
+        m_unicoding->getSeq(i, j);
         printableCell(a, *i, 2);
         while (++i != j)
             m_screen->combineCell(a, *i);

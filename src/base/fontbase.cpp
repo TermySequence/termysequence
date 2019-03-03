@@ -695,9 +695,9 @@ DisplayIterator::decomposeStringCells(DisplayCell &dc, unsigned maxCells, int *s
         dc.point.rx() -= m_cellSize.width();
     }
 
-    std::string::const_iterator cur, next, end;
+    const char *cur, *next, *end;
     unsigned usedCells = 0;
-    next = dc.substr.begin(), end = dc.substr.end();
+    next = dc.substr.data(), end = next + dc.substr.size();
     auto *unicoding = m_term->unicoding();
 
     while (usedCells < maxCells && next != end) {
@@ -707,7 +707,7 @@ DisplayIterator::decomposeStringCells(DisplayCell &dc, unsigned maxCells, int *s
 
     qreal ulsave = dc.point.x();
 
-    if (decomposeStringCells(dc, next - dc.substr.begin()))
+    if (decomposeStringCells(dc, next - dc.substr.data()))
     {
         // Insert a separate cell of spaces for underlining
         DisplayCell ul(dc);
@@ -723,10 +723,10 @@ DisplayIterator::decomposeStringCells(DisplayCell &dc, unsigned maxCells, int *s
     size_t endptr;
 
     if (usedCells > maxCells) {
-        endptr = cur - dc.substr.begin();
+        endptr = cur - dc.substr.data();
         *state = 1;
     } else {
-        endptr = next - dc.substr.begin();
+        endptr = next - dc.substr.data();
         *state = 0;
     }
 

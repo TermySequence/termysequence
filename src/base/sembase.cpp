@@ -379,7 +379,7 @@ static inline unsigned
 javascriptSize(const std::string &str)
 {
     unsigned pos = 0;
-    std::string::const_iterator next = str.begin(), end = str.end();
+    const char *next = str.data(), *end = next + str.size();
 
     while (next != end) {
         codepoint_t val = utf8::unchecked::next(next);
@@ -550,7 +550,7 @@ unsigned
 SemanticParser::residualPtr(const CellRow &row) const
 {
     auto *unicoding = m_buffer->term()->unicoding();
-    auto i = row.str.begin(), j = row.str.end();
+    const char *i = row.str.data(), *j = i + row.str.size();
     column_t pos = 0;
 
     while (i != j && pos < m_region->endCol) {
@@ -558,7 +558,7 @@ SemanticParser::residualPtr(const CellRow &row) const
         ++pos;
     }
 
-    return i - row.str.begin();
+    return i - row.str.data();
 }
 
 bool

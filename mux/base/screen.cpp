@@ -348,7 +348,7 @@ TermScreen::cursorAdvance(unsigned dx)
 void
 TermScreen::combineCell(const CellAttributes &a, codepoint_t c)
 {
-    if (m_cursor.subpos() & (MAX_COMBINING_CHARS - 1))
+    if (likely(m_cursor.subpos() < MAX_CLUSTER_SIZE))
     {
         CellRow &r = m_buffer->singleRow(m_cursor.y() + m_offset);
         // updates cursor

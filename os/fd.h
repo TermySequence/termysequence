@@ -48,7 +48,7 @@ extern int
 osOpenFile(const char *name, size_t *sizeret, uint32_t *moderet);
 
 extern int
-osOpenDir(const char *path, DIR **dirret);
+osOpenDir(const char *path, DIR **dirret, bool blocking = false);
 
 extern int
 osStatFile(const char *name, FileInfo *info);

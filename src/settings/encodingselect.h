@@ -25,10 +25,10 @@ public:
 class EncodingSelectFactory final: public StringListWidgetFactory
 {
 private:
-    const ChoiceDef *m_choices;
+    mutable ChoiceDef *m_choices = nullptr;
 
 public:
-    EncodingSelectFactory(const ChoiceDef *choices);
+    ~EncodingSelectFactory();
 
     QWidget* createWidget(const SettingDef *def, SettingsBase *settings) const;
 };

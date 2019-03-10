@@ -4,6 +4,7 @@
 
 #include "common.h"
 #include "encodingselect.h"
+#include "lib/unicode.h"
 
 #include <QComboBox>
 
@@ -24,21 +25,33 @@ EncodingSelect::handleIndexChanged(int index)
 void
 EncodingSelect::handleSettingChanged(const QVariant &value)
 {
-    QString front = value.toStringList().front();
-    for (int i = 0; i < m_combo->count(); ++i)
-        if (m_combo->itemText(i) == front) {
-            m_combo->setCurrentIndex(i);
-            break;
-        }
+    int i = m_combo->findText(value.toStringList().value(0));
+    m_combo->setCurrentIndex(i >= 0 ? i : 0);
 }
 
-EncodingSelectFactory::EncodingSelectFactory(const ChoiceDef *choices) :
-    m_choices(choices)
+EncodingSelectFactory::~EncodingSelectFactory()
 {
+    delete [] m_choices;
 }
 
 QWidget *
 EncodingSelectFactory::createWidget(const SettingDef *def, SettingsBase *settings) const
 {
+    if (!m_choices) {
+        size_t n = 1;
+        for (const auto &i: Tsq::Unicoding::plugins())
+            for (auto ptr = i->variants; ptr->variant; ++ptr)
+                ++n;
+
+        m_choices = new ChoiceDef[n]{};
+
+        n = 0;
+        for (const auto &i: Tsq::Unicoding::plugins())
+            for (auto ptr = i->variants; ptr->variant; ++ptr) {
+                m_choices[n].description = ptr->variant;
+                m_choices[n].value = QString(ptr->variant);
+                ++n;
+            }
+    }
     return new EncodingSelect(def, settings, m_choices);
 }

@@ -6,13 +6,13 @@
 
 #include "uniplugin.h"
 
-// Unicode variants
+#include <memory>
+#include <vector>
+#include <map>
+
+// Compiled-in variants
 #define TSQ_UNICODE_VARIANT_100             "Unicode 10.0"
 #define TSQ_UNICODE_REVISION_100            1
-
-// Encoding boolean parameters (prefixed with + or -)
-#define TSQ_UNICODE_PARAM_EMOJI             "emoji"
-#define TSQ_UNICODE_PARAM_WIDEAMBIG         "wideambig"
 
 // Recommended default encoding string
 // Encoding string consists of a variant name followed by optional version and
@@ -21,8 +21,13 @@
 
 namespace Tsq
 {
+    //
+    // UnicodingSpec
+    //
     class UnicodingSpec: public UnicodingParams
     {
+        friend class Unicoding;
+
     private:
         std::string m_spec;
         std::string m_name;
@@ -34,28 +39,38 @@ namespace Tsq
         UnicodingSpec(const UnicodingParams &params);
         ~UnicodingSpec();
 
-        inline const auto &name() const { return m_name; }
-
         inline bool operator==(const UnicodingSpec &o) const
             { return m_name == o.m_name; }
         inline bool operator!=(const UnicodingSpec &o) const
             { return m_name != o.m_name; }
     };
 
+    //
+    // Unicoding
+    //
     class Unicoding: private UnicodingImpl
     {
     private:
         Unicoding() = default;
+
+    private:
+        static std::vector<std::unique_ptr<UnicodingInfo>> m_plugins;
+        static std::map<std::string_view,UnicodingCreateFunc> m_variants;
 
     public:
         // Factory method
         static Unicoding* create();
         static Unicoding* create(const UnicodingSpec &spec);
 
-        inline UnicodingSpec spec() const { return params; }
+        static void registerPlugin(UnicodingInitFunc func);
+
+        inline static const auto& plugins() { return m_plugins; }
 
     public:
         ~Unicoding();
+
+        inline UnicodingSpec spec() const { return params; }
+        inline std::string name() const { return spec().m_name; }
 
         // Operations
         inline int widthAt(const char *pos, const char *end) const

@@ -15,6 +15,7 @@
 #include "os/conn.h"
 #include "os/fd.h"
 #include "os/limits.h"
+#include "os/plugins.h"
 #include "os/attr.h"
 
 #include <QApplication>
@@ -148,6 +149,7 @@ main(int argc, char **argv)
     osInitMonotime();
     osSetupClientSignalHandlers();
     osAdjustLimits();
+    osLoadPlugins();
 
     Q_INIT_RESOURCE(resource);
     qRegisterMetaType<AttributeMap>("AttributeMap");

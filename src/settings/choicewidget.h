@@ -13,7 +13,7 @@ QT_END_NAMESPACE
 struct ChoiceDef
 {
     const char *description;
-    const QVariant value;
+    QVariant value;
     const char *icon;
 };
 

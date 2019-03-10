@@ -61,7 +61,7 @@ TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
     m_attributes[Tsq::attr_STARTED] = std::to_string(osBasetime(&m_baseTime));
     m_attributes[Tsq::attr_SESSION_COLS] = std::to_string(size.width());
     m_attributes[Tsq::attr_SESSION_ROWS] = std::to_string(size.height());
-    m_attributes[Tsq::attr_ENCODING] = params->unicoding->spec().name();
+    m_attributes[Tsq::attr_ENCODING] = params->unicoding->name();
 }
 
 TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,

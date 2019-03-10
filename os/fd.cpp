@@ -46,9 +46,10 @@ err:
 }
 
 int
-osOpenDir(const char *path, DIR **dirret)
+osOpenDir(const char *path, DIR **dirret, bool blocking)
 {
-    int fd = open(path, O_DIRECTORY|O_RDONLY|O_NONBLOCK|O_CLOEXEC);
+    int flag = blocking ? 0 : O_NONBLOCK;
+    int fd = open(path, O_DIRECTORY|O_RDONLY|O_CLOEXEC|flag);
     if (fd < 0)
         return -1;
 

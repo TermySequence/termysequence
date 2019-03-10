@@ -82,11 +82,6 @@ static const ChoiceDef s_exitEffectArg[] = {
     { NULL }
 };
 
-static const ChoiceDef s_unicodeVariant[] = {
-    { TSQ_UNICODE_VARIANT_100, TSQ_UNICODE_VARIANT_100 },
-    { NULL }
-};
-
 static const SettingDef s_profileDefs[] = {
     { "Input/Keymap", "keymapName", QVariant::String,
       TN("settings-category", "Input"),
@@ -320,7 +315,7 @@ static const SettingDef s_profileDefs[] = {
     { TSQ_SETTING_ENCODING, "unicoding", QVariant::StringList,
       TN("settings-category", "Encoding"),
       TN("settings", "Unicode variant"),
-      new EncodingSelectFactory(s_unicodeVariant)
+      new EncodingSelectFactory
     },
     { "Encoding/UseEmoji", NULL, QVariant::Invalid,
       TN("settings-category", "Encoding"),

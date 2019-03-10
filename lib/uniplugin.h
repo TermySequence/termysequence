@@ -13,6 +13,12 @@
 #define UNIPLUGIN_VERSION 1
 
 //
+// Encoding boolean parameters (prefixed with + or -)
+//
+#define TSQ_UNICODE_PARAM_EMOJI             "emoji"
+#define TSQ_UNICODE_PARAM_WIDEAMBIG         "wideambig"
+
+//
 // Handy constants
 //
 #define TEXT_SELECTOR   0xFE0E
@@ -31,7 +37,7 @@ struct UnicodingParams {
 };
 
 //
-// Allocate and return this from the create function
+// State tracker and interface object for an instance of a variant
 //
 struct UnicodingImpl {
     int32_t version;
@@ -44,10 +50,10 @@ struct UnicodingImpl {
     uint32_t nextLen;
     Tsq::CellFlags nextFlags;
 
-    // Effective parameters for this instance
-    UnicodingParams params;
     // Private storage for implementation
     void *privdata;
+    // Effective parameters for this instance
+    UnicodingParams params;
 
     // Free the structure and all its allocated resources
     void (*teardown)(UnicodingImpl *thiz);
@@ -60,10 +66,30 @@ struct UnicodingImpl {
 };
 
 //
-// Plugin exports:
-// Export as "variants" a NULL-terminated array of supported variant names
-// Export as "create" a function of this type
+// Plugin description
 //
-typedef int32_t (*CreateFunc)(int32_t version, const UnicodingParams *params,
-                              UnicodingImpl *impl);
+struct UnicodingVariant {
+    const char *variant;
+    int32_t revision;
+};
+
+struct UnicodingInfo {
+    int32_t version;
+    const UnicodingVariant *variants;
+    const char **params;
+    const char *defaultName;
+    int32_t (*create)(int32_t version, const UnicodingParams *params, UnicodingImpl *impl);
+};
+
+//
+// Plugin exports
+//
+#define UNIPLUGIN_EXPORT_INIT "uniplugin_init"
+
+extern int32_t
+uniplugin_init(int32_t version, UnicodingInfo *info);
+
+typedef typeof(uniplugin_init) *UnicodingInitFunc;
+typedef typeof(UnicodingInfo::create) UnicodingCreateFunc;
+
 }

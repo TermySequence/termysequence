@@ -11,6 +11,7 @@
 #include "os/conn.h"
 #include "os/process.h"
 #include "os/logging.h"
+#include "os/plugins.h"
 #include "os/git.h"
 #include "lib/enums.h"
 #include "lib/exitcode.h"
@@ -30,12 +31,13 @@ static char s_pidpath[SOCKET_PATHLEN];
 static int s_listenfd = 3; // SD_LISTEN_FDS_START
 
 static inline void
-loadLibgit2()
+loadPlugins()
 {
 #if USE_LIBGIT2
     if (g_args->git() && !osLoadLibgit2())
         g_args->disableGit();
 #endif
+    osLoadPlugins();
 }
 
 static void
@@ -51,7 +53,7 @@ runStandalone()
     int rc = 1;
     unsigned flavor = Tsq::FlavorStandalone;
     osCreateRuntimeDir(g_args->rundir(), s_udspath);
-    loadLibgit2();
+    loadPlugins();
     scrubEnvironment();
 
     try {
@@ -72,7 +74,7 @@ runListener(int initialrd, int initialwd)
     int rc = 1;
     unsigned flavor = Tsq::FlavorNormal + g_args->activated();
     osCreatePidFile(s_pidpath);
-    loadLibgit2();
+    loadPlugins();
 
     if (g_args->defaultTranslator()->path.empty())
         LOGDBG("Translator: Using compiled-in strings\n");

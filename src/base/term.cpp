@@ -659,27 +659,25 @@ TermInstance::handleSettingChanged(const char *property)
 }
 
 void
-TermInstance::handleEncoding(const std::string &specStr)
+TermInstance::handleEncoding(const std::string &theirName)
 {
-    Tsq::UnicodingSpec spec(specStr);
-    if (spec == m_unicoding->spec())
+    if (theirName == m_unicoding->name())
         return;
 
-    auto *unicoding = Tsq::Unicoding::create(spec);
+    auto *unicoding = Tsq::Unicoding::create(theirName);
     m_unicoding.reset(unicoding);
 
-    if (!m_profile->encodingWarn())
-        return;
+    if (m_profile->encodingWarn()) {
+        auto ourName = unicoding->name();
+        if (ourName != theirName) {
+            QString theirs = QString::fromStdString(theirName);
+            theirs.replace('\x1f', ' ');
+            QString ours = QString::fromStdString(ourName);
+            ours.replace('\x1f', ' ');
 
-    auto ourStr = unicoding->spec().name();
-    if (ourStr != specStr) {
-        QString theirs = QString::fromStdString(specStr);
-        theirs.replace('\x1f', ' ');
-        QString ours = QString::fromStdString(ourStr);
-        ours.replace('\x1f', ' ');
-
-        qCWarning(lcSettings) << "Warning: unsupported encoding" << theirs
-                              << "(closest match is" << ours << ")";
+            qCWarning(lcSettings) << "Warning: unsupported encoding" << theirs
+                                  << "(closest match is" << ours << ")";
+        }
     }
 }
 

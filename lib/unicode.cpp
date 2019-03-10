@@ -8,8 +8,6 @@
 #include <map>
 #include <cstdio>
 
-#include "unicode10impl.hpp"
-
 namespace Tsq
 {
     //
@@ -33,6 +31,9 @@ namespace Tsq
             case '+':
             case '-':
                 pmap[buf + 1] = buf;
+                break;
+            default:
+                pmap[buf] = buf;
                 break;
             }
             buf += strlen(buf) + 1;
@@ -90,18 +91,41 @@ namespace Tsq
         UnicodingImpl::teardown(this);
     }
 
-    Unicoding *
-    Unicoding::create(const UnicodingSpec &spec)
-    {
-        auto *result = new Unicoding();
-        Tsq_Unicode10::create(UNIPLUGIN_VERSION, &spec, result);
-        return result;
-    }
+    std::vector<std::unique_ptr<UnicodingInfo>> Unicoding::m_plugins;
+    std::map<std::string_view,UnicodingCreateFunc> Unicoding::m_variants;
 
     Unicoding *
     Unicoding::create()
     {
-        return create(UnicodingSpec(TSQ_UNICODE_DEFAULT));
+        auto *result = new Unicoding();
+        UnicodingSpec spec(m_plugins[0]->defaultName);
+        m_plugins[0]->create(UNIPLUGIN_VERSION, &spec, result);
+        return result;
+    }
+
+    Unicoding *
+    Unicoding::create(const UnicodingSpec &spec)
+    {
+        const auto i = m_variants.find(spec.variant);
+        if (i != m_variants.cend()) {
+            auto *result = new Unicoding();
+            if ((*i->second)(UNIPLUGIN_VERSION, &spec, result) == 0)
+                return result;
+            else
+                delete result;
+        }
+        return create();
+    }
+
+    void
+    Unicoding::registerPlugin(UnicodingInitFunc func)
+    {
+        auto info = std::make_unique<UnicodingInfo>();
+        if ((*func)(UNIPLUGIN_VERSION, info.get()) == 0) {
+            for (const auto *i = info->variants; i->variant; ++i)
+                m_variants.emplace(i->variant, info->create);
+            m_plugins.emplace_back(std::move(info));
+        }
     }
 
     std::string

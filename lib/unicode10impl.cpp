@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-2.0-only
 
-// Included into unicode.cpp
+#include "common.h"
+#include "unicode.h"
 #include "uniset.h"
 #include "utf8.h"
 #include "config.h"
 
-namespace Tsq_Unicode10 {
 #include "unicode10tab.hpp"
 using namespace Tsq;
 
@@ -291,7 +291,7 @@ hasParam(const UnicodingParams *params, const char *param)
     return false;
 }
 
-int32_t
+static int32_t
 create(int32_t, const UnicodingParams *params, UnicodingImpl *m)
 {
     m->version = UNIPLUGIN_VERSION;
@@ -327,4 +327,24 @@ create(int32_t, const UnicodingParams *params, UnicodingImpl *m)
     m->teardown = teardown;
     return 0;
 }
+
+static const UnicodingVariant s_variants[] = {
+    { TSQ_UNICODE_VARIANT_100, TSQ_UNICODE_REVISION_100 },
+    { NULL }
+};
+static const char *s_params[] = {
+    "+" TSQ_UNICODE_PARAM_EMOJI,
+    "+" TSQ_UNICODE_PARAM_WIDEAMBIG,
+    NULL
+};
+
+extern "C" int32_t
+uniplugin_init(int32_t, UnicodingInfo *info)
+{
+    info->version = UNIPLUGIN_VERSION;
+    info->variants = s_variants;
+    info->params = s_params;
+    info->defaultName = TSQ_UNICODE_DEFAULT;
+    info->create = create;
+    return 0;
 }

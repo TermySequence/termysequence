@@ -35,12 +35,13 @@ static int32_t
 emoji_widthNext(UnicodingImpl *m, const char **i, const char *j)
 {
     codepoint_t c = utf8::unchecked::next(*i);
+    m->nextSeq[0] = c;
+    m->nextLen = 1;
+
     int width = 1 + ((const Uniset *)m->privdata)->has(c);
 
     if (s_emoji_all.contains(c))
     {
-        m->nextSeq[0] = c;
-        m->nextLen = 1;
         m->nextFlags = s_emoji_pres.has(c) ? EmojiChar : 0;
 
         while (*i != j) {
@@ -83,63 +84,13 @@ emoji_widthNext(UnicodingImpl *m, const char **i, const char *j)
     {
         m->nextFlags = 0;
 
-        while (*i != j && s_zerowidth.has(utf8::unchecked::peek_next(*i)))
-            utf8::unchecked::next(*i);
-    }
-
-    return width;
-}
-
-static void
-emoji_next(UnicodingImpl *m, const char **i, const char *j)
-{
-    codepoint_t c = utf8::unchecked::next(*i);
-    m->nextSeq[0] = c;
-    m->nextLen = 1;
-
-    if (s_emoji_all.contains(c))
-    {
-        bool emoji = s_emoji_pres.has(c);
-
-        while (*i != j) {
-            c = utf8::unchecked::peek_next(*i);
-
-            if (s_zerowidth.has(c))
-            {
-                if (c == EMOJI_SELECTOR && m->nextLen == 1)
-                {
-                    emoji = true;
-                }
-                else if (c == TEXT_SELECTOR && m->nextLen == 1)
-                {
-                    emoji = false;
-                }
-            }
-            else if (s_emoji_mods.has(c))
-            {
-                emoji = true;
-            }
-            else if (s_emoji_flags.has(c) && m->nextLen == 1 &&
-                     s_emoji_flags.has(m->nextSeq[0]))
-            {
-                ; // next
-            }
-            else if (!emoji || m->nextLen <= 1 || m->nextSeq[m->nextLen - 1] != ZWJ)
-            {
-                break;
-            }
-
-            m->nextSeq[m->nextLen] = utf8::unchecked::next(*i);
-            m->nextLen += (m->nextLen < MAX_CLUSTER_SIZE - 1);
-        }
-    }
-    else
-    {
         while (*i != j && s_zerowidth.has(utf8::unchecked::peek_next(*i))) {
             m->nextSeq[m->nextLen] = utf8::unchecked::next(*i);
             m->nextLen += (m->nextLen < MAX_CLUSTER_SIZE - 1);
         }
     }
+
+    return width;
 }
 
 static int32_t
@@ -223,24 +174,18 @@ text_widthAt(const UnicodingImpl *m, const char *i, const char *j)
 static int32_t
 text_widthNext(UnicodingImpl *m, const char **i, const char *j)
 {
-    int width = 1 + ((const Uniset *)m->privdata)->has(utf8::unchecked::next(*i));
-
-    while (*i != j && s_zerowidth.has(utf8::unchecked::peek_next(*i)))
-        utf8::unchecked::next(*i);
-
-    return width;
-}
-
-static void
-text_next(UnicodingImpl *m, const char **i, const char *j)
-{
-    m->nextSeq[0] = utf8::unchecked::next(*i);
+    codepoint_t c = utf8::unchecked::next(*i);
+    m->nextSeq[0] = c;
     m->nextLen = 1;
+
+    int width = 1 + ((const Uniset *)m->privdata)->has(c);
 
     while (*i != j && s_zerowidth.has(utf8::unchecked::peek_next(*i))) {
         m->nextSeq[m->nextLen] = utf8::unchecked::next(*i);
         m->nextLen += (m->nextLen < MAX_CLUSTER_SIZE - 1);
     }
+
+    return width;
 }
 
 static int32_t
@@ -308,13 +253,11 @@ create(int32_t, const UnicodingParams *params, UnicodingImpl *m)
         m->widthAt = emoji_widthAt;
         m->widthNext = emoji_widthNext;
         m->widthCategoryOf = emoji_widthCategoryOf;
-        m->next = emoji_next;
         m->params.params[curParam++] = "+" TSQ_UNICODE_PARAM_EMOJI;
     } else {
         m->widthAt = text_widthAt;
         m->widthNext = text_widthNext;
         m->widthCategoryOf = text_widthCategoryOf;
-        m->next = text_next;
     }
 
     if (hasParam(params, "+" TSQ_UNICODE_PARAM_WIDEAMBIG)) {

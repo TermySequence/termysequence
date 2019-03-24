@@ -131,7 +131,7 @@ posByJavascript(TermBuffers *buffers, size_t row, size_t jspos)
     column_t pos = 0;
 
     while (start != next) {
-        unicoding->next(start, next);
+        unicoding->widthNext(start, next);
         ++pos;
     }
     return pos;
@@ -146,7 +146,7 @@ javascriptByPos(TermBuffers *buffers, size_t row, column_t pos)
     auto *unicoding = buffers->term()->unicoding();
 
     for (column_t i = 0; i < pos && next != end; ++i) {
-        unicoding->next(next, end);
+        unicoding->widthNext(next, end);
     }
 
     size_t jspos = 0;
@@ -165,7 +165,7 @@ ptrByPos(TermBuffers *buffers, const std::string &str, column_t pos)
     auto *unicoding = buffers->term()->unicoding();
 
     for (column_t i = 0; i < pos && next != end; ++i) {
-        unicoding->next(next, end);
+        unicoding->widthNext(next, end);
     }
     return next - start;
 }

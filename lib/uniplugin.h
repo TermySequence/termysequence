@@ -61,7 +61,6 @@ struct UnicodingImpl {
     // Operations
     int32_t (*widthAt)(const UnicodingImpl *thiz, const char *pos, const char *end);
     int32_t (*widthNext)(UnicodingImpl *thiz, const char **pos, const char *end);
-    void (*next)(UnicodingImpl *thiz, const char **pos, const char *end);
     int32_t (*widthCategoryOf)(UnicodingImpl *thiz, codepoint_t c, Tsq::CellFlags *flagsor);
 };
 

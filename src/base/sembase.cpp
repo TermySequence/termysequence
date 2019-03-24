@@ -554,7 +554,7 @@ SemanticParser::residualPtr(const CellRow &row) const
     column_t pos = 0;
 
     while (i != j && pos < m_region->endCol) {
-        unicoding->next(i, j);
+        unicoding->widthNext(i, j);
         ++pos;
     }
 

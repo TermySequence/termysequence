@@ -26,7 +26,7 @@ namespace Tsq
             return false;
 
         m_cur = m_next;
-        m_coding->next(m_next, m_end);
+        m_coding->widthNext(m_next, m_end);
         return true;
     }
 

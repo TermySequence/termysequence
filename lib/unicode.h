@@ -77,8 +77,6 @@ namespace Tsq
             { return UnicodingImpl::widthAt(this, pos, end); }
         inline int widthNext(const char *&posret, const char *end)
             { return UnicodingImpl::widthNext(this, &posret, end); }
-        inline void next(const char *&posret, const char *end)
-            { UnicodingImpl::next(this, &posret, end); }
         inline int widthCategoryOf(codepoint_t c, CellFlags &flagsor)
             { return UnicodingImpl::widthCategoryOf(this, c, &flagsor); }
 

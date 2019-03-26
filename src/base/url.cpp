@@ -114,12 +114,20 @@ TermUrl::clear()
     QUrl::clear();
 }
 
+static inline bool
+isSameHost(QString h1, QString h2)
+{
+    QStringRef r1 = h1.leftRef(h1.indexOf('.'));
+    QStringRef r2 = h2.leftRef(h2.indexOf('.'));
+    return r1.compare(r2, Qt::CaseInsensitive) == 0;
+}
+
 bool
 TermUrl::checkHost(const ServerInstance *server) const
 {
     QString h1 = host();
     QString h2 = server ? server->host() : QString();
-    return h1.isEmpty() || h1.leftRef(h1.indexOf('.')) == h2.leftRef(h2.indexOf('.'));
+    return h1.isEmpty() || isSameHost(h1, h2);
 }
 
 bool
@@ -127,7 +135,7 @@ TermUrl::checkHost() const
 {
     QString h1 = host();
     QString h2 = QSysInfo::machineHostName();
-    return h1.isEmpty() || h1.leftRef(h1.indexOf('.')) == h2.leftRef(h2.indexOf('.'));
+    return h1.isEmpty() || isSameHost(h1, h2);
 }
 
 bool
@@ -139,7 +147,7 @@ TermUrl::operator==(const TermUrl &o) const
             return false;
 
         QString h1 = host(), h2 = o.host();
-        return h1.isEmpty() || h2.isEmpty() || h1.leftRef(h1.indexOf('.')) == h2.leftRef(h2.indexOf('.'));
+        return h1.isEmpty() || h2.isEmpty() || isSameHost(h1, h2);
     }
 
     return QUrl::operator==(o);

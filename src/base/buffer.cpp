@@ -1318,7 +1318,6 @@ TermBuffer::endUpdate()
         bool issem = output && output->contains(index);
         unsigned pos = 0;
         const CellRow &row = m_rows[index & m_capmask];
-        m_str = row.str;
 
         if (!issem) {
             output = findOutputRegion(index);
@@ -1334,13 +1333,13 @@ TermBuffer::endUpdate()
                 continue;
             } else if (output->endCol) {
                 pos = output->parser->residualPtr(row);
-                m_str = m_str.substr(pos);
             }
         }
 
         output = nullptr;
-        std::smatch match;
         m_breaks.clear();
+        const std::string *str = &row.str;
+        bool iscont = false;
 
         while (++m_updatelo < m_updatehi)
         {
@@ -1348,11 +1347,22 @@ TermBuffer::endUpdate()
             if (!(cur.flags & Tsq::Continuation))
                 break;
 
-            m_breaks.push_back(pos + m_str.size());
+            if (!iscont) {
+                iscont = true;
+                m_str = *str;
+                str = &m_str;
+            }
+
+            m_breaks.push_back(m_str.size());
             m_str.append(cur.str);
         }
 
-        while (std::regex_search(m_str, match, s_urlre))
+        std::smatch match;
+        auto i = str->begin() + pos, j = str->end();
+        auto k = m_breaks.cbegin(), l = m_breaks.cend();
+        unsigned base = 0;
+
+        while (std::regex_search(i, j, match, s_urlre))
         {
             Region *r;
             r = new Region(Tsqt::RegionLink, this, m_parent->nextSemanticId());
@@ -1361,29 +1371,25 @@ TermBuffer::endUpdate()
             handleContentRegion(r);
 
             pos += match.position();
-            unsigned col = pos;
-            while (!m_breaks.empty() && pos >= m_breaks.front()) {
+            i += match.position();
+            while (k != l && pos >= *k) {
                 ++index;
-                col = pos - m_breaks.front();
-                m_breaks.erase(m_breaks.begin());
+                base = *k++;
             }
             r->startRow = index;
-            r->startCol = xByPtr(index, col);
+            r->startCol = xByPtr(index, pos - base);
 
             pos += match.length();
-            col += match.length();
-            while (!m_breaks.empty() && pos > m_breaks.front()) {
+            i += match.length();
+            while (k != l && pos >= *k) {
                 ++index;
-                col = pos - m_breaks.front();
-                m_breaks.erase(m_breaks.begin());
+                base = *k++;
             }
             r->endRow = index;
-            r->endCol = xByPtr(index, col);
+            r->endCol = xByPtr(index, pos - base);
 
             insertSemanticRegion(r);
             rc = true;
-
-            m_str = match.suffix().str();
         }
     }
 

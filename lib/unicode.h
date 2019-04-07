@@ -11,13 +11,13 @@
 #include <map>
 
 // Compiled-in variants
-#define TSQ_UNICODE_VARIANT_100             "Unicode 10.0"
-#define TSQ_UNICODE_REVISION_100            1
+#define TSQ_UNICODE_VARIANT_120             "TermyUnicode 12"
+#define TSQ_UNICODE_REVISION_120            1
 
 // Recommended default encoding string
 // Encoding string consists of a variant name followed by optional version and
 // parameter specifications, all separated by \x1f characters
-#define TSQ_UNICODE_DEFAULT TSQ_UNICODE_VARIANT_100 "\x1f+" TSQ_UNICODE_PARAM_EMOJI
+#define TSQ_UNICODE_DEFAULT TSQ_UNICODE_VARIANT_120
 
 namespace Tsq
 {

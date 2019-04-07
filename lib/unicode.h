@@ -85,9 +85,10 @@ namespace Tsq
             j = seq + len;
         }
         inline void restart(codepoint_t c) {
-            seq[0] = c;
-            len = 1;
+            state = 0;
             flags = 0;
+            len = 1;
+            seq[0] = c;
         }
 
         inline CellFlags nextFlags() const { return UnicodingImpl::nextFlags; }

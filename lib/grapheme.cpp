@@ -52,15 +52,14 @@ namespace Tsq
 
         column_t size = 1;
         m_cur = m_next;
-        int width = m_coding->widthNext(m_next, m_end);
-        flagsret = m_coding->nextFlags() | (width == 2 ? DblWidthChar : 0);
+        m_coding->widthNext(m_next, m_end);
+        flagsret = m_coding->nextFlags();
 
         if (!flagsret) {
             while (m_next != m_end) {
                 const char *save = m_next;
-                width = m_coding->widthNext(m_next, m_end);
-                auto flags = m_coding->nextFlags() | (width == 2 ? DblWidthChar : 0);
-                if (flags) {
+                m_coding->widthNext(m_next, m_end);
+                if (m_coding->nextFlags()) {
                     m_next = save;
                     break;
                 }
@@ -88,15 +87,14 @@ namespace Tsq
         m_cur = m_next;
 
         column_t size = 1;
-        int width = m_coding->widthNext(m_next, m_end);
-        flagsret = m_coding->nextFlags() | (width == 2 ? DblWidthChar : 0);
+        m_coding->widthNext(m_next, m_end);
+        flagsret = m_coding->nextFlags();
 
         if (!(flagsret & Tsq::EmojiChar)) {
             while (m_next != m_end) {
                 const char *save = m_next;
-                width = m_coding->widthNext(m_next, m_end);
-                auto flags = m_coding->nextFlags() | (width == 2 ? DblWidthChar : 0);
-                if (flags != flagsret) {
+                m_coding->widthNext(m_next, m_end);
+                if (m_coding->nextFlags() != flagsret) {
                     m_next = save;
                     break;
                 }

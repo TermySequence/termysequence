@@ -92,7 +92,7 @@
 #define KEEPALIVE_MIN 5000
 
 /* Maximum codepoints in a grapheme cluster (128 or less) */
-#define MAX_CLUSTER_SIZE 8
+#define MAX_CLUSTER_SIZE 16
 /* Maximum lines in reported commands */
 #define MAX_COMMAND_LINES 5
 

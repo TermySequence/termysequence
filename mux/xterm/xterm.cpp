@@ -407,14 +407,17 @@ XTermEmulator::printable(const Codepoint c)
     CellAttributes a(m_attributes);
     int width;
 
-    if (c & ~0x7f) {
-        width = m_unicoding->widthCategoryOf(c, a.flags);
-    } else {
+    if (c < 128) {
+        // ASCII fast path
         m_unicoding->restart(c);
         width = 1;
+        goto printable;
     }
 
+    width = m_unicoding->widthCategoryOf(c, a.flags);
+
     if (width > 0) {
+    printable:
         printableCell(a, c, width);
     }
     else if (width == 0) {

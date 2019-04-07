@@ -29,6 +29,7 @@
 #include "imagewidget.h"
 #include "encodingselect.h"
 #include "encodingcheck.h"
+#include "encodingwidget.h"
 #include "langwidget.h"
 #include "lib/unicode.h"
 
@@ -317,15 +318,15 @@ static const SettingDef s_profileDefs[] = {
       TN("settings", "Unicode variant"),
       new EncodingSelectFactory
     },
-    { "Encoding/UseEmoji", NULL, QVariant::Invalid,
-      TN("settings-category", "Encoding"),
-      TN("settings", "Display emoji"),
-      new EncodingCheckFactory(TSQ_UNICODE_PARAM_EMOJI)
-    },
     { "Encoding/DoubleWidthAmbiguous", NULL, QVariant::Invalid,
       TN("settings-category", "Encoding"),
       TN("settings", "Treat ambiguous-width characters as double width"),
       new EncodingCheckFactory(TSQ_UNICODE_PARAM_WIDEAMBIG)
+    },
+    { "Encoding/CustomParameters", NULL, QVariant::Invalid,
+      TN("settings-category", "Encoding"),
+      TN("settings", "Custom encoding settings"),
+      new EncodingWidgetFactory
     },
     //
     // End ordering requirement

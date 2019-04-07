@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
 #include "common.h"
-#include "app/config.h"
 #include "envdialog.h"
 #include "settings.h"
 #include "profile.h"

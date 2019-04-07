@@ -107,13 +107,13 @@ namespace Tsq
     Unicoding::create(const UnicodingSpec &spec)
     {
         const auto i = m_variants.find(spec.variant);
-        if (i != m_variants.cend()) {
-            auto *result = new Unicoding();
-            if ((*i->second)(UNIPLUGIN_VERSION, &spec, result) == 0)
-                return result;
-            else
-                delete result;
-        }
+        auto func = i != m_variants.cend() ? i->second : m_plugins[0]->create;
+
+        auto *result = new Unicoding();
+        if ((*func)(UNIPLUGIN_VERSION, &spec, result) == 0)
+            return result;
+
+        delete result;
         return create();
     }
 

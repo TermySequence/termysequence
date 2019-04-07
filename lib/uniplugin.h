@@ -15,7 +15,6 @@
 //
 // Encoding boolean parameters (prefixed with + or -)
 //
-#define TSQ_UNICODE_PARAM_EMOJI             "emoji"
 #define TSQ_UNICODE_PARAM_WIDEAMBIG         "wideambig"
 
 //

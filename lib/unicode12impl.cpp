@@ -173,7 +173,7 @@ widthCategoryOf(UnicodingImpl *m, codepoint_t c, CellFlags *flagsor)
         if (emoji_combines(m->state, gcb)) {
             // Upgrade width
             if (!m->flags)
-                rc = -2;
+                rc = -258;
             // Add emoji flag
             m->flags = EmojiChar|DblWidthChar;
             goto push;

@@ -85,7 +85,7 @@ namespace Tsq
         std::string result;
         char buf[16];
 
-        for (unsigned i = 0, n = nextLen; i < n; ++i) {
+        for (unsigned i = 0, n = UnicodingImpl::nextLen; i < n; ++i) {
             if (i == 1 && nextSeq[i] == EMOJI_SELECTOR)
                 continue;
 

@@ -71,7 +71,8 @@ namespace Tsq
             seq[0] = c;
         }
 
-        inline CellFlags nextFlags() const { return UnicodingImpl::nextFlags; }
+        inline auto nextFlags() const { return UnicodingImpl::nextFlags; }
+        inline auto nextLen() const { return UnicodingImpl::nextLen; }
         std::string nextEmojiName() const;
     };
 }

@@ -402,6 +402,38 @@ XTermEmulator::printableCell(const CellAttributes &a, const Codepoint c, int wid
     m_screen->writeCell(a, c, width);
 }
 
+void
+XTermEmulator::printableSpecial(const CellAttributes &a, int width)
+{
+    const Codepoint *i, *j;
+    m_unicoding->getSeq(i, j);
+
+    switch (width) {
+    case -258:
+        // Width upgrade
+        if (m_screen->cursorPastEnd(1))
+            m_screen->deleteCell();
+        else
+            m_screen->cursorMoveX(true, -1, true);
+
+        width = 2;
+        break;
+    case -2:
+    case -3:
+        // Character substitution
+        i += m_unicoding->nextLen();
+        width = -width - 1;
+        break;
+    default:
+        // Ignored codepoint
+        return;
+    }
+
+    printableCell(a, *i, width);
+    while (++i != j)
+        m_screen->combineCell(a, *i);
+}
+
 inline void
 XTermEmulator::printable(const Codepoint c)
 {
@@ -424,18 +456,8 @@ XTermEmulator::printable(const Codepoint c)
     else if (width == 0) {
         m_screen->combineCell(a, c);
     }
-    else if (width == -2) {
-        // Width upgrade
-        if (m_screen->cursorPastEnd(1))
-            m_screen->deleteCell();
-        else
-            m_screen->cursorMoveX(true, -1, true);
-
-        const Codepoint *i, *j;
-        m_unicoding->getSeq(i, j);
-        printableCell(a, *i, 2);
-        while (++i != j)
-            m_screen->combineCell(a, *i);
+    else {
+        printableSpecial(a, width);
     }
 }
 

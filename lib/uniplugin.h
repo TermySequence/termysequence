@@ -129,11 +129,14 @@ struct UnicodingImpl {
     //   Or the PerCharFlags of the most recent character into *flagsor
     //   Update len and seq as appropriate
     //   Return the width category of the code point:
-    //     0: code point combines into the current character
-    //     -2: code point combines into the current character and increases the width from 1 to 2
-    //     1: code point starts a new character with width 1
-    //     2: code point starts a new character with width 2
-    //     255: ignore this code point entirely
+    //     0: codepoint combines into the current character
+    //     1: codepoint starts a new character of width 1
+    //     2: codepoint starts a new character of width 2
+    //     -2: substitute the codepoint sequence starting at nextLen, of width 1
+    //     -3: substitute the codepoint sequence starting at nextLen, of width 2
+    //     -258: back up 1 and replay the codepoint sequence of width 2
+    //     -99999: ignore the codepoint
+    //
     int32_t (*widthCategoryOf)(UnicodingImpl *thiz, codepoint_t c, Tsq::CellFlags *flagsor);
 };
 

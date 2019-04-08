@@ -40,6 +40,7 @@ private:
     void carriageReturn();
     void control(const Codepoint c);
     void printableCell(const CellAttributes &a, const Codepoint c, int width);
+    void printableSpecial(const CellAttributes &a, int width);
     void printable(const Codepoint c);
 
     void setPrivateMode(int mode);

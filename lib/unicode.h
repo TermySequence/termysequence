@@ -6,18 +6,16 @@
 
 #include "uniplugin.h"
 
-#include <memory>
 #include <vector>
-#include <map>
 
 // Compiled-in variants
-#define TSQ_UNICODE_VARIANT_120             "TermyUnicode 12"
-#define TSQ_UNICODE_REVISION_120            1
+#define TSQ_UNICODE_VARIANT_TERMY           "TermyUnicode"
+#define TSQ_UNICODE_REVISION_TERMY          "120"
 
 // Recommended default encoding string
-// Encoding string consists of a variant name followed by optional version and
-// parameter specifications, all separated by \x1f characters
-#define TSQ_UNICODE_DEFAULT TSQ_UNICODE_VARIANT_120
+// Encoding string consists of a variant name followed by optional
+// parameter strings, all separated by \x1f characters
+#define TSQ_UNICODE_DEFAULT TSQ_UNICODE_VARIANT_TERMY
 
 namespace Tsq
 {
@@ -54,8 +52,7 @@ namespace Tsq
         Unicoding() = default;
 
     private:
-        static std::vector<std::unique_ptr<UnicodingInfo>> m_plugins;
-        static std::map<std::string_view,UnicodingCreateFunc> m_variants;
+        static std::vector<UnicodingVariant> m_variants;
 
     public:
         // Factory method
@@ -64,7 +61,7 @@ namespace Tsq
 
         static void registerPlugin(UnicodingInitFunc func);
 
-        inline static const auto& plugins() { return m_plugins; }
+        inline static const auto& variants() { return m_variants; }
 
     public:
         ~Unicoding();

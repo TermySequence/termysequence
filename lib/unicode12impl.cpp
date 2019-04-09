@@ -53,7 +53,7 @@ s_hangul_table(s_hangul_data, ARRAY_SIZE(s_hangul_data) / 3);
 typedef typeof(s_single_ambig_table) *MainTablePtr;
 
 //
-// Unicode 12.0 methods
+// TermyUnicode methods
 //
 static bool
 hangul_combines(codepoint_t a, codepoint_t b)
@@ -224,7 +224,7 @@ push:
 }
 
 //
-// Unicode 12.0 base class
+// Base plugin stuff
 //
 static void
 teardown(UnicodingImpl *m)
@@ -250,13 +250,13 @@ create(int32_t, const UnicodingParams *params, UnicodingImpl *m)
     m->seq = new codepoint_t[MAX_CLUSTER_SIZE * 2];
     m->nextSeq = m->seq + MAX_CLUSTER_SIZE;
 
-    m->params.variant = TSQ_UNICODE_VARIANT_120;
-    m->params.revision = TSQ_UNICODE_REVISION_120;
-    m->params.params = new const char *[2]{};
+    m->params.variant = TSQ_UNICODE_VARIANT_TERMY;
+    m->params.params = new const char *[3]{};
+    m->params.params[0] = TSQ_UNICODE_PARAM_REVISION "=" TSQ_UNICODE_REVISION_TERMY;
 
-    if (hasParam(params, "+" TSQ_UNICODE_PARAM_WIDEAMBIG)) {
+    if (hasParam(params, TSQ_UNICODE_PARAM_WIDEAMBIG)) {
         m->privdata = (void*)&s_double_ambig_table;
-        m->params.params[0] = "+" TSQ_UNICODE_PARAM_WIDEAMBIG;
+        m->params.params[1] = TSQ_UNICODE_PARAM_WIDEAMBIG;
     } else {
         m->privdata = (void*)&s_single_ambig_table;
     }
@@ -269,20 +269,17 @@ create(int32_t, const UnicodingParams *params, UnicodingImpl *m)
 }
 
 static const char *s_params[] = {
-    "+" TSQ_UNICODE_PARAM_WIDEAMBIG,
+    TSQ_UNICODE_PARAM_WIDEAMBIG,
     NULL
 };
-static const UnicodingParams s_variants[] = {
-    { TSQ_UNICODE_VARIANT_120, TSQ_UNICODE_REVISION_120, s_params },
+static const UnicodingVariant s_variants[] = {
+    { "", VFSelectable, s_params, create },
     { NULL }
 };
 
 extern "C" int32_t
 uniplugin_init(int32_t, UnicodingInfo *info)
 {
-    info->version = UNIPLUGIN_VERSION;
     info->variants = s_variants;
-    info->defaultName = TSQ_UNICODE_DEFAULT;
-    info->create = create;
-    return 0;
+    return info->version = UNIPLUGIN_VERSION;
 }

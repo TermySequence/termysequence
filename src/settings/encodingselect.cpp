@@ -39,17 +39,17 @@ EncodingSelectFactory::createWidget(const SettingDef *def, SettingsBase *setting
 {
     if (!m_choices) {
         size_t n = 1;
-        for (const auto &i: Tsq::Unicoding::plugins())
-            for (auto ptr = i->variants; ptr->variant; ++ptr)
+        for (const auto &i: Tsq::Unicoding::variants())
+            if (i.flags & VFSelectable)
                 ++n;
 
         m_choices = new ChoiceDef[n]{};
 
         n = 0;
-        for (const auto &i: Tsq::Unicoding::plugins())
-            for (auto ptr = i->variants; ptr->variant; ++ptr) {
-                m_choices[n].description = ptr->variant;
-                m_choices[n].value = QString(ptr->variant);
+        for (const auto &i: Tsq::Unicoding::variants())
+            if (i.flags & VFSelectable) {
+                m_choices[n].description = i.prefix;
+                m_choices[n].value = QString(i.prefix);
                 ++n;
             }
     }

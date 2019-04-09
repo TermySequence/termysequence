@@ -13,9 +13,10 @@
 #define UNIPLUGIN_VERSION 1
 
 //
-// Encoding boolean parameters (prefixed with + or -)
+// Encoding parameter names (parameter strings take the form name[=value])
 //
-#define TSQ_UNICODE_PARAM_WIDEAMBIG         "wideambig"
+#define TSQ_UNICODE_PARAM_REVISION          "v"
+#define TSQ_UNICODE_PARAM_WIDEAMBIG         "+wideambig"
 
 //
 // Handy constants
@@ -23,48 +24,58 @@
 #define TEXT_SELECTOR   0xFE0E
 #define EMOJI_SELECTOR  0xFE0F
 #define ZWJ             0x200D
+#define REPLACEMENT_CH  0xFFFD
 
 extern "C" {
 
 //
 // Plugin description
 //
-struct UnicodingParams {
-    // Name of the variant
-    const char *variant;
-    // Revision number of the implementation
-    uint32_t revision;
-    // NULL-terminated array of parameter strings or parameter names
-    const char **params;
-};
-
+struct UnicodingParams;
 struct UnicodingImpl;
 
-struct UnicodingInfo {
-    // Report the plugin interface version supported by the plugin
-    int32_t version;
-    // Report a NULL-terminated list of supported variants with unique names
-    // Report as the params of each entry a list of the parameter names supported
-    const UnicodingParams *variants;
-    // Report the default (preferred) variant name
-    const char *defaultName;
+enum UnicodingVariantFlags {
+    VFSelectable =  1u,
+    VFNeedsLocale = 2u,
+};
 
-    // Note: all strings reported above must remain fixed for the lifetime of the plugin
+struct UnicodingVariant {
+    // String prefix to match against incoming encoding names
+    const char *prefix;
+    // Flags that configure variant behavior
+    uint64_t flags;
+    // NULL-terminated array of supported parameter names
+    const char **params;
 
     // Operations
 
     // Create an instance of a variant implementation
     //   Version is the plugin interface version requested by the host
-    //   Params is the requested parameters for the instance
+    //   Params is the requested variant name and parameters
     //   Impl is the (pre-zeroed) structure to fill out
     //   Return zero on success, -1 otherwise
-    //   Report the actual version and params in the impl structure
+    //   Report the actual variant name and parameters in the impl structure
     int32_t (*create)(int32_t version, const UnicodingParams *params, UnicodingImpl *impl);
+};
+
+struct UnicodingInfo {
+    // Report the plugin interface version supported by the plugin
+    int32_t version;
+    // Report a list of supported variants terminated by a NULL prefix name
+    // Note: variant information must remain in memory for the plugin lifetime
+    const UnicodingVariant *variants;
 };
 
 //
 // State tracker and interface object for an instance of a variant
 //
+struct UnicodingParams {
+    // Name of the variant
+    const char *variant;
+    // NULL-terminated array of parameter strings
+    const char **params;
+};
+
 struct UnicodingImpl {
     // Set this to the structure version (=1)
     int32_t version;
@@ -126,11 +137,10 @@ struct UnicodingImpl {
 // Called by the host to initialize the plugin
 //   Fill out the info structure with the plugin information
 //   Version is the plugin interface version supported by the host
-//   Return zero on success, -1 otherwise
+//   Return the version value of the filled-out structure or -1 on failure
 extern int32_t
 uniplugin_init(int32_t version, UnicodingInfo *info);
 
 typedef typeof(uniplugin_init) *UnicodingInitFunc;
-typedef typeof(UnicodingInfo::create) UnicodingCreateFunc;
 
 }

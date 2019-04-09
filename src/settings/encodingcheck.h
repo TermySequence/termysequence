@@ -11,8 +11,7 @@ class EncodingCheck final: public CheckWidget
     Q_OBJECT
 
 private:
-    QString m_paramOn;
-    QString m_paramOff;
+    QString m_param;
 
 private slots:
     void handleStateChanged(int state);

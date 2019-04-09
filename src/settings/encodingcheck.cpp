@@ -7,17 +7,12 @@
 #include "base.h"
 
 #include <QCheckBox>
-#include <QHBoxLayout>
 
 EncodingCheck::EncodingCheck(const SettingDef *def, SettingsBase *settings,
                              const char *param) :
     CheckWidget(def, settings, 0l),
-    m_paramOn('+'),
-    m_paramOff('-')
+    m_param(param)
 {
-    m_paramOn.append(param);
-    m_paramOff.append(param);
-
     handleSettingChanged(m_value);
 }
 
@@ -25,11 +20,10 @@ void
 EncodingCheck::handleStateChanged(int index)
 {
     QStringList parts = m_value.toStringList();
-    parts.removeOne(m_paramOn);
-    parts.removeOne(m_paramOff);
+    parts.removeAll(m_param);
 
     if (m_check->isChecked())
-        parts.append(m_paramOn);
+        parts.append(m_param);
 
     setProperty(parts);
 }
@@ -38,7 +32,7 @@ void
 EncodingCheck::handleSettingChanged(const QVariant &value)
 {
     QStringList parts = value.toStringList();
-    m_check->setChecked(parts.contains(m_paramOn));
+    m_check->setChecked(parts.contains(m_param));
 }
 
 

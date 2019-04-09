@@ -16,7 +16,6 @@ namespace Tsq
     void
     UnicodingSpec::parse()
     {
-        revision = 0;
         variant = m_spec.data();
 
         std::map<std::string_view,const char *> pmap;
@@ -24,25 +23,16 @@ namespace Tsq
         const char *end = m_spec.data() + m_spec.size();
 
         while (buf < end) {
-            switch (*buf) {
-            case 'v':
-                revision = atoi(buf + 1);
-                break;
-            case '+':
-            case '-':
-                pmap[buf + 1] = buf;
-                break;
-            default:
+            const char *ptr = strchr(buf, '=');
+            if (ptr) {
+                pmap[std::string_view(buf, ptr - buf)] = buf;
+            } else {
                 pmap[buf] = buf;
-                break;
             }
             buf += strlen(buf) + 1;
         }
 
         m_name = variant;
-        m_name.push_back('\x1f');
-        m_name.push_back('v');
-        m_name.append(std::to_string(revision));
 
         params = new const char*[pmap.size() + 1]{};
         int i = 0;
@@ -66,14 +56,12 @@ namespace Tsq
     UnicodingSpec::UnicodingSpec(const UnicodingParams &params) :
         m_spec(params.variant)
     {
-        m_spec.push_back('\0');
-        m_spec.push_back('v');
-        m_spec.append(std::to_string(params.revision));
-
         const char **p = params.params;
-        while (*p) {
-            m_spec.push_back('\0');
-            m_spec.append(*p++);
+        if (p) {
+            while (*p) {
+                m_spec.push_back('\0');
+                m_spec.append(*p++);
+            }
         }
         parse();
     }
@@ -91,40 +79,40 @@ namespace Tsq
         UnicodingImpl::teardown(this);
     }
 
-    std::vector<std::unique_ptr<UnicodingInfo>> Unicoding::m_plugins;
-    std::map<std::string_view,UnicodingCreateFunc> Unicoding::m_variants;
+    std::vector<UnicodingVariant> Unicoding::m_variants;
 
     Unicoding *
     Unicoding::create()
     {
         auto *result = new Unicoding();
-        UnicodingSpec spec(m_plugins[0]->defaultName);
-        m_plugins[0]->create(UNIPLUGIN_VERSION, &spec, result);
+        UnicodingSpec spec(TSQ_UNICODE_DEFAULT);
+        m_variants[0].create(UNIPLUGIN_VERSION, &spec, result);
         return result;
     }
 
     Unicoding *
     Unicoding::create(const UnicodingSpec &spec)
     {
-        const auto i = m_variants.find(spec.variant);
-        auto func = i != m_variants.cend() ? i->second : m_plugins[0]->create;
-
         auto *result = new Unicoding();
-        if ((*func)(UNIPLUGIN_VERSION, &spec, result) == 0)
-            return result;
 
-        delete result;
-        return create();
+        for (auto i = m_variants.crbegin(), j = m_variants.crend(); i != j; ++i)
+            if (!strncmp(spec.variant, i->prefix, i->flags >> 32))
+                if ((*i->create)(UNIPLUGIN_VERSION, &spec, result) == 0)
+                    break;
+
+        return result;
     }
 
     void
     Unicoding::registerPlugin(UnicodingInitFunc func)
     {
-        auto info = std::make_unique<UnicodingInfo>();
-        if ((*func)(UNIPLUGIN_VERSION, info.get()) == 0) {
-            for (const auto *i = info->variants; i->variant; ++i)
-                m_variants.emplace(i->variant, info->create);
-            m_plugins.emplace_back(std::move(info));
+        UnicodingInfo info;
+        if ((*func)(UNIPLUGIN_VERSION, &info) == UNIPLUGIN_VERSION) {
+            for (const auto *prec = info.variants; prec->prefix; ++prec) {
+                auto &rec = m_variants.emplace_back(*prec);
+                // Store the prefix length for use in create()
+                rec.flags |= strlen(prec->prefix) << 32;
+            }
         }
     }
 

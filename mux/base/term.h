@@ -15,6 +15,7 @@ namespace Tsq { class ProtocolMarshaler; }
 class TermEmulator;
 class TermStatusTracker;
 class TermFilemon;
+class TermLocale;
 class Translator;
 class Region;
 struct PtyParams;
@@ -36,6 +37,7 @@ private:
 
     TermFilemon *m_filemon;
     const Translator *m_translator;
+    TermLocale *m_locale;
     PtyParams *m_params;
 
     std::unordered_set<Region*> m_incomingRegions;

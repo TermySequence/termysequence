@@ -5,6 +5,7 @@
 #include "common.h"
 #include "app/attr.h"
 #include "langwidget.h"
+#include "settings.h"
 
 #include <QComboBox>
 #include <QLineEdit>
@@ -54,7 +55,7 @@ LangWidget::handleIndexChanged(int index)
         break;
     default:
         m_text->setEnabled(true);
-        val = getenv("LANG");
+        val = g_settings->defaultLang();
         m_text->setText(val);
         m_text->setFocus(Qt::OtherFocusReason);
     }

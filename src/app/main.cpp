@@ -17,6 +17,7 @@
 #include "os/limits.h"
 #include "os/plugins.h"
 #include "os/attr.h"
+#include "os/locale.h"
 
 #include <QApplication>
 #include <QTranslator>
@@ -146,6 +147,7 @@ main(int argc, char **argv)
     if (osPipe(s_sigfd) != 0)
         return EXITCODE_FAILED;
 
+    osInitLocale();
     osInitMonotime();
     osSetupClientSignalHandlers();
     osAdjustLimits();

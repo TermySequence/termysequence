@@ -6,6 +6,7 @@
 #include "args.h"
 #include "base/exception.h"
 #include "os/attr.h"
+#include "os/locale.h"
 #include "config.h"
 
 #include <cstdio>
@@ -300,10 +301,10 @@ ArgParser::parse(int argc, char **argv)
     if (pthread_mutex_init(&m_lock, NULL) < 0)
         throw ErrnoException("pthread_mutex_init", errno);
 
-    const char *lang = getenv("LANG");
-    const Translator *translator;
+    const char *lang = osGetLang();
+    const Translator *translator = makeTranslator(lang);
 
-    if (lang && (translator = makeTranslator(lang))) {
+    if (translator) {
         m_translators.emplace(lang, translator);
         m_translator = new Translator(*translator);
     } else {

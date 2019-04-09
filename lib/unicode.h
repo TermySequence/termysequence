@@ -58,6 +58,7 @@ namespace Tsq
         // Factory method
         static Unicoding* create();
         static Unicoding* create(const UnicodingSpec &spec);
+        static bool needsLocale(const UnicodingSpec &spec);
 
         static void registerPlugin(UnicodingInitFunc func);
 

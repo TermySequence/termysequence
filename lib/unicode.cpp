@@ -103,6 +103,17 @@ namespace Tsq
         return result;
     }
 
+    bool
+    Unicoding::needsLocale(const UnicodingSpec &spec)
+    {
+        for (auto i = m_variants.crbegin(), j = m_variants.crend(); i != j; ++i)
+            if (!strncmp(spec.variant, i->prefix, i->flags >> 32))
+                if (i->flags & VFNeedsLocale)
+                    return true;
+
+        return false;
+    }
+
     void
     Unicoding::registerPlugin(UnicodingInitFunc func)
     {

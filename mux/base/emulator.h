@@ -16,9 +16,11 @@ class TermBuffer;
 class TermInstance;
 class TermTabStops;
 class TermPalette;
+class TermLocale;
 class Translator;
 
 struct EmulatorParams {
+    TermLocale *locale;
     Tsq::Unicoding *unicoding;
     const Translator *translator;
     Tsq::TermFlags flags;

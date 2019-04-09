@@ -12,6 +12,7 @@
 #include "os/time.h"
 #include "os/eventfd.h"
 #include "os/limits.h"
+#include "os/locale.h"
 #include "lib/exitcode.h"
 
 #include <exception>
@@ -26,6 +27,7 @@ main(int argc, char **argv)
         return EXITCODE_ARGPARSE;
     }
 
+    osInitLocale();
     osInitMonotime();
 
     ArgParser args;

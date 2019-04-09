@@ -11,6 +11,7 @@
 #include "writer.h"
 #include "listener.h"
 #include "zombies.h"
+#include "locale.h"
 #include "exception.h"
 #include "xterm/xterm.h"
 #include "systemd/scoper.h"
@@ -56,6 +57,7 @@ TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
     m_filemon = new TermFilemon(params->fileLimit, this);
     m_translator = params->translator;
     m_status = new TermStatusTracker(m_translator, std::move(oi->environ));
+    m_locale = params->locale;
 
     m_attributes[Tsq::attr_ID] = m_id.str();
     m_attributes[Tsq::attr_STARTED] = std::to_string(osBasetime(&m_baseTime));
@@ -90,6 +92,7 @@ TermInstance::~TermInstance()
     delete m_emulator;
     delete m_status;
     delete m_filemon;
+    delete m_locale;
     delete m_params;
 
     forDeleteAll(m_incomingRegions);
@@ -715,6 +718,7 @@ TermInstance::handleWork(const WorkItem &item)
 void
 TermInstance::threadMain()
 {
+    m_locale->setLocale();
     m_filemon->start(-1);
     launch();
 
@@ -912,8 +916,9 @@ TermInstance::configuredInitParams(EmulatorParams *params) const
         lang = i->second;
     }
 
-    params->unicoding = Tsq::Unicoding::create(unicoding);
     params->translator = g_args->getTranslator(lang);
+    params->locale = new TermLocale(std::move(unicoding), std::move(lang));
+    params->unicoding = params->locale->createEncoding();
 }
 
 std::string

@@ -11,6 +11,7 @@
 #include "app/pluginwindow.h"
 #include "base/fontbase.h"
 #include "base/thumbicon.h"
+#include "os/locale.h"
 #include "settings.h"
 #include "global.h"
 #include "keymap.h"
@@ -50,7 +51,7 @@ TermSettings::TermSettings()
 {
     // calculate some defaults
     m_defaultFont = FontBase::getDefaultFont();
-    m_defaultLang = getenv("LANG");
+    m_defaultLang = osGetLang();
     m_defaultEncoding.reset(Tsq::Unicoding::create());
 
     StateSettings::populateDefaults();

@@ -13,10 +13,13 @@ TermLocale::TermLocale(std::string &&spec, std::string &&lang) :
     m_spec(std::move(spec)),
     m_lang(std::move(lang))
 {
+    m_unicoding = createEncoding();
 }
 
 TermLocale::~TermLocale()
 {
+    delete m_unicoding;
+
     if (m_locale)
         osFreeLocale(m_locale);
 }

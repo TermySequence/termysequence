@@ -66,7 +66,6 @@ private:
     void handleProcessExited(int disposition);
     void halt();
 
-    void configuredInitParams(EmulatorParams *params) const;
     std::string configuredStartParams(PtyParams *params) const;
     int configuredExitAction() const;
     std::pair<int,int> configuredAutoClose() const;
@@ -87,10 +86,11 @@ public:
                  Size size, OwnershipInfo *oi);
     ~TermInstance();
 
-    inline TermEmulator* emulator() { return m_emulator; }
-    inline TermFilemon* filemon() { return m_filemon; }
-    inline const Translator* translator() const { return m_translator; }
-    inline const int32_t* modTimePtr() const { return &m_modTime; }
+    inline auto* emulator() { return m_emulator; }
+    inline auto* filemon() { return m_filemon; }
+    inline const auto* translator() const { return m_translator; }
+    inline const auto* locale() const { return m_locale; }
+    inline const auto* modTimePtr() const { return &m_modTime; }
 
     TermInstance* commandDuplicate(const Tsq::Uuid &id, const Tsq::Uuid &owner,
                                    Size size, OwnershipInfo *oi);

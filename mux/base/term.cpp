@@ -29,6 +29,7 @@
 #include "lib/enums.h"
 #include "lib/attr.h"
 #include "lib/attrstr.h"
+#include "lib/unicode.h"
 #include "config.h"
 
 #include <cstdio>
@@ -39,6 +40,9 @@
 #define TR_HALTMSG1 TL("server", "Restarting process", "halt1")
 #define TR_HALTMSG2 TL("server", "Emulator execution has finished", "halt2")
 #define TR_HALTMSG3 TL("server", "%1ms required before autoclose (actual: %2ms)", "halt3")
+
+static void
+configuredInitParams(const StringMap &attributes, EmulatorParams *params);
 
 void
 TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
@@ -53,17 +57,16 @@ TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
     m_params->daemon = true;
     m_params->exitDelay = true;
 
-    configuredInitParams(params);
+    m_translator = g_args->getTranslator(params->lang);
+    m_locale = new TermLocale(std::move(params->unicoding), std::move(params->lang));
     m_filemon = new TermFilemon(params->fileLimit, this);
-    m_translator = params->translator;
     m_status = new TermStatusTracker(m_translator, std::move(oi->environ));
-    m_locale = params->locale;
 
     m_attributes[Tsq::attr_ID] = m_id.str();
     m_attributes[Tsq::attr_STARTED] = std::to_string(osBasetime(&m_baseTime));
     m_attributes[Tsq::attr_SESSION_COLS] = std::to_string(size.width());
     m_attributes[Tsq::attr_SESSION_ROWS] = std::to_string(size.height());
-    m_attributes[Tsq::attr_ENCODING] = params->unicoding->name();
+    m_attributes[Tsq::attr_ENCODING] = m_locale->unicoding()->name();
 }
 
 TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
@@ -71,6 +74,7 @@ TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
     ConnInstance("term", true)
 {
     EmulatorParams params;
+    configuredInitParams(oi->attributes, &params);
     setup(id, owner, size, oi, &params);
 
     m_emulator = new XTermEmulator(this, size, params);
@@ -82,6 +86,11 @@ TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,
     ConnInstance("term", true)
 {
     EmulatorParams params;
+    configuredInitParams(oi->attributes, &params);
+
+    params.unicoding = copyfrom->locale()->spec();
+    params.lang = copyfrom->locale()->lang();
+
     setup(id, owner, size, oi, &params);
 
     m_emulator = copyfrom->m_emulator->duplicate(this, size);
@@ -875,50 +884,45 @@ TermInstance::termData(const Codestring &body)
 /*
  * Attribute parsing
  */
-void
-TermInstance::configuredInitParams(EmulatorParams *params) const
+static void
+configuredInitParams(const StringMap &attributes, EmulatorParams *params)
 {
-    // Note: only call from constructor (no locking)
+    params->unicoding = TSQ_UNICODE_DEFAULT;
     params->flags = Tsq::DefaultTermFlags;
     params->caporder = TERM_DEF_CAPORDER;
     params->promptNewline = false;
     params->scrollClear = false;
     params->fileLimit = FILEMON_DEFAULT_LIMIT;
-    std::string lang, unicoding = TSQ_UNICODE_DEFAULT;
     char *endptr;
 
-    StringMap::const_iterator j = m_attributes.end(), i;
+    StringMap::const_iterator j = attributes.end(), i;
 
-    if ((i = m_attributes.find(Tsq::attr_PROFILE_FLAGS)) != j) {
+    if ((i = attributes.find(Tsq::attr_PROFILE_FLAGS)) != j) {
         params->flags |= strtoull(i->second.c_str(), &endptr, 10);
         if (*endptr == '\x1f')
             params->flags &= ~strtoull(endptr + 1, NULL, 10);
     }
-    if ((i = m_attributes.find(Tsq::attr_PREF_PALETTE)) != j) {
+    if ((i = attributes.find(Tsq::attr_PREF_PALETTE)) != j) {
         params->palette = i->second;
     }
-    if ((i = m_attributes.find(Tsq::attr_PROFILE_CAPORDER)) != j) {
+    if ((i = attributes.find(Tsq::attr_PROFILE_CAPORDER)) != j) {
         params->caporder = strtoul(i->second.c_str(), NULL, 10);
     }
-    if ((i = m_attributes.find(Tsq::attr_PROFILE_NFILES)) != j) {
+    if ((i = attributes.find(Tsq::attr_PROFILE_NFILES)) != j) {
         params->fileLimit = strtoul(i->second.c_str(), NULL, 10);
     }
-    if ((i = m_attributes.find(Tsq::attr_PROFILE_PROMPTNEWLINE)) != j) {
+    if ((i = attributes.find(Tsq::attr_PROFILE_PROMPTNEWLINE)) != j) {
         params->promptNewline = (i->second == "true"s || i->second == "1"s);
     }
-    if ((i = m_attributes.find(Tsq::attr_PROFILE_SCROLLCLEAR)) != j) {
+    if ((i = attributes.find(Tsq::attr_PROFILE_SCROLLCLEAR)) != j) {
         params->scrollClear = (i->second == "true"s || i->second == "1"s);
     }
-    if ((i = m_attributes.find(Tsq::attr_PROFILE_ENCODING)) != j) {
-        unicoding = i->second;
+    if ((i = attributes.find(Tsq::attr_PROFILE_ENCODING)) != j) {
+        params->unicoding = i->second;
     }
-    if ((i = m_attributes.find(Tsq::attr_PREF_LANG)) != j) {
-        lang = i->second;
+    if ((i = attributes.find(Tsq::attr_PREF_LANG)) != j) {
+        params->lang = i->second;
     }
-
-    params->translator = g_args->getTranslator(lang);
-    params->locale = new TermLocale(std::move(unicoding), std::move(lang));
-    params->unicoding = params->locale->createEncoding();
 }
 
 std::string

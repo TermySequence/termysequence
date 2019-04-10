@@ -12,6 +12,7 @@
 #include "os/logging.h"
 #include "lib/attrstr.h"
 #include "lib/utf8.h"
+#include "lib/unicode.h"
 
 using namespace std;
 

@@ -6,12 +6,12 @@
 
 #include "lib/types.h"
 #include "lib/flags.h"
-#include "lib/unicode.h"
 #include "screen.h"
 #include "attributemap.h"
 
 #include <memory>
 
+namespace Tsq { class Unicoding; }
 class TermBuffer;
 class TermInstance;
 class TermTabStops;
@@ -20,11 +20,10 @@ class TermLocale;
 class Translator;
 
 struct EmulatorParams {
-    TermLocale *locale;
-    Tsq::Unicoding *unicoding;
-    const Translator *translator;
-    Tsq::TermFlags flags;
     std::string palette;
+    std::string unicoding;
+    std::string lang;
+    Tsq::TermFlags flags;
     uint8_t caporder;
     bool promptNewline;
     bool scrollClear;

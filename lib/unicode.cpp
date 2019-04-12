@@ -79,54 +79,6 @@ namespace Tsq
         UnicodingImpl::teardown(this);
     }
 
-    std::vector<UnicodingVariant> Unicoding::m_variants;
-
-    Unicoding *
-    Unicoding::create()
-    {
-        auto *result = new Unicoding();
-        UnicodingSpec spec(TSQ_UNICODE_DEFAULT);
-        m_variants[0].create(UNIPLUGIN_VERSION, &spec, result);
-        return result;
-    }
-
-    Unicoding *
-    Unicoding::create(const UnicodingSpec &spec)
-    {
-        auto *result = new Unicoding();
-
-        for (auto i = m_variants.crbegin(), j = m_variants.crend(); i != j; ++i)
-            if (!strncmp(spec.variant, i->prefix, i->flags >> 32))
-                if ((*i->create)(UNIPLUGIN_VERSION, &spec, result) == 0)
-                    break;
-
-        return result;
-    }
-
-    bool
-    Unicoding::needsLocale(const UnicodingSpec &spec)
-    {
-        for (auto i = m_variants.crbegin(), j = m_variants.crend(); i != j; ++i)
-            if (!strncmp(spec.variant, i->prefix, i->flags >> 32))
-                if (i->flags & VFNeedsLocale)
-                    return true;
-
-        return false;
-    }
-
-    void
-    Unicoding::registerPlugin(UnicodingInitFunc func)
-    {
-        UnicodingInfo info;
-        if ((*func)(UNIPLUGIN_VERSION, &info) == UNIPLUGIN_VERSION) {
-            for (const auto *prec = info.variants; prec->prefix; ++prec) {
-                auto &rec = m_variants.emplace_back(*prec);
-                // Store the prefix length for use in create()
-                rec.flags |= strlen(prec->prefix) << 32;
-            }
-        }
-    }
-
     std::string
     Unicoding::nextEmojiName() const
     {

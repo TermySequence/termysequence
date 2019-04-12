@@ -7,12 +7,12 @@
 #include "term.h"
 #include "tabstops.h"
 #include "palette.h"
-#include "locale.h"
 #include "config.h"
+#include "os/encoding.h"
 #include "lib/attrstr.h"
 
 TermEmulator::TermEmulator(TermInstance *parent, Size &size, EmulatorParams &params) :
-    m_unicoding(parent->locale()->unicoding()),
+    m_unicoding(parent->locale()),
     m_parent(parent),
     m_modTimePtr(parent->modTimePtr()),
     m_initflags(params.flags),
@@ -42,7 +42,7 @@ TermEmulator::TermEmulator(TermInstance *parent, Size &size, EmulatorParams &par
 }
 
 TermEmulator::TermEmulator(TermInstance *parent, const TermEmulator *copyfrom) :
-    m_unicoding(parent->locale()->unicoding()),
+    m_unicoding(parent->locale()),
     m_parent(parent),
     m_modTimePtr(parent->modTimePtr()),
     m_initflags(copyfrom->m_initflags),

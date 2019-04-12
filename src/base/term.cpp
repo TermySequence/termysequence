@@ -33,7 +33,7 @@
 #include "settings/switchrule.h"
 #include "settings/iconrule.h"
 #include "lib/sequences.h"
-#include "lib/unicode.h"
+#include "os/encoding.h"
 
 #include <QKeyEvent>
 #include <QApplication>
@@ -664,7 +664,7 @@ TermInstance::handleEncoding(const std::string &theirName)
     if (theirName == m_unicoding->name())
         return;
 
-    auto *unicoding = Tsq::Unicoding::create(theirName);
+    auto *unicoding = new TermUnicoding(theirName);
     m_unicoding.reset(unicoding);
 
     if (m_profile->encodingWarn()) {

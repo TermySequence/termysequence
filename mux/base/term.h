@@ -15,7 +15,7 @@ namespace Tsq { class ProtocolMarshaler; }
 class TermEmulator;
 class TermStatusTracker;
 class TermFilemon;
-class TermLocale;
+class TermUnicoding;
 class Translator;
 class Region;
 struct PtyParams;
@@ -37,7 +37,7 @@ private:
 
     TermFilemon *m_filemon;
     const Translator *m_translator;
-    TermLocale *m_locale;
+    TermUnicoding *m_locale;
     PtyParams *m_params;
 
     std::unordered_set<Region*> m_incomingRegions;
@@ -89,7 +89,7 @@ public:
     inline auto* emulator() { return m_emulator; }
     inline auto* filemon() { return m_filemon; }
     inline const auto* translator() const { return m_translator; }
-    inline const auto* locale() const { return m_locale; }
+    inline auto* locale() const { return m_locale; }
     inline const auto* modTimePtr() const { return &m_modTime; }
 
     TermInstance* commandDuplicate(const Tsq::Uuid &id, const Tsq::Uuid &owner,

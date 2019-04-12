@@ -6,8 +6,6 @@
 
 #include "uniplugin.h"
 
-#include <vector>
-
 // Compiled-in variants
 #define TSQ_UNICODE_VARIANT_TERMY           "TermyUnicode"
 #define TSQ_UNICODE_REVISION_TERMY          "120"
@@ -46,29 +44,13 @@ namespace Tsq
     //
     // Unicoding
     //
-    class Unicoding: private UnicodingImpl
+    class Unicoding: protected UnicodingImpl
     {
-    private:
-        Unicoding() = default;
-
-    private:
-        static std::vector<UnicodingVariant> m_variants;
-
     public:
-        // Factory method
-        static Unicoding* create();
-        static Unicoding* create(const UnicodingSpec &spec);
-        static bool needsLocale(const UnicodingSpec &spec);
+        // Note: This must be populated in a subclass
+        virtual ~Unicoding();
 
-        static void registerPlugin(UnicodingInitFunc func);
-
-        inline static const auto& variants() { return m_variants; }
-
-    public:
-        ~Unicoding();
-
-        inline UnicodingSpec spec() const { return params; }
-        inline std::string name() const { return spec().m_name; }
+        inline std::string name() const { return UnicodingSpec(params).m_name; }
 
         // Operations
         inline int widthAt(const char *pos, const char *end) const

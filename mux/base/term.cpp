@@ -11,12 +11,12 @@
 #include "writer.h"
 #include "listener.h"
 #include "zombies.h"
-#include "locale.h"
 #include "exception.h"
 #include "xterm/xterm.h"
 #include "systemd/scoper.h"
 #include "app/args.h"
 #include "os/attr.h"
+#include "os/encoding.h"
 #include "os/dir.h"
 #include "os/pty.h"
 #include "os/time.h"
@@ -29,7 +29,6 @@
 #include "lib/enums.h"
 #include "lib/attr.h"
 #include "lib/attrstr.h"
-#include "lib/unicode.h"
 #include "config.h"
 
 #include <cstdio>
@@ -58,7 +57,7 @@ TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
     m_params->exitDelay = true;
 
     m_translator = g_args->getTranslator(params->lang);
-    m_locale = new TermLocale(std::move(params->unicoding), std::move(params->lang));
+    m_locale = new TermUnicoding(std::move(params->unicoding), std::move(params->lang));
     m_filemon = new TermFilemon(params->fileLimit, this);
     m_status = new TermStatusTracker(m_translator, std::move(oi->environ));
 
@@ -66,7 +65,7 @@ TermInstance::setup(const Tsq::Uuid &id, const Tsq::Uuid &owner, Size size,
     m_attributes[Tsq::attr_STARTED] = std::to_string(osBasetime(&m_baseTime));
     m_attributes[Tsq::attr_SESSION_COLS] = std::to_string(size.width());
     m_attributes[Tsq::attr_SESSION_ROWS] = std::to_string(size.height());
-    m_attributes[Tsq::attr_ENCODING] = m_locale->unicoding()->name();
+    m_attributes[Tsq::attr_ENCODING] = m_locale->name();
 }
 
 TermInstance::TermInstance(const Tsq::Uuid &id, const Tsq::Uuid &owner,

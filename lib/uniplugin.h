@@ -16,6 +16,7 @@
 // Encoding parameter names (parameter strings take the form name[=value])
 //
 #define TSQ_UNICODE_PARAM_REVISION          "v"
+#define TSQ_UNICODE_PARAM_LOCALE            "l"
 #define TSQ_UNICODE_PARAM_WIDEAMBIG         "+wideambig"
 
 //

@@ -9,7 +9,7 @@
 
 // Test Macros
 #define DECLARE_ROW CellRow row; TermEventTransfer t(row)
-#define DECLARE_VARS DECLARE_ROW; auto *wl = Tsq::Unicoding::create()
+#define DECLARE_VARS DECLARE_ROW; auto *wl = new TermUnicoding()
 #define DECLARE_CURSOR(x) DECLARE_VARS; Cursor cursor(x)
 #define LOAD_STR(str, clu, wid) const char *STR = str; t.setStr(STR, clu, wid)
 #define STR_ITER(ptr) t.getStrIter(ptr)

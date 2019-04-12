@@ -11,6 +11,7 @@
 #include "app/pluginwindow.h"
 #include "base/fontbase.h"
 #include "base/thumbicon.h"
+#include "os/encoding.h"
 #include "os/locale.h"
 #include "settings.h"
 #include "global.h"
@@ -37,7 +38,6 @@
 #include "tipwindow.h"
 #include "iconrule.h"
 #include "iconeditor.h"
-#include "lib/unicode.h"
 #include "lib/base64.h"
 
 #include <QDir>
@@ -52,7 +52,7 @@ TermSettings::TermSettings()
     // calculate some defaults
     m_defaultFont = FontBase::getDefaultFont();
     m_defaultLang = osGetLang();
-    m_defaultEncoding.reset(Tsq::Unicoding::create());
+    m_defaultEncoding.reset(new TermUnicoding());
 
     StateSettings::populateDefaults();
     GlobalSettings::populateDefaults();

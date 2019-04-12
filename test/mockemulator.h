@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "lib/unicode.h"
+#include "os/encoding.h"
 #include "mux/base/cell.h"
 
 // Provides friend access to CellRow

@@ -5,7 +5,7 @@
 FIND_PACKAGE(Cmocka 1.1.1 REQUIRED)
 
 ADD_LIBRARY(mockemulator STATIC mockemulator.cpp)
-TARGET_LINK_LIBRARIES(mockemulator common)
+TARGET_LINK_LIBRARIES(mockemulator os common Threads::Threads)
 
 # Informal testing tools
 IF (MAINTAINER_MODE)

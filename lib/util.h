@@ -7,6 +7,7 @@
 #pragma once
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(*(x)))
+#define LIT_LEN(x) x, sizeof(x) - 1
 
 // Replacement for qDeleteAll with better type warnings
 #define forDeleteAll(c) for (auto *x: c) delete x

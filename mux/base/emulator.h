@@ -16,7 +16,6 @@ class TermBuffer;
 class TermInstance;
 class TermTabStops;
 class TermPalette;
-class TermLocale;
 class Translator;
 
 struct EmulatorParams {

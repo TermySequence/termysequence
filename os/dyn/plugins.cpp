@@ -4,9 +4,9 @@
 
 #include "common.h"
 #include "os/plugins.h"
+#include "os/encoding.h"
 #include "os/fd.h"
 #include "os/logging.h"
-#include "lib/unicode.h"
 
 #include <sys/types.h>
 #include <dirent.h>
@@ -22,7 +22,7 @@ void
 osLoadPlugins()
 {
     // Register the compiled-in defaults first
-    Tsq::Unicoding::registerPlugin(uniplugin_init);
+    TermUnicoding::registerPlugin(uniplugin_init);
 
     DIR *dir;
     int rc = osOpenDir(DATADIR "/" SERVER_NAME "/plugins", &dir, true);
@@ -42,7 +42,7 @@ osLoadPlugins()
             // Try to load this plugin
             void *h = dlopen(info.name.c_str(), RTLD_LAZY);
             if (h && (h = dlsym(h, UNIPLUGIN_EXPORT_INIT))) {
-                Tsq::Unicoding::registerPlugin((UnicodingInitFunc)h);
+                TermUnicoding::registerPlugin((UnicodingInitFunc)h);
                 LOGDBG("Plugins: Loaded %s\n", info.name.c_str());
             } else {
                 LOGWRN("Failed to load %s: %s\n", info.name.c_str(), dlerror());

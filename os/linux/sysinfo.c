@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include <dirent.h>
+#include <gnu/libc-version.h>
 
 int
 osGetCpuCores()
@@ -51,4 +52,16 @@ osGetLoadAverage(char *buf, unsigned buflen)
     }
 
     return 0;
+}
+
+const char *
+osGetStdlibName(char *buf16)
+{
+    return "glibc";
+}
+
+const char *
+osGetStdlibVersion(char *buf16)
+{
+    return gnu_get_libc_version();
 }

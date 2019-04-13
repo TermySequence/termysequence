@@ -5,6 +5,7 @@
 #include "common.h"
 #include "encoding.h"
 #include "locale.h"
+#include "sysinfo.h"
 
 #include <pthread.h>
 
@@ -25,6 +26,22 @@ extern "C" void* threadFunc(void *argPtr) {
     return NULL;
 }
 
+static void
+addPlatformParams(std::string &spec, const char *lang)
+{
+    char buf[16];
+
+    spec.append(LIT_LEN("\x1f" TSQ_UNICODE_PARAM_LOCALE));
+    spec.push_back('=');
+    spec.append(lang);
+
+    spec.append(LIT_LEN("\x1f" TSQ_UNICODE_PARAM_STDLIB));
+    spec.push_back('=');
+    spec.append(osGetStdlibName(buf));
+    spec.push_back(':');
+    spec.append(osGetStdlibVersion(buf));
+}
+
 TermUnicoding::TermUnicoding(std::string &&spec, std::string &&lang) :
     m_spec(std::move(spec)),
     m_lang(std::move(lang))
@@ -41,10 +58,7 @@ TermUnicoding::TermUnicoding(std::string &&spec, std::string &&lang) :
             if (!(m_locale = osCreateLocale(wantlang)))
                 wantlang = curlang;
 
-        newspec = spec;
-        newspec.append(LIT_LEN("\x1f" TSQ_UNICODE_PARAM_LOCALE));
-        newspec.push_back('=');
-        newspec.append(wantlang);
+        addPlatformParams(newspec = m_spec, wantlang);
         specptr = &newspec;
     }
 
@@ -64,10 +78,7 @@ TermUnicoding::TermUnicoding(const std::string &spec)
     std::string newspec;
 
     if (needsLocale(spec.c_str())) {
-        newspec = spec;
-        newspec.append(LIT_LEN("\x1f" TSQ_UNICODE_PARAM_LOCALE));
-        newspec.push_back('=');
-        newspec.append(osGetLocale());
+        addPlatformParams(newspec = spec, osGetLocale());
         specptr = &newspec;
     }
 

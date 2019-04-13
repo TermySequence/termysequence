@@ -14,6 +14,12 @@ osGetCpuCores();
 extern int
 osGetLoadAverage(char *buf, unsigned buflen);
 
+extern const char *
+osGetStdlibName(char *buf16);
+
+extern const char *
+osGetStdlibVersion(char *buf16);
+
 #ifdef __cplusplus
 }
 #endif

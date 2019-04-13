@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <mach-o/dyld.h>
 
 int
 osGetCpuCores()
@@ -57,4 +58,18 @@ osGetLoadAverage(char *buf, unsigned buflen)
     memmove(buf, buf + start, end - start);
     buf[end - start] = '\0';
     return 1;
+}
+
+const char *
+osGetStdlibName(char *buf16)
+{
+    return "darwin";
+}
+
+const char *
+osGetStdlibVersion(char *buf16)
+{
+    int32_t v = NSVersionOfRunTimeLibrary("System");
+    snprintf(buf16, 16, "%d.%d.%d", v >> 16, (v >> 8) & 255, v & 255);
+    return buf16;
 }

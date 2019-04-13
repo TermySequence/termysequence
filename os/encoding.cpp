@@ -77,7 +77,8 @@ TermUnicoding::TermUnicoding(const std::string &spec)
 TermUnicoding::TermUnicoding()
 {
     Tsq::UnicodingSpec spec(TSQ_UNICODE_DEFAULT);
-    s_variants[0].create(UNIPLUGIN_VERSION, &spec, this);
+    const auto &variant = s_variants.front();
+    variant.create(UNIPLUGIN_VERSION, &spec, variant.privarg, this);
 }
 
 TermUnicoding::~TermUnicoding()
@@ -100,8 +101,12 @@ TermUnicoding::populate(const std::string *specptr)
 
     for (auto i = s_variants.crbegin(), j = s_variants.crend(); i != j; ++i)
         if (!strncmp(spec.variant, i->prefix, i->flags >> 32))
-            if ((*i->create)(UNIPLUGIN_VERSION, &spec, this) == 0)
-                break;
+            if ((*i->create)(UNIPLUGIN_VERSION, &spec, i->privarg, this) == 0)
+                return;
+
+    // fallback
+    const auto &variant = s_variants.front();
+    variant.create(UNIPLUGIN_VERSION, &spec, variant.privarg, this);
 }
 
 bool
@@ -109,7 +114,7 @@ TermUnicoding::needsLocale(const char *prefix)
 {
     for (auto i = s_variants.crbegin(), j = s_variants.crend(); i != j; ++i)
         if (!strncmp(prefix, i->prefix, i->flags >> 32))
-            if (i->flags & VFNeedsLocale)
+            if (i->flags & VFPlatformDependent)
                 return true;
 
     return false;

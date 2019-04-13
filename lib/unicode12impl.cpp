@@ -244,7 +244,7 @@ hasParam(const UnicodingParams *params, const char *param)
 }
 
 static int32_t
-create(int32_t, const UnicodingParams *params, UnicodingImpl *m)
+create(int32_t, const UnicodingParams *params, int64_t, UnicodingImpl *m)
 {
     m->version = UNIPLUGIN_VERSION;
     m->seq = new codepoint_t[MAX_CLUSTER_SIZE * 2];
@@ -255,10 +255,10 @@ create(int32_t, const UnicodingParams *params, UnicodingImpl *m)
     m->params.params[0] = TSQ_UNICODE_PARAM_REVISION "=" TSQ_UNICODE_REVISION_TERMY;
 
     if (hasParam(params, TSQ_UNICODE_PARAM_WIDEAMBIG)) {
-        m->privdata = (void*)&s_double_ambig_table;
+        m->privdata = (int64_t)&s_double_ambig_table;
         m->params.params[1] = TSQ_UNICODE_PARAM_WIDEAMBIG;
     } else {
-        m->privdata = (void*)&s_single_ambig_table;
+        m->privdata = (int64_t)&s_single_ambig_table;
     }
 
     m->teardown = teardown;
@@ -273,7 +273,7 @@ static const char *s_params[] = {
     NULL
 };
 static const UnicodingVariant s_variants[] = {
-    { "", VFSelectable, s_params, create },
+    { TSQ_UNICODE_VARIANT_TERMY, VFNoFlags, s_params, create },
     { NULL }
 };
 

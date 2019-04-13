@@ -16,7 +16,8 @@
 // Encoding parameter names (parameter strings take the form name[=value])
 //
 #define TSQ_UNICODE_PARAM_REVISION          "v"
-#define TSQ_UNICODE_PARAM_LOCALE            "l"
+#define TSQ_UNICODE_PARAM_LOCALE            "locale"
+#define TSQ_UNICODE_PARAM_STDLIB            "stdlib"
 #define TSQ_UNICODE_PARAM_WIDEAMBIG         "+wideambig"
 
 //
@@ -36,8 +37,9 @@ struct UnicodingParams;
 struct UnicodingImpl;
 
 enum UnicodingVariantFlags {
-    VFSelectable =  1u,
-    VFNeedsLocale = 2u,
+    VFNoFlags = 0u,
+    VFHidden = 1u,
+    VFPlatformDependent = 2u,
 };
 
 struct UnicodingVariant {
@@ -56,7 +58,11 @@ struct UnicodingVariant {
     //   Impl is the (pre-zeroed) structure to fill out
     //   Return zero on success, -1 otherwise
     //   Report the actual variant name and parameters in the impl structure
-    int32_t (*create)(int32_t version, const UnicodingParams *params, UnicodingImpl *impl);
+    int32_t (*create)(int32_t version, const UnicodingParams *params, int64_t privarg,
+                      UnicodingImpl *impl);
+
+    // Private data given to create method
+    int64_t privarg;
 };
 
 struct UnicodingInfo {
@@ -99,7 +105,7 @@ struct UnicodingImpl {
     codepoint_t *nextSeq;
 
     // Private storage for implementation
-    void *privdata;
+    int64_t privdata;
     // Report the effective parameters for this instance at create time
     UnicodingParams params;
 

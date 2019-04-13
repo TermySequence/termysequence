@@ -16,7 +16,7 @@ osCreateLocale(const char *lang)
     locale_t locale = 0;
     if (*lang) {
         locale = duplocale(LC_GLOBAL_LOCALE);
-        locale = newlocale(LC_CTYPE_MASK, lang, locale);
+        locale = newlocale(LC_COLLATE_MASK|LC_CTYPE_MASK, lang, locale);
     }
     return reinterpret_cast<uint64_t>(locale);
 }

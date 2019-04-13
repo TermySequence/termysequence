@@ -40,14 +40,14 @@ EncodingSelectFactory::createWidget(const SettingDef *def, SettingsBase *setting
     if (!m_choices) {
         size_t n = 1;
         for (const auto &i: TermUnicoding::variants())
-            if (i.flags & VFSelectable)
+            if (!(i.flags & VFHidden))
                 ++n;
 
         m_choices = new ChoiceDef[n]{};
 
         n = 0;
         for (const auto &i: TermUnicoding::variants())
-            if (i.flags & VFSelectable) {
+            if (!(i.flags & VFHidden)) {
                 m_choices[n].description = i.prefix;
                 m_choices[n].value = QString(i.prefix);
                 ++n;

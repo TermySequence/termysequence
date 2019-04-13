@@ -64,7 +64,7 @@ InfoPropModel::updateData(int idx, const QString &value)
 inline void
 InfoPropModel::updateList(int idx, QString value)
 {
-    updateData(idx, value.replace('\x1f', ' '));
+    updateData(idx, value.replace('\x1f', C(0xb7)));
 }
 
 inline void

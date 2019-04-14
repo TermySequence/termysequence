@@ -26,14 +26,14 @@ osLoadPlugins()
     TermUnicoding::registerPlugin(uniplugin_syswc_init);
 
     DIR *dir;
-    int rc = osOpenDir(DATADIR "/" SERVER_NAME "/plugins", &dir, true);
+    int rc = osOpenDir(DATADIR "/" SERVER_NAME "/plugins/", &dir, true);
     FileInfo info(rc);
     while (rc != -1) {
-        switch (rc = osReadDir(dir, &info) != -1) {
+        switch (rc = osReadDir(dir, &info)) {
         case -1:
             closedir(dir);
-            break;
-        case 1:
+            return;
+        case 2:
             const size_t n = sizeof(SO_SUFFIX) - 1;
             if (info.name.size() <= n)
                 break;
@@ -41,6 +41,7 @@ osLoadPlugins()
                 break;
 
             // Try to load this plugin
+            info.name.insert(0, LIT_LEN(DATADIR "/" SERVER_NAME "/plugins/"));
             void *h = dlopen(info.name.c_str(), RTLD_LAZY);
             if (h && (h = dlsym(h, UNIPLUGIN_EXPORT_INIT))) {
                 TermUnicoding::registerPlugin((UnicodingInitFunc)h);

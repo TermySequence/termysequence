@@ -671,9 +671,9 @@ TermInstance::handleEncoding(const std::string &theirName)
         auto ourName = unicoding->name();
         if (ourName != theirName) {
             QString theirs = QString::fromStdString(theirName);
-            theirs.replace('\x1f', ' ');
+            theirs.replace('\x1f', C(0xb7));
             QString ours = QString::fromStdString(ourName);
-            ours.replace('\x1f', ' ');
+            ours.replace('\x1f', C(0xb7));
 
             qCWarning(lcSettings) << "Warning: unsupported encoding" << theirs
                                   << "(closest match is" << ours << ")";

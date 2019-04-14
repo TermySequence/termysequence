@@ -13,12 +13,23 @@ namespace Tsq
     //
     // UnicodingSpec
     //
+    struct ParamSorter
+    {
+        bool operator()(const std::string_view &lhs, const std::string_view &rhs) const {
+            if (lhs == TSQ_UNICODE_PARAM_REVISION)
+                return true;
+            if (rhs == TSQ_UNICODE_PARAM_REVISION)
+                return false;
+            return lhs < rhs;
+        }
+    };
+
     void
     UnicodingSpec::parse()
     {
         variant = m_spec.data();
 
-        std::map<std::string_view,const char *> pmap;
+        std::map<std::string_view,const char *,ParamSorter> pmap;
         const char *buf = m_spec.data() + strlen(variant) + 1;
         const char *end = m_spec.data() + m_spec.size();
 
@@ -74,6 +85,10 @@ namespace Tsq
     //
     // Unicoding
     //
+    Unicoding::Unicoding() :
+        UnicodingImpl{}
+    {}
+
     Unicoding::~Unicoding()
     {
         UnicodingImpl::teardown(this);

@@ -17,10 +17,10 @@
 #include <cwchar>
 
 //
-// SystemWcWidth methods
+// SystemLocale methods
 //
 static Tsq::CellFlags
-syswc_lookup(codepoint_t c)
+syswc_lookup(codepoint_t c, MainTablePtr table)
 {
     switch(wcwidth(c)) {
     case -1:
@@ -28,24 +28,42 @@ syswc_lookup(codepoint_t c)
     case 0:
         return GcbCombining;
     case 1:
-        return 0;
+        return table ? table->lookup(c) & PerCharFlags : 0;
     default:
-        return DblWidthChar | (g_double_ambig_table.lookup(c) & EmojiChar);
+        return DblWidthChar | (g_single_ambig_table.lookup(c) & EmojiChar);
     }
+}
+
+static Tsq::CellFlags
+syswc_width(codepoint_t c, MainTablePtr table)
+{
+    if (wcwidth(c) != 2) {
+        return table ? table->lookup(c) & DblWidthChar : 0;
+    } else {
+        return DblWidthChar;
+    }
+}
+
+static inline bool
+syswc_combines(codepoint_t c)
+{
+    return wcwidth(c) == 0;
 }
 
 static int32_t
 widthAt(const UnicodingImpl *m, const char *i, const char *j)
 {
+    auto table = (MainTablePtr)m->privdata;
     codepoint_t c = utf8::unchecked::next(i);
-    return 1 + (wcwidth(c) > 1);
+    return (syswc_width(c, table) != 0) + 1;
 }
 
 static int32_t
 widthNext(UnicodingImpl *m, const char **i, const char *j)
 {
+    auto table = (MainTablePtr)m->privdata;
     codepoint_t c = utf8::unchecked::next(*i);
-    Tsq::CellFlags gcb = syswc_lookup(c);
+    Tsq::CellFlags gcb = syswc_lookup(c, table);
 
     m->nextFlags = gcb & PerCharFlags;
     m->nextLen = 1;
@@ -55,7 +73,7 @@ widthNext(UnicodingImpl *m, const char **i, const char *j)
         auto k = *i;
         c = utf8::unchecked::next(k);
 
-        if (!(syswc_lookup(c) & GcbCombining))
+        if (!(syswc_combines(c)))
             break;
 
         switch (c) {
@@ -78,22 +96,23 @@ widthNext(UnicodingImpl *m, const char **i, const char *j)
 static int32_t
 widthCategoryOf(UnicodingImpl *m, codepoint_t c, Tsq::CellFlags *flagsor)
 {
-    Tsq::CellFlags gcb = syswc_lookup(c);
-
-    if (m->len == 0)
-        goto assign;
+    auto table = (MainTablePtr)m->privdata;
+    Tsq::CellFlags gcb = syswc_lookup(c, table);
 
     switch (gcb & GcbBaseMask) {
     case GcbInvalid:
+        m->flags = syswc_width(REPLACEMENT_CH, table);
         goto replace;
     case GcbCombining:
+        if (m->len == 0)
+            goto assign;
         switch (c) {
         case EMOJI_SELECTOR:
-            if (m->nextFlags == DblWidthChar)
-                m->nextFlags |= EmojiChar;
+            if (m->flags == DblWidthChar)
+                m->flags |= EmojiChar;
             break;
         case TEXT_SELECTOR:
-            m->nextFlags &= ~EmojiChar;
+            m->flags &= ~EmojiChar;
             break;
         }
         goto push;
@@ -105,8 +124,8 @@ replace:
     m->len = 1;
     m->seq[0] = REPLACEMENT_CH;
     m->nextLen = 0;
-    *flagsor |= (m->privdata & PerCharFlags);
-    return (int16_t)m->privdata;
+    *flagsor |= m->flags;
+    return m->flags ? -3 : -2;
 assign:
     m->flags = gcb & PerCharFlags;
     m->len = 1;
@@ -126,8 +145,19 @@ push:
 static void
 teardown(UnicodingImpl *m)
 {
+    free(const_cast<char*>(m->params.params[1]));
     delete [] m->params.params;
     delete [] m->seq;
+}
+
+static const char *
+getParam(const UnicodingParams *params, const char *param)
+{
+    size_t n = strlen(param);
+    for (const char **p = params->params; *p; ++p)
+        if (!strncmp(*p, param, n))
+            return *p;
+    return nullptr;
 }
 
 static int32_t
@@ -138,10 +168,14 @@ create(int32_t, const UnicodingParams *params, int64_t, UnicodingImpl *m)
     m->nextSeq = m->seq + MAX_CLUSTER_SIZE;
 
     m->params.variant = PLUGIN_NAME;
-    m->params.params = new const char *[2]{};
+    m->params.params = new const char *[4]{};
     m->params.params[0] = TSQ_UNICODE_PARAM_REVISION "=" PLUGIN_REVISION;
+    m->params.params[1] = strdup(getParam(params, TSQ_UNICODE_PARAM_STDLIB));
 
-    m->privdata = wcwidth(REPLACEMENT_CH) > 1 ? DblWidthChar|-2 : ~DblWidthChar&-3;
+    if (getParam(params, TSQ_UNICODE_PARAM_WIDEAMBIG)) {
+        m->privdata = (int64_t)&g_double_ambig_table;
+        m->params.params[2] = TSQ_UNICODE_PARAM_WIDEAMBIG;
+    }
 
     m->teardown = teardown;
     m->widthAt = widthAt;

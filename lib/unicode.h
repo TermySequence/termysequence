@@ -51,6 +51,7 @@ namespace Tsq
     {
     public:
         // Note: This must be populated in a subclass
+        Unicoding();
         virtual ~Unicoding();
 
         inline std::string name() const { return UnicodingSpec(params).m_name; }

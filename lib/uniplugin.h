@@ -20,6 +20,9 @@
 #define TSQ_UNICODE_PARAM_STDLIB            "stdlib"
 #define TSQ_UNICODE_PARAM_WIDEAMBIG         "+wideambig"
 
+// Maximum codepoints in a grapheme cluster (128 or less)
+#define MAX_CLUSTER_SIZE 16
+
 //
 // Handy constants
 //

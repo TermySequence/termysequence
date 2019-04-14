@@ -6,6 +6,10 @@
 
 // UTF8-CPP library with explicit instantiations
 
+#ifdef PLUGIN
+#include "../vendor/utf8cpp/utf8.h"
+#else
+
 #include <utf8.h>
 
 namespace utf8 {
@@ -20,3 +24,5 @@ namespace utf8 {
         extern template uint32_t next(const char *&ptr);
     }
 }
+
+#endif

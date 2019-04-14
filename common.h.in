@@ -10,29 +10,8 @@
 #endif
 #define _FILE_OFFSET_BITS 64
 
-/* Utility macros */
+/* Globally included headers and utilities */
 #include "lib/util.h"
-
-/* Globally included headers */
-#ifdef __cplusplus
-#include <cstddef>
-#include <cinttypes>
-#include <cstring>
-#include <cstdlib>
-#include <string>
-#include <utility>
-#include <iterator>
-#else
-#include <stddef.h>
-#include <inttypes.h>
-#include <string.h>
-#include <stdlib.h>
-#endif
-
-/* Globally imported namespaces */
-#ifdef __cplusplus
-using namespace std::string_literals;
-#endif
 
 /* Project branding and defines */
 #define PREFIX "@CMAKE_INSTALL_PREFIX@"

@@ -63,6 +63,7 @@ if (@ARGV != 1 || ! -d $ARGV[0]) {
 my $datadir = $ARGV[0];
 my $table = Unitable->new();
 my $hangul = Unitable->new();
+my $emoji = Unitable->new();
 
 #
 ##
@@ -131,6 +132,10 @@ parse_file('emoji-data.txt',
            sub { return $_[0] eq 'Emoji_Presentation' },
            sub { $table->augment($_[0], $_[1], ['EmojiChar', 'DblWidthChar']) });
 
+parse_file('emoji-data.txt',
+           sub { return $_[0] eq 'Emoji_Presentation' },
+           sub { $emoji->emplace($_[0], $_[1], ['EmojiChar']) });
+
 #
 ## DblWidthChar
 #
@@ -171,14 +176,8 @@ parse_holes('UnicodeData.txt', \&handle_hole);
 ### Print 1
 ##
 #
-print <<'EOF';
-// Copyright © 2019 TermySequence LLC
-//
-// SPDX-License-Identifier: GPL-2.0-only
-
-EOF
-
 $table->print('codepoint_t', 's_single_ambig_data', "\n");
+$emoji->print_set('codepoint_t', 's_emoji_data', "\n");
 
 #
 ##
@@ -195,7 +194,7 @@ parse_holes('UnicodeData.txt', \&handle_hole);
 
 #
 ##
-### Print 1
+### Print 2
 ##
 #
 $table->print('codepoint_t', 's_double_ambig_data', "\n");

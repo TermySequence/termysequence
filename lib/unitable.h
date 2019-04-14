@@ -9,8 +9,10 @@
 
 namespace Tsq
 {
-    // Codepoint range lookup table
-    template<class T, T defval>
+    //
+    // Range-based codepoint lookup table
+    //
+    template<class T, T defval = 0>
     class Unitable
     {
     private:

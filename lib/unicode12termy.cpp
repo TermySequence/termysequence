@@ -2,55 +2,18 @@
 //
 // SPDX-License-Identifier: GPL-2.0-only
 
-#include "common.h"
+#include "util.h"
 #include "unicode.h"
-#include "unitable.h"
 #include "utf8.h"
-#include "config.h"
 
-using namespace Tsq;
+#define PLUGIN_NAME     TSQ_UNICODE_VARIANT_TERMY
+#define PLUGIN_REVISION TSQ_UNICODE_REVISION_TERMY
 
-// Redefine CellFlags values for our own use
-enum GcbParserFlag : uint32_t {
-    GcbPictographicSequence    = 1u,
-    GcbStateMask               = 255u,
-
-    GcbZwj                     = 1u << 8,
-    GcbSkinToneModifier        = 1u << 9,
-    GcbHangulL                 = 1u << 10,
-    GcbHangulV                 = 1u << 11,
-    GcbHangulT                 = 1u << 12,
-    GcbHangulLV                = 1u << 13,
-    GcbHangulLVT               = 1u << 14,
-    GcbFlagsMask               = 255u << 8,
-
-    GcbCombining               = 1u << 16,
-    GcbPictographic            = 1u << 17,
-    GcbEmojiModifier           = 1u << 18,
-    GcbTextModifier            = 1u << 19,
-    GcbRegionalIndicator       = 1u << 20,
-    GcbHangul                  = 1u << 21,
-    GcbBaseMask                = 255u << 16,
-
-    // EmojiChar               = 1u << 30,
-    // DblWidthChar            = 1u << 31,
-    // PerCharFlags            = 3u << 30,
-
-    GcbPictographicJoin        = (GcbPictographicSequence|GcbZwj),
-};
-
-#include "unicode12tab.hpp"
-
-static const Unitable<codepoint_t, 0>
-s_single_ambig_table(s_single_ambig_data, ARRAY_SIZE(s_single_ambig_data) / 3);
-
-static const Unitable<codepoint_t, 0>
-s_double_ambig_table(s_double_ambig_data, ARRAY_SIZE(s_double_ambig_data) / 3);
-
-static const Unitable<uint16_t, GcbHangulLVT>
-s_hangul_table(s_hangul_data, ARRAY_SIZE(s_hangul_data) / 3);
-
-typedef typeof(s_single_ambig_table) *MainTablePtr;
+#ifdef PLUGIN
+#include "unicode12data.cpp"
+#else
+#include "unicode12data.h"
+#endif
 
 //
 // TermyUnicode methods
@@ -58,8 +21,8 @@ typedef typeof(s_single_ambig_table) *MainTablePtr;
 static bool
 hangul_combines(codepoint_t a, codepoint_t b)
 {
-    CellFlags a_gcb = s_hangul_table.search(a);
-    CellFlags b_gcb = s_hangul_table.search(b);
+    Tsq::CellFlags a_gcb = g_hangul_table.search(a);
+    Tsq::CellFlags b_gcb = g_hangul_table.search(b);
 
     if (a_gcb & GcbHangulL)
         return b_gcb & (GcbHangulL|GcbHangulV|GcbHangulLV|GcbHangulLVT);
@@ -74,7 +37,7 @@ hangul_combines(codepoint_t a, codepoint_t b)
 }
 
 static inline bool
-emoji_combines(CellFlags a_gcb, CellFlags b_gcb)
+emoji_combines(Tsq::CellFlags a_gcb, Tsq::CellFlags b_gcb)
 {
     return !(b_gcb & GcbSkinToneModifier) || (a_gcb & GcbPictographic);
 }
@@ -83,7 +46,7 @@ static int32_t
 widthAt(const UnicodingImpl *m, const char *i, const char *j)
 {
     auto table = (MainTablePtr)m->privdata;
-    CellFlags gcb = table->lookup(utf8::unchecked::next(i));
+    Tsq::CellFlags gcb = table->lookup(utf8::unchecked::next(i));
 
     if (gcb & DblWidthChar)
         return 2;
@@ -100,7 +63,7 @@ widthNext(UnicodingImpl *m, const char **i, const char *j)
 {
     auto table = (MainTablePtr)m->privdata;
     codepoint_t c = utf8::unchecked::next(*i);
-    CellFlags gcb = table->lookup(c);
+    Tsq::CellFlags gcb = table->lookup(c);
     bool is_pictoseq = gcb & GcbPictographic;
     m->nextFlags = gcb & PerCharFlags;
     m->nextLen = 1;
@@ -109,7 +72,7 @@ widthNext(UnicodingImpl *m, const char **i, const char *j)
     while (*i != j) {
         auto k = *i;
         codepoint_t next_c = utf8::unchecked::next(k);
-        CellFlags next_gcb = table->lookup(next_c);
+        Tsq::CellFlags next_gcb = table->lookup(next_c);
 
         switch (next_gcb & GcbBaseMask) {
         case GcbEmojiModifier:
@@ -157,10 +120,10 @@ out:
 }
 
 static int32_t
-widthCategoryOf(UnicodingImpl *m, codepoint_t c, CellFlags *flagsor)
+widthCategoryOf(UnicodingImpl *m, codepoint_t c, Tsq::CellFlags *flagsor)
 {
     auto table = (MainTablePtr)m->privdata;
-    CellFlags gcb = table->search(c);
+    Tsq::CellFlags gcb = table->search(c);
     int rc;
 
     if (m->len == 0)
@@ -250,15 +213,15 @@ create(int32_t, const UnicodingParams *params, int64_t, UnicodingImpl *m)
     m->seq = new codepoint_t[MAX_CLUSTER_SIZE * 2];
     m->nextSeq = m->seq + MAX_CLUSTER_SIZE;
 
-    m->params.variant = TSQ_UNICODE_VARIANT_TERMY;
+    m->params.variant = PLUGIN_NAME;
     m->params.params = new const char *[3]{};
-    m->params.params[0] = TSQ_UNICODE_PARAM_REVISION "=" TSQ_UNICODE_REVISION_TERMY;
+    m->params.params[0] = TSQ_UNICODE_PARAM_REVISION "=" PLUGIN_REVISION;
 
     if (hasParam(params, TSQ_UNICODE_PARAM_WIDEAMBIG)) {
-        m->privdata = (int64_t)&s_double_ambig_table;
+        m->privdata = (int64_t)&g_double_ambig_table;
         m->params.params[1] = TSQ_UNICODE_PARAM_WIDEAMBIG;
     } else {
-        m->privdata = (int64_t)&s_single_ambig_table;
+        m->privdata = (int64_t)&g_single_ambig_table;
     }
 
     m->teardown = teardown;
@@ -273,13 +236,19 @@ static const char *s_params[] = {
     NULL
 };
 static const UnicodingVariant s_variants[] = {
-    { TSQ_UNICODE_VARIANT_TERMY, VFNoFlags, s_params, create },
+    { PLUGIN_NAME, VFNoFlags, s_params, create },
     { NULL }
 };
 
 extern "C" int32_t
-uniplugin_init(int32_t, UnicodingInfo *info)
+uniplugin_termy_init(int32_t, UnicodingInfo *info)
 {
     info->variants = s_variants;
     return info->version = UNIPLUGIN_VERSION;
 }
+
+#ifdef PLUGIN
+extern "C" int32_t
+uniplugin_init(int32_t, UnicodingInfo*)
+__attribute__((alias("uniplugin_termy_init")));
+#endif

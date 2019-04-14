@@ -21,8 +21,9 @@
 void
 osLoadPlugins()
 {
-    // Register the compiled-in defaults first
-    TermUnicoding::registerPlugin(uniplugin_init);
+    // Register the compiled-in variants first
+    TermUnicoding::registerPlugin(uniplugin_termy_init);
+    TermUnicoding::registerPlugin(uniplugin_syswc_init);
 
     DIR *dir;
     int rc = osOpenDir(DATADIR "/" SERVER_NAME "/plugins", &dir, true);

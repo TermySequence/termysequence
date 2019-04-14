@@ -10,6 +10,9 @@
 #define TSQ_UNICODE_VARIANT_TERMY           "TermyUnicode"
 #define TSQ_UNICODE_REVISION_TERMY          "120"
 
+#define TSQ_UNICODE_VARIANT_SYSWC           "SystemLocale"
+#define TSQ_UNICODE_REVISION_SYSWC          "1"
+
 // Recommended default encoding string
 // Encoding string consists of a variant name followed by optional
 // parameter strings, all separated by \x1f characters
@@ -76,3 +79,10 @@ namespace Tsq
         std::string nextEmojiName() const;
     };
 }
+
+// Init functions for compiled-in variants
+extern "C" int32_t
+uniplugin_termy_init(int32_t, UnicodingInfo*);
+
+extern "C" int32_t
+uniplugin_syswc_init(int32_t, UnicodingInfo*);

@@ -151,9 +151,6 @@ struct UnicodingImpl {
 //   Fill out the info structure with the plugin information
 //   Version is the plugin interface version supported by the host
 //   Return the version value of the filled-out structure or -1 on failure
-extern int32_t
-uniplugin_init(int32_t version, UnicodingInfo *info);
-
-typedef typeof(uniplugin_init) *UnicodingInitFunc;
+typedef int32_t (*UnicodingInitFunc)(int32_t version, UnicodingInfo *info);
 
 }

@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-2.0-only
 
+#include "util.h"
+#include "unicode12data.h"
+
 static const codepoint_t s_single_ambig_data[] = {
     0x00A9, 0x00A9, GcbPictographic,
     0x00AE, 0x00AE, GcbPictographic,
@@ -1441,3 +1444,12 @@ static const uint16_t s_hangul_data[] = {
     0xD7B0, 0xD7C6, GcbHangulV,
     0xD7CB, 0xD7FB, GcbHangulT,
 };
+
+const Tsq::Unitable<codepoint_t>
+g_single_ambig_table(s_single_ambig_data, ARRAY_SIZE(s_single_ambig_data) / 3);
+
+const Tsq::Unitable<codepoint_t>
+g_double_ambig_table(s_double_ambig_data, ARRAY_SIZE(s_double_ambig_data) / 3);
+
+const Tsq::Unitable<uint16_t, GcbHangulLVT>
+g_hangul_table(s_hangul_data, ARRAY_SIZE(s_hangul_data) / 3);

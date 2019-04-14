@@ -229,4 +229,23 @@ sub print {
     print "\n};\n", $suffix;
 }
 
+sub print_set {
+    my ($self, $type, $varname, $suffix) = @_;
+    my $ranges = $$self{RANGES};
+
+    print "static const $type ${varname}[] = {\n";
+
+    for (my $i = 0; $i < @$ranges; $i += 3) {
+        if ($$ranges[$i] > 0xffff) {
+            printf "    0x%5X, 0x%5X,", $$ranges[$i], $$ranges[$i + 1];
+        } else {
+            printf "    0x%04X, 0x%04X,", $$ranges[$i], $$ranges[$i + 1];
+        }
+
+        print "\n" if ($i + 3 < @$ranges);
+    }
+
+    print "\n};\n", $suffix;
+}
+
 1;

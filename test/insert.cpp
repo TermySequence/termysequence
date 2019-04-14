@@ -149,6 +149,8 @@ static void insertBetweenRanges(void**)
 
 int main()
 {
+    REGISTER_UNIPLUGIN(uniplugin_termy_init);
+
     const CMUnitTest tests[] = {
         cmocka_unit_test(simpleSingleByteInsert),
         cmocka_unit_test(simpleEndOfStringInsert),

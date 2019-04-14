@@ -297,6 +297,8 @@ static void partialOffEnd(void**)
 
 int main()
 {
+    REGISTER_UNIPLUGIN(uniplugin_termy_init);
+
     const CMUnitTest tests[] = {
         cmocka_unit_test(frontErase),
         cmocka_unit_test(frontSplitErase),

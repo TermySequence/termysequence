@@ -94,6 +94,8 @@ static void zeroWidthFullSubstr(void**)
 
 int main()
 {
+    REGISTER_UNIPLUGIN(uniplugin_termy_init);
+
     const CMUnitTest tests[] = {
         cmocka_unit_test(frontSubstr),
         cmocka_unit_test(backSubstr),

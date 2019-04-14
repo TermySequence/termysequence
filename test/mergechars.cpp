@@ -125,6 +125,8 @@ static void mergeCoalesceRanges(void**)
 
 int main()
 {
+    REGISTER_UNIPLUGIN(uniplugin_termy_init);
+
     const CMUnitTest tests[] = {
         cmocka_unit_test(simpleSingleWidthMerge),
         cmocka_unit_test(simpleEndOfStringMerge),

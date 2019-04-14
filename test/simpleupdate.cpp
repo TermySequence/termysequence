@@ -330,6 +330,8 @@ static void emojiOverreach(void**)
 
 int main()
 {
+    REGISTER_UNIPLUGIN(uniplugin_termy_init);
+
     const CMUnitTest tests[] = {
         cmocka_unit_test(nullUpdate),
         cmocka_unit_test(simpleSingleByteSingleWidth),

@@ -145,6 +145,8 @@ static void doubleAndDoubleWithDouble(void**)
 
 int main()
 {
+    REGISTER_UNIPLUGIN(uniplugin_termy_init);
+
     const CMUnitTest tests[] = {
         cmocka_unit_test(doubleWithSingleAligned),
         cmocka_unit_test(doubleWithSingleUnaligned),

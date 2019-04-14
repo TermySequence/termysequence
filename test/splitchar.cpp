@@ -143,6 +143,8 @@ static void splitBetweenRanges(void**)
 
 int main()
 {
+    REGISTER_UNIPLUGIN(uniplugin_termy_init);
+
     const CMUnitTest tests[] = {
         cmocka_unit_test(simpleSplit),
         cmocka_unit_test(simpleSplitWithCombiner),

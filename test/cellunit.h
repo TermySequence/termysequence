@@ -8,6 +8,7 @@
 #include "mockemulator.h"
 
 // Test Macros
+#define REGISTER_UNIPLUGIN(x) TermUnicoding::registerPlugin(x);
 #define DECLARE_ROW CellRow row; TermEventTransfer t(row)
 #define DECLARE_VARS DECLARE_ROW; auto *wl = new TermUnicoding()
 #define DECLARE_CURSOR(x) DECLARE_VARS; Cursor cursor(x)
@@ -26,8 +27,8 @@
 #define DW   "\xEF\xBF\xA6"         // FULLWIDTH WON SIGN
 #define CMB  "\xCC\x80"             // COMBINING GRAVE
 #define PEMO "\xF0\x9F\x83\x8F"     // PLAYING CARD BLACK JOKER
-#define TEMO "#\xEF\xB8\x8F"        // # + VARIATION SELECTOR
-#define ECMB "\xE2\x80\x8D#"        // ZERO WIDTH JOINER + #
+#define TEMO "#\xEF\xB8\x8F"        // # + EMOJI VARIATION SELECTOR
+#define ECMB "\xE2\x80\x8D\xC2\xA9" // ZERO WIDTH JOINER + COPYRIGHT SIGN
 // WHITE UP POINTING INDEX + EMOJI MODIFIER FITZPATRICK TYPE 1-2
 #define MEMO "\xE2\x98\x9D\xF0\x9F\x8F\xBB"
 

@@ -41,11 +41,11 @@ SlotWidget::handleSettingChanged(const QVariant &value)
 {
     QString text = value.toString();
 
-    for (int i = 0; i < m_combo->count(); ++i)
-        if (m_combo->itemText(i) == text) {
-            m_combo->setCurrentIndex(i);
-            return;
-        }
+    int row = m_combo->findText(text);
+    if (row != -1) {
+        m_combo->setCurrentIndex(row);
+        return;
+    }
 
     m_combo->setEditText(text);
 }

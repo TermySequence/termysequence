@@ -250,5 +250,6 @@ uniplugin_termy_init(int32_t, UnicodingInfo *info)
 #ifdef PLUGIN
 extern "C" int32_t
 uniplugin_init(int32_t, UnicodingInfo*)
-__attribute__((alias("uniplugin_termy_init")));
+    __attribute__((alias("uniplugin_termy_init")))
+    __attribute__((visibility("default")));
 #endif

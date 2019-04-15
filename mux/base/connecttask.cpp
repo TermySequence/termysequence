@@ -219,13 +219,13 @@ RunConnect::begin()
     params.env = m_params[Tsq::attr_COMMAND_ENVIRON];
     params.dir = m_params[Tsq::attr_COMMAND_STARTDIR];
 
-    for (int i = 0; i < params.command.size(); ++i)
-        if (params.command[i] == '\x1f')
-            params.command[i] = '\0';
+    for (char &c: params.command)
+        if (c == '\x1f')
+            c = '\0';
 
-    for (int i = 0; i < params.env.size(); ++i)
-        if (params.env[i] == '\x1f')
-            params.env[i] = '\0';
+    for (char &c: params.env)
+        if (c == '\x1f')
+            c = '\0';
 
     osRelativeToHome(params.dir);
     params.daemon = true;

@@ -164,33 +164,39 @@ MainWidget::makeSplitWidget(SplitLayoutReader &layout, int &pos, int type)
     switch (type) {
     case SPLIT_VFIXED4:
         fixed = true;
+        // fallthru
     case SPLIT_VRESIZE4:
         horizontal = false;
         count = 4;
         break;
     case SPLIT_VFIXED3:
         fixed = true;
+        // fallthru
     case SPLIT_VRESIZE3:
         horizontal = false;
         count = 3;
         break;
     case SPLIT_VFIXED2:
         fixed = true;
+        // fallthru
     case SPLIT_VRESIZE2:
         horizontal = false;
         break;
     case SPLIT_HFIXED4:
         fixed = true;
+        // fallthru
     case SPLIT_HRESIZE4:
         count = 4;
         break;
     case SPLIT_HFIXED3:
         fixed = true;
+        // fallthru
     case SPLIT_HRESIZE3:
         count = 3;
         break;
     case SPLIT_HFIXED2:
         fixed = true;
+        // fallthru
     default:
         break;
     }

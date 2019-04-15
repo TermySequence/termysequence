@@ -69,13 +69,13 @@ DownloadWidget::addPath(int type, QString path)
 void
 DownloadWidget::handleTextChanged(const QString &text)
 {
-    QVariant value = text;
+    QVariant value;
 
-    for (int i = 0; i < m_combo->count(); ++i)
-        if (m_combo->itemText(i) == value) {
-            value = m_combo->itemData(i);
-            break;
-        }
+    int row = m_combo->findText(text);
+    if (row != -1)
+        value = m_combo->itemData(row);
+    else
+        value = text;
 
     if (m_value != value)
         setProperty(value);
@@ -84,11 +84,11 @@ DownloadWidget::handleTextChanged(const QString &text)
 void
 DownloadWidget::handleSettingChanged(const QVariant &value)
 {
-    for (int i = 0; i < m_combo->count(); ++i)
-        if (m_combo->itemData(i) == value) {
-            m_combo->setCurrentIndex(i);
-            return;
-        }
+    int row = m_combo->findData(value);
+    if (row != -1) {
+        m_combo->setCurrentIndex(row);
+        return;
+    }
 
     QString text = value.toString();
 

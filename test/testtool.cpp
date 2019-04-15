@@ -34,7 +34,8 @@ command(const char *cmd)
 
     switch (*cmd) {
     case '\0':
-        output.append(1, '\n');
+        output.push_back('\n');
+        break;
     case '-':
         if (output.size() == 1) {
             // Go raw
@@ -69,7 +70,7 @@ command(const char *cmd)
             long code = strtol(output.c_str() + 1, &end, 10);
             if (end[1] == '\0') {
                 output.clear();
-                output.append(1, (char)code);
+                output.push_back((char)code);
             }
         }
         break;

@@ -408,14 +408,13 @@ TermListener::findTerm(TermManager *target, const TermState *rec) const
 void
 TermListener::handleStackReordered()
 {
-    int base = 1;
+    int base = 0;
 
-    for (int i = 0; i < m_managers.size(); ++i) {
-        const auto &stacks = m_managers.at(i)->m_stacks;
-
-        for (int j = 0; j < stacks.size(); ++j) {
-            stacks.at(j)->setIndex(base++);
-            stacks.at(j)->setPos(j);
+    for (auto manager: qAsConst(m_managers)) {
+        int i = 0;
+        for (auto stack: qAsConst(manager->m_stacks)) {
+            stack->setIndex(++base);
+            stack->setPos(i++);
         }
     }
 }

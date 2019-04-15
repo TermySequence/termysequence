@@ -140,7 +140,7 @@ TermsWindow::event(QEvent *event)
         break;
     case QEvent::Close:
         g_state->store(TermsGeometryKey, saveGeometry());
-        setting.append(1, m_check->isChecked());
+        setting.push_back(m_check->isChecked());
         g_state->storeVersioned(TermsSettingsKey, STATE_VERSION, setting);
         break;
     case QEvent::WindowActivate:

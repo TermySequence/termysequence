@@ -13,6 +13,7 @@
 #include "lib/attrstr.h"
 #include "lib/utf8.h"
 #include "lib/unicode.h"
+#include "config.h"
 
 using namespace std;
 
@@ -74,28 +75,36 @@ XTermEmulator::termReset(const char *buf, unsigned len, Tsq::ResetFlags arg)
 }
 
 void
-XTermEmulator::termEventChecked(const char *buf, unsigned len)
+XTermEmulator::termEventChecked(const char *i, const char *j)
 {
-    string checked;
-
     try {
-        utf8::replace_invalid(buf, buf + len, std::back_inserter(checked));
+        while (i != j) {
+            codepoint_t c = utf8::validating_next(i, j);
+            if (c != (codepoint_t)-1) {
+                m_state.process(c);
+            } else {
+                CellAttributes save = m_attributes;
+                m_attributes.flags |= Tsq::Fg|Tsq::Bg;
+                m_attributes.fg = INVALID_INPUT_FG;
+                m_attributes.bg = INVALID_INPUT_BG;
+
+                m_state.process(REPLACEMENT_CH);
+
+                m_attributes = save;
+            }
+        }
     }
     catch (const utf8::not_enough_room &) {
-        // Note: UTF8CPP provides no obvious way to handle this case
+        unsigned off = j - i;
+        memcpy(m_running + (8 - off), i, off);
+        m_running[0] = off;
     }
-
-    utf8::unchecked::iterator<string::iterator> i(checked.begin());
-    utf8::unchecked::iterator<string::iterator> j(checked.end());
-
-    for (; i != j; ++i)
-        m_state.process(*i);
 }
 
 bool
 XTermEmulator::termEvent(char *buf, unsigned len, bool running, bool chflags)
 {
-    int off = 0;
+    unsigned off = 0;
 
     if (running && m_running[0]) {
         memcpy(buf - 8, m_running, 8);
@@ -103,8 +112,7 @@ XTermEmulator::termEvent(char *buf, unsigned len, bool running, bool chflags)
         m_running[0] = 0;
     }
 
-    utf8::iterator<const char *> i(buf - off, buf - off, buf + len);
-    utf8::iterator<const char *> j(buf + len, buf - off, buf + len);
+    const char *i = buf - off, *j = buf + len;
 
     TermInstance::StateLock slock(m_parent, true);
     resetEventState();
@@ -113,16 +121,16 @@ XTermEmulator::termEvent(char *buf, unsigned len, bool running, bool chflags)
     Cursor savedCursor = cursor();
 
     try {
-        for (; i != j; ++i)
-            m_state.process(*i);
+        while (i != j)
+            m_state.process(utf8::next(i, j));
     }
     catch (const utf8::not_enough_room &) {
-        off = len - (i.base() - buf);
-        memcpy(m_running + (8 - off), i.base(), off);
+        off = j - i;
+        memcpy(m_running + (8 - off), i, off);
         m_running[0] = off;
     }
     catch (const utf8::exception &) {
-        termEventChecked(i.base(), len - (i.base() - buf));
+        termEventChecked(i, j);
     }
 
     if (m_attributes.flags & Tsq::Command)
@@ -479,8 +487,8 @@ XTermEmulator::internalError(const char *msg)
     // Can't use state machine here
     CellAttributes save = m_attributes;
     m_attributes.flags = Tsq::Fg|Tsq::Bg|Tsq::Bold;
-    m_attributes.fg = MAKE_COLOR(255, 128, 128);
-    m_attributes.bg = MAKE_COLOR(0, 0, 0);
+    m_attributes.fg = INVALID_INPUT_FG;
+    m_attributes.bg = INVALID_INPUT_BG;
 
     while (*msg)
         printable(*msg++);

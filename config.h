@@ -93,6 +93,10 @@
 
 /* Maximum lines in reported commands */
 #define MAX_COMMAND_LINES 5
+/* Background color when displaying invalid terminal input */
+#define INVALID_INPUT_BG MAKE_COLOR(0, 0, 0)
+/* Foreground color when displaying invalid terminal input */
+#define INVALID_INPUT_FG MAKE_COLOR(255, 128, 128)
 
 /* Terminal file monitor readdir batch size */
 #define FILEMON_BATCH_SIZE 25

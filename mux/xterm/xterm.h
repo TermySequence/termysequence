@@ -30,7 +30,7 @@ private:
     std::stack<std::string> m_titleStack, m_title2Stack;
 
     void termReply(const char *buf);
-    void termEventChecked(const char *buf, unsigned len);
+    void termEventChecked(const char *buf, const char *end);
 
     void clearScreen();
     void eraseInDisplay(int type);

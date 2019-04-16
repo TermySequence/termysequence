@@ -51,9 +51,11 @@ widthAt(const UnicodingImpl *m, const char *i, const char *j)
     if (gcb & DblWidthChar)
         return 2;
 
-    if (i != j)
-        if (emoji_combines(gcb, table->lookup(utf8::unchecked::peek_next(i))))
+    if (i != j) {
+        Tsq::CellFlags next_gcb = table->lookup(utf8::unchecked::peek_next(i));
+        if (next_gcb & GcbEmojiModifier && emoji_combines(gcb, next_gcb))
             return 2;
+    }
 
     return 1;
 }
